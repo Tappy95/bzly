@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.user.LRankMachineDao">
+	<resultMap id="BaseResultMap" type="LRankMachine">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="img" property="img" jdbcType="VARCHAR"/>
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="LRankMachine">
+	   INSERT INTO l_rank_machine(img,mobile,create_time)
+       VALUES (#{img},#{mobile},#{createTime})
+	</insert>
+	
+	<select id="selectList" parameterType="LRankMachine" resultMap="BaseResultMap">
+	    SELECT *
+		FROM l_rank_machine
+		ORDER BY create_time DESC
+	</select>
+	
+	<select id="selectOne" parameterType="int" resultMap="BaseResultMap">
+	    SELECT *
+		FROM l_rank_machine
+		where id=#{id}
+	</select>
+	
+	<update id="update" parameterType="LRankMachine">
+	    update l_rank_machine
+	    <set>
+	       <if test="img != null">
+				img = #{img},
+		   </if>
+		   <if test="mobile != null">
+				mobile = #{mobile},
+		   </if>
+	    </set>
+	    where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+	    delete from l_rank_machine where id=#{id}
+	</delete>
+</mapper>

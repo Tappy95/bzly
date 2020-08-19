@@ -1,0 +1,67 @@
+server:
+  port: 8083
+spring:
+  datasource:
+      name: test
+      url: jdbc:mysql://mysql:33060/bzly?characterEncoding=utf-8&allowMultiQueries=true
+      username: bzly_user
+      password: BZ_2019mysql#user
+      # 使用druid数据源
+      type: com.alibaba.druid.pool.DruidDataSource
+      driver-class-name: com.mysql.jdbc.Driver
+      filters: stat
+      maxActive: 20
+      initialSize: 1
+      maxWait: 60000
+      minIdle: 1
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxOpenPreparedStatements: 20
+  activemq: 
+      broker-url: tcp://activemq:61616
+      user: admin
+      password: admin
+      in-memory: true
+      pooled: false
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.mc.bzly.model
+
+dubbo:
+  registry:
+    address: zookeeper:2181
+#Logger
+logging:
+  level:
+    root: INFO
+    com.mc.bzly.dao: trace
+    
+#pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: false
+    supportMethodsArguments: false
+    params: count=countSql
+    
+jedis:
+    host: redis
+    max:
+        idle: 10
+        total: 500
+        wait:
+            millis: 10000
+    min:
+        idle: 5
+    port: 6379
+    test:
+        'on':
+            borrow: true
+    zk:
+        session:
+            timeout:
+                ms: 20000

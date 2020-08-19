@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LRankPigDao" >
+	<resultMap type="LRankPig" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="rank_type" property="rankType" jdbcType="INTEGER"/>
+		<result column="rank_order" property="rankOrder" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+		<result column="alias_name" property="aliasName" jdbcType="VARCHAR"/>
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+		<result column="pig_balance" property="pigBalance" jdbcType="INTEGER"/>
+		<result column="rank_date" property="rankDate" jdbcType="VARCHAR"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="real_data" property="realData" jdbcType="INTEGER"/>
+	</resultMap>
+
+	<resultMap type="LRankPigSimple" id="BaseResultMap1">
+		<result column="rank_order" property="rankOrder" jdbcType="INTEGER"/>
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+		<result column="pig_balance" property="pigBalance" jdbcType="INTEGER"/>
+		<result column="reward_amount" property="rewardAmount" jdbcType="INTEGER"/>
+	</resultMap>
+
+	<select id="selectList" parameterType="LRankPig" resultMap="BaseResultMap">
+		select * from l_rank_pig 
+		<where>
+			<if test="rankType != null and rankType != ''">
+				and rank_type = #{rankType}
+			</if>
+			<if test="rankDate != null and rankDate != ''">
+				and rank_date = #{rankDate}
+			</if>
+			<if test="realData != null and realData != ''">
+				and real_data = #{realData}
+			</if>
+		</where>
+		order by rank_date desc,rank_order asc
+	</select>
+	
+	<select id="selectFlist" parameterType="LRankPig" resultMap="BaseResultMap1" >
+		select rank_order,image_url,CONCAT(SUBSTR(mobile FROM 1 FOR 3),'****',SUBSTR(mobile FROM 8 FOR 4)) as mobile,pig_balance,reward_amount from l_rank_pig 
+		<where>
+			<if test="rankType != null and rankType != ''">
+				and rank_type = #{rankType}
+			</if>
+			<if test="rankDate != null and rankDate != ''">
+				and rank_date = #{rankDate}
+			</if>
+		</where>
+		order by rank_order asc
+	</select>
+	
+	<select id="selectByUser" resultMap="BaseResultMap1" >
+		select * from l_rank_pig 
+		where rank_type = #{rankType} and rank_date = #{rankDate} and user_id = #{userId}
+	</select>
+	
+	<select id="selectLatest7Date" resultType="String">
+	 	select GROUP_CONCAT(a.rank_date) from (select DISTINCT rank_date from l_rank_pig where rank_type=1 ORDER BY rank_date desc limit 1,7)a
+	 </select>
+	 
+	 <select id="selectByUserOne" parameterType="LRankPig" resultMap="BaseResultMap">
+	 	select * from l_rank_pig where rank_type = #{rankType} and user_id = #{userId} and rank_date = #{rankDate}
+	 </select>
+</mapper>

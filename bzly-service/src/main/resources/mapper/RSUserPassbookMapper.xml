@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.RSUserPassbookDao" >
+	<resultMap type="RSUserPassbook" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="passbook_id" property="passbookId" jdbcType="INTEGER"/>
+		<result column="expiration_time" property="expirationTime" jdbcType="VARCHAR"/>
+		<result column="expiration_day" property="expirationDay" jdbcType="INTEGER"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		
+		<result column="passbook_name" property="passbookName" jdbcType="VARCHAR"/>
+		<result column="passbook_type" property="passbookType" jdbcType="INTEGER"/>
+		<result column="passbook_value" property="passbookValue" jdbcType="INTEGER"/>
+		<result column="type_name" property="typeName" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into rs_user_passbook
+		(id,user_id,passbook_id,expiration_day,expiration_time,status) values
+		<foreach collection="list" index="index" item="item" separator=",">
+			(#{item.id},#{item.userId},#{item.passbookId},#{item.expirationDay},#{item.expirationTime},#{item.status})
+		</foreach>
+	</insert>
+
+	<insert id="insert" parameterType="RSUserPassbook">
+		insert into rs_user_passbook
+		(id,user_id,passbook_id,expiration_day,expiration_time,status) values
+			(#{id},#{userId},#{passbookId},#{expirationDay},#{expirationTime},#{status})
+	</insert>
+	
+	<update id="update" parameterType="RSUserPassbook">
+		update rs_user_passbook 
+		<set>
+			<if test="status != null">
+				 status = #{status},
+			</if>
+			<if test="expirationDay != null">
+				 expiration_day = #{expirationDay}
+			</if>
+		</set>
+		 where id = #{id}
+	</update>
+	
+	<select id="selectByExample" resultMap="BaseResultMap" parameterType="RSUserPassbook">
+		select * from rs_user_passbook 
+		<where>
+			<if test="userId != null">
+				and user_id = #{userId}
+			</if>
+			<if test="passbookId != null">
+				and passbook_id = #{passbookId}
+			</if>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectListByExample" resultMap="BaseResultMap" parameterType="RSUserPassbook">
+		select * from rs_user_passbook 
+		<where>
+			<if test="userId != null">
+				and user_id = #{userId}
+			</if>
+			<if test="passbookId != null">
+				and passbook_id = #{passbookId}
+			</if>
+			<if test="status != null">
+				status = #{status}
+			</if>
+		</where>
+	</select>
+	
+	<update id="batchUpdate" parameterType="java.util.List">
+		 <foreach collection="list" item="item" index= "index" open="" close="" separator =";">
+             update rs_user_passbook
+             <set>
+                expiration_day = #{item.expirationDay,jdbcType=INTEGER},
+                status = #{item.status,jdbcType=INTEGER}
+             </set>
+             <where>
+                 id = #{item.id,jdbcType=INTEGER}
+             </where>
+         </foreach>
+	</update>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+		select * 
+		from rs_user_passbook 
+		where id=#{id}
+	</select>
+	
+	<select id="selectAppList" parameterType="RSUserPassbook" resultMap="BaseResultMap">
+		SELECT rs.*,p.passbook_name,p.passbook_value,p.passbook_type,
+		CONCAT(
+		(SELECT GROUP_CONCAT(short_name) FROM m_task_type WHERE id IN (SELECT task_type_id FROM rs_passbook_task rsp WHERE rsp.passbook_id = p.id ORDER BY rsp.task_type_id DESC)),'爵任务') AS type_name
+		 FROM rs_user_passbook rs
+		LEFT JOIN m_passbook p ON rs.passbook_id = p.id 
+		WHERE rs.status=1 and rs.user_id=#{userId}
+	</select>
+	
+	<select id="selectByUser" resultType="java.util.Map">
+		select rs.id as rsId,passbook.* from rs_user_passbook rs
+		left join m_passbook passbook on rs.passbook_id = passbook.id
+		where rs.user_id = #{userId} and passbook.passbook_type = #{passbookType} and rs.status  = 1
+	</select>
+	
+	<select id="selectDiscount" resultMap="BaseResultMap">
+	    SELECT  r.id,m.passbook_name,m.passbook_value
+		FROM rs_user_passbook r INNER JOIN m_passbook m ON r.passbook_id=m.id
+		WHERE m.passbook_type=2 AND r.status=1 AND r.user_id=#{userId}
+	</select>
+	
+	<select id="selectAddDiscount" resultMap="BaseResultMap">
+	    SELECT  r.id,m.passbook_name,m.passbook_value
+		FROM rs_user_passbook r INNER JOIN m_passbook m ON r.passbook_id=m.id
+		WHERE m.passbook_type=3 AND r.status=1 AND r.user_id=#{userId}
+		ORDER BY r.id DESC
+		limit 0,1
+	</select>
+	
+	<select id="selectAddDiscountCount" resultType="int">
+	    SELECT  count(1)
+		FROM rs_user_passbook r INNER JOIN m_passbook m ON r.passbook_id=m.id
+		WHERE m.passbook_type=3 AND r.status=1 AND r.user_id=#{userId}
+		ORDER BY r.id DESC
+		limit 0,1
+	</select>
+</mapper>   

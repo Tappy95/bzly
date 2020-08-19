@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.thirdparty.TpGameRelationTypeDao">
+	<resultMap id="BaseResultMap" type="TpGameRelationType">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="game_id" property="gameId" jdbcType="INTEGER"/>
+		<result column="type_id" property="typeId" jdbcType="VARCHAR"/>  
+	</resultMap>
+	
+	<insert id="save" parameterType="TpGameRelationType">
+	   INSERT INTO tp_game_relation_type(game_id,type_id)
+       VALUES (#{gameId},#{gameId})
+	</insert>
+	
+	<insert id="insertList" parameterType="java.util.List">
+		insert into tp_game_relation_type(game_id,type_id)
+        VALUE 
+        <foreach collection="list" item="item" index="index" separator=",">
+        	(#{item.gameId},#{item.typeId})
+   		</foreach>		
+	</insert>
+	
+	<select id="selectListType" parameterType="int" resultType="int">
+	   select type_id
+	   from tp_game_relation_type 
+	   where game_id = #{gameId}
+	</select>
+	
+	<delete id="delete" parameterType="int">
+	  delete from tp_game_relation_type where game_id = #{gameId}
+	</delete>
+	
+	<delete id="deleteTypeId" parameterType="int">
+	  delete from tp_game_relation_type where type_id = #{typeId}
+	</delete>
+</mapper>

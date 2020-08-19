@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.MChannelConfigUserDao" >
+	<resultMap type="MChannelConfigUser" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="config_id" property="configId" jdbcType="INTEGER"/>		
+		<result column="user_type" property="userType" jdbcType="INTEGER"/>		
+		<result column="sign_7" property="sign7" jdbcType="INTEGER"/>		
+		<result column="sign_15" property="sign15" jdbcType="INTEGER"/>		
+		<result column="vip_18" property="vip18" jdbcType="INTEGER"/>		
+		<result column="vip_48" property="vip48" jdbcType="INTEGER"/>		
+		<result column="vip_228" property="vip228" jdbcType="INTEGER"/>		
+		<result column="vip_1188" property="vip1188" jdbcType="INTEGER"/>		
+		<result column="vip_1688" property="vip1688" jdbcType="INTEGER"/>		
+		<result column="vip_1888" property="vip1888" jdbcType="INTEGER"/>		
+		<result column="vip_3188" property="vip3188" jdbcType="INTEGER"/>		
+		<result column="level_4" property="level4" jdbcType="INTEGER"/>		
+		<result column="level_6" property="level6" jdbcType="INTEGER"/>		
+		<result column="level_8" property="level8" jdbcType="INTEGER"/>		
+		<result column="level_12" property="level12" jdbcType="INTEGER"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>	
+		<result column="referrer_addition" property="referrerAddition" jdbcType="INTEGER"/>		
+		<result column="recommend_coin" property="recommendCoin" jdbcType="INTEGER"/>	
+		<result column="daren_coin" property="darenCoin" jdbcType="INTEGER"/>			
+	</resultMap>
+	
+	<insert id="insert" parameterType="MChannelConfigUser">
+		insert into m_channel_config_user 
+		(id,config_id,user_type,sign_7,sign_15,
+			vip_18,vip_48,vip_228,vip_1188,vip_1688,vip_1888,vip_3188,
+			level_4,level_6,level_8,level_12,referrer_addition,daren_coin,recommend_coin,create_time,status) 
+		values 
+		(#{id},#{configId},#{userType},#{sign7},#{sign15},
+			#{vip18},#{vip48},#{vip228},#{vip1188},#{vip1688},#{vip1888},#{vip3188},
+			#{level4},#{level6},#{level8},#{level12},#{referrerAddition},#{darenCoin},#{recommendCoin},#{createTime},#{status})
+	</insert>
+
+	<insert id="batchInsert">
+		insert into m_channel_config_user 
+		(id,config_id,user_type,sign_7,sign_15,
+			vip_18,vip_48,vip_228,vip_1188,vip_1688,vip_1888,vip_3188,
+			level_4,level_6,level_8,level_12,referrer_addition,daren_coin,recommend_coin,create_time,status) 
+		values 
+		<foreach collection="list" index="index" item="item" separator=",">
+		(#{item.id},#{item.configId},#{item.userType},#{item.sign7},#{item.sign15},
+			#{item.vip18},#{item.vip48},#{item.vip228},#{item.vip1188},#{item.vip1688},#{item.vip1888},#{item.vip3188},
+			#{item.level4},#{item.level6},#{item.level8},#{item.level12},#{item.referrerAddition},#{item.darenCoin},#{item.recommendCoin},#{item.createTime},#{item.status})
+		</foreach>
+	</insert>
+	
+	<update id="update" parameterType="MChannelConfigUser">
+		update m_channel_config_user 
+		<set>
+			<if test="configId != null">
+				config_id = #{configId},
+			</if>
+			<if test="userType != null">
+				user_type = #{userType},
+			</if>
+			<if test="sign7 != null">
+				sign_7 = #{sign7},
+			</if>
+			<if test="sign15 != null">
+				sign_15 = #{sign15},
+			</if>
+			<if test="vip18 != null">
+				vip_18 = #{vip18},
+			</if>
+			<if test="vip48 != null">
+				vip_48 = #{vip48},
+			</if>
+			<if test="vip228 != null">
+				vip_228 = #{vip228},
+			</if>
+			<if test="vip1188 != null">
+				vip_1188 = #{vip1188},
+			</if>
+			<if test="vip1688 != null">
+				vip_1688 = #{vip1688},
+			</if>
+			<if test="vip1888 != null">
+				vip_1888 = #{vip1888},
+			</if>
+			<if test="vip3188 != null">
+				vip_3188 = #{vip3188},
+			</if>
+			<if test="level4 != null">
+				level_4 = #{level4},
+			</if>
+			<if test="level6 != null">
+				level_6 = #{level6},
+			</if>
+			<if test="level8 != null">
+				level_8 = #{level8},
+			</if>
+			<if test="level12 != null">
+				level_12 = #{level12},
+			</if>
+			<if test="referrerAddition != null">
+				referrer_addition = #{referrerAddition},
+			</if>
+			<if test="darenCoin != null">
+				daren_coin = #{darenCoin},
+			</if>
+			<if test="recommendCoin != null">
+				recommend_coin = #{recommendCoin},
+			</if>
+			<if test="status != null">
+				status = #{status}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from m_channel_config_user where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from m_channel_config_user where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="MChannelConfigUser" resultMap="BaseResultMap">
+		select * from m_channel_config_user
+		<where>
+			<if test="configId != null and configId != ''">
+				and config_id =#{configId}
+			</if>
+		</where>
+	</select>
+	<select id="selectUserChannelCode" resultMap="BaseResultMap">
+	    SELECT *
+		FROM m_channel_config_user
+		WHERE user_type=#{userType} AND config_id=(SELECT id FROM m_channel_config WHERE channel_code=#{channelCode})
+	</select>
+	
+	<select id="selectByUserTypeAndConfigId" resultMap="BaseResultMap">
+		select * from m_channel_config_user where config_id = #{configId} and user_type = #{userType}
+	</select>
+</mapper>

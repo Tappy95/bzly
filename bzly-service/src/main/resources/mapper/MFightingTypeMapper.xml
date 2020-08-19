@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.fighting.MFightingTypeDao" >
+	<resultMap type="MFightingType" id="BaseResultMap">
+		<id column="type_id" property="typeId" jdbcType="INTEGER"/>		
+		<result column="type_name" property="typeName" jdbcType="VARCHAR"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>				
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>
+		<result column="is_disable" property="isDisable" jdbcType="INTEGER"/>	
+		<result column="reward_type" property="rewardType" jdbcType="INTEGER"/>	
+		<result column="reward_from" property="rewardFrom" jdbcType="INTEGER"/>	
+		<result column="reward_to" property="rewardTo" jdbcType="INTEGER"/>	
+		<result column="fighting_rule" property="fightingRule" jdbcType="VARCHAR"/>	
+		<result column="question_num" property="questionNum" jdbcType="INTEGER"/>				
+	</resultMap>
+	
+	<insert id="save" parameterType="MFightingType">
+	   INSERT INTO m_fighting_type(type_name,create_time,update_time,is_disable,reward_type,reward_from,reward_to,fighting_rule,question_num)
+       VALUES (#{typeName},#{createTime},#{updateTime},#{isDisable},#{rewardType},#{rewardFrom},#{rewardTo},#{fightingRule},#{questionNum})
+	</insert>
+	
+	<select id="seleteList" parameterType="MFightingType" resultMap="BaseResultMap">
+	    select *
+	    from m_fighting_type
+	    <where>
+			<if test="typeName != null and typeName !=''">
+				and type_name = #{typeName}
+			</if>
+		</where>
+		order by create_time desc 
+	</select>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+	    select *
+	    from m_fighting_type
+	    where type_id=#{typeId}
+	</select>
+	
+	<update id="update" parameterType="MFightingType">
+	    update m_fighting_type
+	    <set>
+			<if test="typeName != null and typeName != ''">
+				type_name = #{typeName},
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				update_time = #{updateTime},
+			</if>
+			<if test="isDisable != null and isDisable != ''">
+				is_disable = #{isDisable},
+			</if>
+			<if test="rewardType != null and rewardType != ''">
+				reward_type = #{rewardType},
+			</if>
+			<if test="rewardType ==-1">
+				reward_type =0,
+			</if>
+			<if test="rewardFrom != null and rewardFrom != ''">
+				reward_from = #{rewardFrom},
+			</if>
+			<if test="rewardTo != null and rewardTo != ''">
+				reward_to = #{rewardTo},
+			</if>
+			<if test="fightingRule != null and fightingRule != ''">
+				fighting_rule = #{fightingRule},
+			</if>
+			<if test="questionNum != null and questionNum != ''">
+				question_num = #{questionNum},
+			</if>
+		</set>
+		where type_id=#{typeId}
+	</update>
+	
+	<delete id="delete">
+	   delete from m_fighting_type where type_id=#{typeId}
+	</delete>
+</mapper>

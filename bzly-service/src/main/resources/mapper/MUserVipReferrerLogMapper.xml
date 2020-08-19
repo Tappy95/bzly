@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.MUserVipReferrerLogDao" >
+	<resultMap type="MUserVipReferrerLog" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="referrer_id" property="referrerId" jdbcType="VARCHAR"/>				
+		<result column="rank" property="rank" jdbcType="INTEGER"/>				
+		<result column="creator_time" property="creatorTime" jdbcType="INTEGER"/>			
+	</resultMap>
+	
+	<insert id="insert" parameterType="MUserVipReferrerLog">
+		INSERT INTO m_user_vip_referrer_log(user_id,referrer_id,rank,creator_time)
+        VALUE(#{userId},#{referrerId},#{rank},#{creatorTime})
+	</insert>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+		select *
+		from m_user_vip_referrer_log
+		where user_id=#{userId} AND referrer_id=#{referrerId}
+		group by rank desc
+		limit 0,1
+	</select>
+</mapper>

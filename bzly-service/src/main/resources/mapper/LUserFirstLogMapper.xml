@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserFirstLogDao" >
+	<resultMap type="LUserFirstLog" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="is_one" property="isOne" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="LUserFirstLog">
+		insert into l_user_first_log 
+		(id,user_id,is_one)
+		values 
+		(#{id},#{userId},#{isOne})
+	</insert>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+	    select *
+	    from l_user_first_log
+	    where user_id=#{userId}
+	</select>
+</mapper>

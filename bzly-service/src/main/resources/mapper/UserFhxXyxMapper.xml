@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.wish.UserFhxXyxDao" >
+	<resultMap type="UserFhxXyx" id="baseMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="fhx_total" property="fhxTotal" jdbcType="INTEGER"/>
+		<result column="fhx_active" property="fhxActive" jdbcType="INTEGER"/>
+		<result column="fhx_overdue" property="fhxOverdue" jdbcType="INTEGER"/>
+		<result column="xyx_total" property="xyxTotal" jdbcType="INTEGER"/>
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="UserFhxXyx">
+		insert into sr_user_fhx_xyx (id,user_id,fhx_total,fhx_active,fhx_overdue,xyx_total,update_time)
+		values (#{id},#{userId},#{fhxTotal},#{fhxActive},#{fhxOverdue},#{xyxTotal},#{updateTime})
+	</insert>
+	
+	<update id="update" parameterType="UserFhxXyx">
+		update sr_user_fhx_xyx 
+		<set>
+			<if test="fhxTotal != null">fhx_total = #{fhxTotal},</if>
+			<if test="fhxActive != null">fhx_active = #{fhxActive},</if>
+			<if test="fhxOverdue != null">fhx_overdue = #{fhxOverdue},</if>
+			<if test="xyxTotal != null">xyx_total = #{xyxTotal},</if>
+			<if test="updateTime != null">update_time = #{updateTime},</if>
+		</set>
+		where user_id = #{userId}
+	</update>
+	
+	<select id="selectOne" parameterType="String" resultMap="baseMap">
+		select * from sr_user_fhx_xyx where user_id = #{userId}
+	</select>
+	
+	<select id="selectList" parameterType="UserFhxXyx" resultMap="baseMap">
+		select * from sr_user_fhx_xyx 
+		<where>
+			<if test="userId != null and userId != ''">user_id = #{userId}</if>
+		</where>
+		order by update_time desc 
+		limit #{pageIndex},#{pageSize}
+	</select>
+
+	<select id="selectListCount" parameterType="UserFhxXyx" resultType="long">
+		select count(id) from sr_user_fhx_xyx 
+		<where>
+			<if test="userId != null and userId != ''">user_id = #{userId}</if>
+		</where>
+	</select>
+</mapper>

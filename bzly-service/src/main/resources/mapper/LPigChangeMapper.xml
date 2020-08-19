@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LPigChangeDao" >
+	<resultMap type="LPigChange" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="amount" property="amount" jdbcType="INTEGER"/>				
+		<result column="flow_type" property="flowType" jdbcType="INTEGER"/>		
+		<result column="changed_type" property="changedType" jdbcType="INTEGER"/>		
+		<result column="changed_time" property="changedTime" jdbcType="INTEGER"/>
+		<result column="userName" property="userName" jdbcType="VARCHAR"/>	
+		<result column="channelCode" property="channelCode" jdbcType="VARCHAR"/>	
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>	
+		<result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+		<result column="pig_balance" property="pigBalance" jdbcType="INTEGER"/>		
+		<result column="role_type" property="roleType" jdbcType="INTEGER"/>	
+		<result column="channelRelation" property="channelRelation" jdbcType="VARCHAR"/>
+		<result column="registerTime" property="registerTime" jdbcType="INTEGER"/>
+		
+		<result column="level" property="level" jdbcType="VARCHAR"/>
+		<result column="revenue" property="revenue" jdbcType="VARCHAR"/>
+		<result column="expend" property="expend" jdbcType="VARCHAR"/>		
+	</resultMap>
+
+	<resultMap type="MessageList" id="MessageListMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="content" property="content" jdbcType="VARCHAR"/>				
+		<result column="changed_time" property="changedTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="LPigChange">
+		INSERT INTO l_pig_chanage(user_id,amount,flow_type,changed_type,changed_time,remarks,pig_balance)
+        VALUE (#{userId},#{amount},#{flowType},#{changedType},#{changedTime},#{remarks},#{pigBalance})
+	</insert>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select c.*,u.user_name AS userName 
+		from l_pig_chanage AS c,m_user_info AS u
+		where c.user_id=u.user_id AND c.id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="LPigChange" resultMap="BaseResultMap">
+		select * from l_pig_chanage where user_id=#{userId}
+		order by changed_time desc
+	</select>
+	
+	<select id="selectPageList" parameterType="LPigChange" resultMap="BaseResultMap">
+		SELECT c.*,u.user_name AS userName,u.account_id,
+		u.role_type,
+		u.channel_code as channelCode,u.level,
+		CASE c.flow_type
+		WHEN 1 THEN c.amount
+		END revenue,
+		CASE c.flow_type
+		WHEN 2 THEN c.amount
+		END expend,
+		u.create_time as registerTime
+		FROM l_pig_chanage AS c,m_user_info AS u
+		WHERE c.user_id=u.user_id
+		<if test="channelCode !='baozhu'">
+			    <if test="channelCode != null and channelCode != '' and userRelation==1">
+				    and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==2">
+				    and u.channel_code=#{channelCode}
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+				</if>
+				<!-- and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+		</if>
+		<if test="userName != null and userName != ''">
+			and u.user_name = #{userName}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and u.mobile = #{mobile}
+		</if>
+		<if test="changedType != null and changedType != ''">
+			and c.changed_type = #{changedType}
+		</if>
+		<if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		</if>
+		<if test="flowType != null and flowType != ''">
+			and c.flow_type = #{flowType}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and c.changed_time >= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and #{endTime} >= c.changed_time
+		</if>
+		ORDER BY c.changed_time DESC
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectSum" parameterType="LPigChange" resultType="map">
+	    SELECT SUM(a.amount) AS amount,a.flow_type AS flowType,COUNT(*) cou
+		FROM (
+		SELECT flow_type,amount
+		FROM l_pig_chanage AS c,m_user_info AS u
+		WHERE c.user_id=u.user_id AND u.user_id!="1"
+	    <if test="channelCode !='baozhu'">
+			    <if test="channelCode != null and channelCode != '' and userRelation==1">
+				    and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==2">
+				    and u.channel_code=#{channelCode}
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+				</if>
+				<!-- and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+		</if>
+		<if test="userName != null and userName != ''">
+			and u.user_name = #{userName}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and u.mobile = #{mobile}
+		</if>
+		<if test="changedType != null and changedType != ''">
+			and c.changed_type = #{changedType}
+		</if>
+		<if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		</if>
+		<if test="flowType != null and flowType != ''">
+			and c.flow_type = #{flowType}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and c.changed_time >= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and #{endTime} >= c.changed_time
+		</if>
+		ORDER BY c.changed_time DESC
+		LIMIT #{pageIndex},#{pageSize}
+		) a
+		GROUP BY a.flow_type
+	</select>
+	
+	<select id="selectCount" parameterType="LPigChange" resultType="map">
+	    SELECT SUM(a.amount) AS amount,a.flow_type AS flowType,COUNT(*) cou
+		FROM (
+		SELECT flow_type,amount
+		FROM l_pig_chanage AS c,m_user_info AS u
+		WHERE c.user_id=u.user_id AND u.user_id!="1"
+		<if test="channelCode !='baozhu'">
+			    <if test="channelCode != null and channelCode != '' and userRelation==1">
+				    and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==2">
+				    and u.channel_code=#{channelCode}
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+				</if>
+				<!-- and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+		</if>
+		<if test="userName != null and userName != ''">
+			and u.user_name = #{userName}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and u.mobile = #{mobile}
+		</if>
+		<if test="changedType != null and changedType != ''">
+			and c.changed_type = #{changedType}
+		</if>
+		<if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		</if>
+		<if test="flowType != null and flowType != ''">
+			and c.flow_type = #{flowType}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and c.changed_time >= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and #{endTime} >= c.changed_time
+		</if>
+		) a
+		GROUP BY a.flow_type
+	</select>
+	
+	<select id="selectMessageList" resultMap="MessageListMap" >
+		select * from (
+			(
+				select changes.id,changes.user_id,
+				case changes.changed_type 
+				when 1 then CONCAT(CONCAT(SUBSTR(info.mobile FROM 1 FOR 3),'****',SUBSTR(info.mobile FROM 8 FOR 4)),'刚刚答题获得',amount,'金币') 
+				when 2 then CONCAT(CONCAT(SUBSTR(info.mobile FROM 1 FOR 3),'****',SUBSTR(info.mobile FROM 8 FOR 4)),'刚刚签到获得',amount,'金币')
+				when 4 then CONCAT(CONCAT(SUBSTR(info.mobile FROM 1 FOR 3),'****',SUBSTR(info.mobile FROM 8 FOR 4)),'刚刚出题获得',amount,'金币')
+				 end content ,changed_time 
+				from l_pig_chanage changes
+				left join m_user_info info on changes.user_id = info.user_id
+				where flow_type = 1 ORDER BY changed_time desc  limit 5
+			)
+			UNION ALL
+			(	select changes.log_id as id ,changes.user_id,
+				case changes.changed_type 
+				when 3 then CONCAT(CONCAT(SUBSTR(info.mobile FROM 1 FOR 3),'****',SUBSTR(info.mobile FROM 8 FOR 4)),'刚刚推荐好友获得',amount,'元') 
+				when 5 then CONCAT(CONCAT(SUBSTR(info.mobile FROM 1 FOR 3),'****',SUBSTR(info.mobile FROM 8 FOR 4)),'刚刚参与打卡瓜分了',amount,'元')
+				 end content,changed_time
+				from l_balance_change changes
+				left join m_user_info info on changes.user_id = info.user_id
+				where flow_type = 1 ORDER BY changed_time desc  limit 5
+			)
+		) a ORDER BY a.changed_time DESC LIMIT 5
+	</select>
+	
+	<select id="getReliefPig" parameterType="String" resultType="int">
+	    SELECT COUNT(*)
+		FROM l_pig_chanage
+		WHERE FROM_UNIXTIME(changed_time/1000,'%Y-%m-%d')=CURDATE() AND changed_type=7 AND user_id=#{userId}
+	</select>
+	
+	<select id="selectCountPig" resultType="long">
+        SELECT SUM(amount)
+		FROM l_pig_chanage
+		WHERE changed_type=#{changedType} AND user_id=#{userId}	
+ 	</select>
+ 	
+ 	<select id="selectChannelList" parameterType="LPigChange" resultMap="BaseResultMap">
+	    SELECT c.*,u.user_name AS userName,u.account_id,
+	    CASE IFNULL(u.channel_code,0)
+		    WHEN #{channelCode} THEN '直属用户' 
+		    WHEN 0 THEN '非直属用户'
+		    END channelRelation,
+		     u.role_type,
+		     u.channel_code as channelCode
+		FROM l_pig_chanage c INNER JOIN m_user_info u ON c.user_id=u.user_id
+		<where>
+		<!-- (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+		<if test="userRelation==1">
+		    and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+		</if>
+		<if test="userRelation==2">
+		    and u.channel_code=#{channelCode}
+		</if>
+		<if test="userRelation==3">
+		    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+		</if>
+		<if test="userName != null and userName != ''">
+			and u.user_name = #{userName}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and u.mobile = #{mobile}
+		</if>
+		<if test="changedType != null and changedType != ''">
+			and c.changed_type = #{changedType}
+		</if>
+		<if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		</if>
+		<if test="flowType != null and flowType != ''">
+			and c.flow_type = #{flowType}
+		</if>
+		</where>
+		ORDER BY changed_time DESC
+	</select>
+	<select id="exclPigChange" parameterType="LPigChange" resultType="Map">
+	    SELECT c.amount,
+		CASE c.changed_type 
+			WHEN 1 THEN 'vip'
+			WHEN 2 THEN '提现'
+			WHEN 3 THEN '任务'
+			WHEN 4 THEN '试玩'
+			WHEN 5 THEN '金币兑换获得'
+			WHEN 6 THEN '竞猜'
+			WHEN 7 THEN 'vip救济金猪'
+			WHEN 8 THEN '金猪抽奖'
+			WHEN 9 THEN '抽奖退回'
+			WHEN 10 THEN '竞猜退回'
+			WHEN 11 THEN '团队长赠送'
+			WHEN 12 THEN '每日救济金猪'
+			WHEN 13 THEN '砸金蛋'
+			WHEN 14 THEN '使用金蛋'
+			WHEN 15 THEN '金猪日榜排行奖励'
+			END changedType,
+		CASE c.flow_type 
+			WHEN 1 THEN '收入'
+			WHEN 2 THEN '支出'
+			END flowType,
+		u.user_name AS userName,
+		u.account_id AS accountId,
+		CASE IFNULL(u.channel_code,0)
+		    WHEN #{channelCode} THEN '直属用户' 
+		    WHEN 0 THEN '非直属用户'
+		    END channelRelation,
+		CASE u.role_type 
+		    WHEN 1 THEN '小猪猪'
+		    WHEN 2 THEN '团队长'
+		    WHEN 3 THEN '超级合伙人'
+		    END roleType,
+		u.channel_code as channelCode,
+		FROM_UNIXTIME(c.changed_time/1000,'%Y-%m-%d %H:%i:%s') AS changedTime,
+		u.level,
+		CASE c.flow_type
+		WHEN 1 THEN c.amount
+		END revenue,
+		CASE c.flow_type
+		WHEN 2 THEN c.amount
+		END expend,
+		FROM_UNIXTIME(u.create_time/1000,'%Y-%m-%d %H:%i:%s') AS exclRegisterTime,
+		c.pig_balance as pigBalance
+		FROM l_pig_chanage c INNER JOIN m_user_info u ON c.user_id=u.user_id
+		<where>
+			<if test="channelCode !='baozhu'">
+			    <if test="channelCode != null and channelCode != '' and userRelation==1">
+				    and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==2">
+				    and u.channel_code=#{channelCode}
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+				</if>
+				<!-- and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+			</if>
+			<if test="mobile != null and mobile != ''">
+				and u.mobile = #{mobile}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+			</if>
+		</where>	
+		ORDER BY c.changed_time DESC
+		limit 0,5000
+	</select>
+	
+	<select id="selectLastMonthPigWin" resultType="long">
+		select IFNULL(sum(amount),0) from l_pig_chanage where user_id = #{userId} and flow_type = 1 and changed_type = 6 and changed_time >= #{startTime} and #{endTime} >= changed_time
+	</select>
+
+	<select id="selectCountJJ" resultType="Long">
+		select count(1) from l_pig_chanage where user_id = #{userId} and changed_type = #{changedType} and flow_type = 1 and changed_time >= #{changedTime}
+	</select>
+	
+	
+	<select id="selectByChangeTypeRank" resultType="double">
+		select IFNULL(sum(amount),0) from l_pig_chanage where user_id = #{userId} and flow_type = 1 and changed_type = 6 and changed_time >= #{startTime}
+	</select>
+	
+	<select id="selectPageListNew" parameterType="LPigChange" resultMap="BaseResultMap">
+		SELECT c.*,
+		CASE c.flow_type
+		WHEN 1 THEN c.amount
+		END revenue,
+		CASE c.flow_type
+		WHEN 2 THEN c.amount
+		END expend,
+		(select user_name from m_user_info where user_id=c.user_id) as userName,
+		(select account_id from m_user_info where user_id=c.user_id) as account_id,
+		(select level from m_user_info where user_id=c.user_id) as level,
+		(select create_time from m_user_info where user_id=c.user_id) as registerTime
+		FROM l_pig_chanage as c
+		<where>
+			<if test="channelCode !='baozhu'">
+				    <if test="channelCode != null and channelCode != '' and userRelation==1">
+					    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==2">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==3">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+					</if>
+			</if>
+			<if test="userId != null and userId != ''">
+				and c.user_id = #{userId}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+		    </if>
+		</where> 
+		ORDER BY c.changed_time DESC
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectSumNew" parameterType="LPigChange" resultType="map">
+	    SELECT SUM(a.amount) AS amount,a.flow_type AS flowType,COUNT(*) cou
+		FROM (
+		SELECT c.flow_type,c.amount
+		FROM l_pig_chanage AS c
+		<where>
+			<if test="channelCode !='baozhu'">
+				    <if test="channelCode != null and channelCode != '' and userRelation==1">
+					    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==2">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==3">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+					</if>
+			</if>
+			<if test="userId != null and userId != ''">
+				and c.user_id = #{userId}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+		    </if>
+		</where> 
+		ORDER BY c.changed_time DESC
+		LIMIT #{pageIndex},#{pageSize}
+		) a
+		GROUP BY a.flow_type
+	</select>
+	
+	<select id="selectCountNew" parameterType="LPigChange" resultType="map">
+	    SELECT SUM(a.amount) AS amount,a.flow_type AS flowType,COUNT(*) cou
+		FROM (
+		SELECT c.flow_type,c.amount
+		FROM l_pig_chanage AS c
+		<where>
+			<if test="channelCode !='baozhu'">
+				    <if test="channelCode != null and channelCode != '' and userRelation==1">
+					    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==2">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==3">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+					</if>
+			</if>
+			<if test="userId != null and userId != ''">
+				and c.user_id = #{userId}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+		    </if>
+		</where>
+		) a
+		GROUP BY a.flow_type
+	</select>
+	
+	<select id="exclPigChangeNew" parameterType="LPigChange" resultType="Map">
+	    SELECT c.amount,
+		CASE c.changed_type 
+			WHEN 1 THEN 'vip'
+			WHEN 2 THEN '提现'
+			WHEN 3 THEN '任务'
+			WHEN 4 THEN '试玩'
+			WHEN 5 THEN '金币兑换获得'
+			WHEN 6 THEN '竞猜'
+			WHEN 7 THEN 'vip救济金猪'
+			WHEN 8 THEN '金猪抽奖'
+			WHEN 9 THEN '抽奖退回'
+			WHEN 10 THEN '竞猜退回'
+			WHEN 11 THEN '团队长赠送'
+			WHEN 12 THEN '每日救济金猪'
+			WHEN 13 THEN '砸金蛋'
+			WHEN 14 THEN '使用金蛋'
+			WHEN 15 THEN '金猪日榜排行奖励'
+			END changedType,
+		CASE c.flow_type 
+			WHEN 1 THEN '收入'
+			WHEN 2 THEN '支出'
+			END flowType,
+		(select user_name from m_user_info where user_id=c.user_id) as userName,
+		(select account_id from m_user_info where user_id=c.user_id) as accountId,
+		FROM_UNIXTIME(c.changed_time/1000,'%Y-%m-%d %H:%i:%s') AS changedTime,
+		(select level from m_user_info where user_id=c.user_id) as level,
+		CASE c.flow_type
+		WHEN 1 THEN c.amount
+		END revenue,
+		CASE c.flow_type
+		WHEN 2 THEN c.amount
+		END expend,
+		FROM_UNIXTIME((select create_time from m_user_info where user_id=c.user_id)/1000,'%Y-%m-%d %H:%i:%s') AS exclRegisterTime,
+		c.pig_balance as pigBalance
+		FROM l_pig_chanage c
+		<where>
+			<if test="channelCode !='baozhu'">
+				    <if test="channelCode != null and channelCode != '' and userRelation==1">
+					    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==2">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==3">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+					</if>
+			</if>
+			<if test="userId != null and userId != ''">
+				and c.user_id = #{userId}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+		    </if>
+		</where> 	
+		ORDER BY c.changed_time DESC
+		limit 0,5000
+	</select>
+</mapper>

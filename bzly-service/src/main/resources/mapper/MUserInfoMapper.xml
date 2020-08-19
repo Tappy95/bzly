@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.MUserInfoDao" >
+	<resultMap type="MUserInfo" id="BaseResultMap">
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="user_name" property="userName" jdbcType="VARCHAR"/>		
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>		
+		<result column="sex" property="sex" jdbcType="INTEGER"/>		
+		<result column="birthday" property="birthday" jdbcType="VARCHAR"/>		
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>		
+		<result column="alias_name" property="aliasName" jdbcType="VARCHAR"/>		
+		<result column="identity" property="identity" jdbcType="VARCHAR"/>		
+		<result column="social_digital_num" property="socialDigitalNum" jdbcType="VARCHAR"/>		
+		<result column="digital_num_type" property="digitalNumType" jdbcType="INTEGER"/>		
+		<result column="profile" property="profile" jdbcType="VARCHAR"/>		
+		<result column="balance" property="balance" jdbcType="DECIMAL"/>		
+		<result column="jade_cabbage" property="jadeCabbage" jdbcType="DECIMAL"/>		
+		<result column="coin" property="coin" jdbcType="INTEGER"/>		
+		<result column="reward" property="reward" jdbcType="DECIMAL"/>		
+		<result column="apprentice" property="apprentice" jdbcType="INTEGER"/>		
+		<result column="qr_code" property="qrCode" jdbcType="VARCHAR"/>		
+		<result column="level" property="level" jdbcType="VARCHAR"/>		
+		<result column="level_value" property="levelValue" jdbcType="INTEGER"/>		
+		<result column="password" property="password" jdbcType="VARCHAR"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>		
+		<result column="referrer" property="referrer" jdbcType="VARCHAR"/>		
+		<result column="referrerName" property="referrerName" jdbcType="VARCHAR"/>		
+		<result column="referrerMobile" property="referrerMobile" jdbcType="VARCHAR"/>		
+		<result column="recommended_time" property="recommendedTime" jdbcType="INTEGER"/>		
+		<result column="imei" property="imei" jdbcType="VARCHAR"/>		
+		<result column="equipment_type" property="equipmentType" jdbcType="INTEGER"/>		
+		<result column="pig_coin" property="pigCoin" jdbcType="INTEGER"/>		
+		<result column="registration_id" property="registrationId" jdbcType="VARCHAR"/>		
+		<result column="token" property="token" jdbcType="VARCHAR"/>
+		<result column="ali_num" property="aliNum" jdbcType="VARCHAR"/>		
+		<result column="open_id" property="openId" jdbcType="VARCHAR"/>		
+		<result column="reg_imei" property="regImei" jdbcType="VARCHAR"/>	
+		<result column="pay_password" property="payPassword" jdbcType="VARCHAR"/>	
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>	
+		<result column="parent_channel_code" property="parentChannelCode" jdbcType="VARCHAR"/>	
+		<result column="surplus_time" property="surplusTime" jdbcType="INTEGER"/>	
+		<result column="xq_end_time" property="xqEndTime" jdbcType="INTEGER"/>	
+		<result column="role_type" property="roleType" jdbcType="INTEGER"/>	
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>	
+		<result column="vipName" property="vipName" jdbcType="VARCHAR"/>	
+		<result column="vipAmount" property="vipAmount" jdbcType="DECIMAL"/>	
+		<result column="vipCount" property="vipCount" jdbcType="INTEGER"/>	
+		<result column="txAmount" property="txAmount" jdbcType="INTEGER"/>	
+		<result column="txCount" property="txCount" jdbcType="INTEGER"/>	
+		<result column="djCount" property="djCount" jdbcType="INTEGER"/>
+		<result column="yxCount" property="yxCount" jdbcType="INTEGER"/>
+		<result column="zcYxCount" property="zcYxCount" jdbcType="INTEGER"/>
+		<result column="channelRelation" property="channelRelation" jdbcType="VARCHAR"/>
+		<result column="wx_num" property="wxNum" jdbcType="VARCHAR"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="qq_num" property="qqNum" jdbcType="VARCHAR"/>
+		
+		<result column="roleName" property="roleName" jdbcType="VARCHAR"/>
+		<result column="createDate" property="createDate" jdbcType="VARCHAR"/>	
+		<result column="open_activity" property="openActivity" jdbcType="INTEGER"/>	
+		<result column="high_role" property="highRole" jdbcType="INTEGER"/>	
+	</resultMap>
+	<resultMap type="DarenUserVo" id="BaseResultMap2">
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="user_name" property="userName" jdbcType="VARCHAR"/>		
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>		
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>		
+		<result column="alias_name" property="aliasName" jdbcType="VARCHAR"/>		
+		<result column="coin" property="coin" jdbcType="INTEGER"/>		
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>	
+		<result column="role_type" property="roleType" jdbcType="INTEGER"/>	
+		<result column="daren_time" property="darenTime" jdbcType="INTEGER"/>
+		<result column="darenDate" property="darenDate" jdbcType="INTEGER"/>
+		<result column="open_activity" property="openActivity" jdbcType="INTEGER"/>	
+	</resultMap>
+	
+	
+	<resultMap type="MChannelUser" id="ChannelResultMap">
+	    <result column="accountId" property="accountId" jdbcType="VARCHAR"/>		
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>		
+		<result column="createTime" property="createTime" jdbcType="INTEGER"/>		
+		<result column="channelCode" property="channelCode" jdbcType="VARCHAR"/>		
+		<result column="coin" property="coin" jdbcType="INTEGER"/>		
+		<result column="pigCoin" property="pigCoin" jdbcType="INTEGER"/>		
+		<result column="sumCoin" property="sumCoin" jdbcType="INTEGER"/>		
+		<result column="sumRecharge" property="sumRecharge" jdbcType="INTEGER"/>		
+		<result column="sumCash" property="sumCash" jdbcType="INTEGER"/>
+		<result column="role_type" property="roleType" jdbcType="INTEGER"/>	
+		<result column="channelRelation" property="channelRelation" jdbcType="VARCHAR"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>	
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+		<result column="level" property="level" jdbcType="VARCHAR"/>		
+		<result column="equipment_type" property="equipmentType" jdbcType="INTEGER"/>			
+	</resultMap>
+	
+	<sql id="BaseInfo">
+		user_id,user_name,sex,birthday,mobile,alias_name,profile,balance,equipment_type,pig_coin,account_id,apprentice,
+		coin,jade_cabbage,reward,qr_code,level,level_value,referrer,imei,registration_id,token,ali_num,open_id,status,high_role,
+		create_time,update_time,reg_imei,pay_password,channel_code,parent_channel_code,surplus_time,role_type,remark,xq_end_time,qq_num,open_activity
+	</sql>
+	
+	<insert id="insert" parameterType="MUserInfo">
+		insert into m_user_info 
+		(user_id,user_name,sex,birthday,mobile,alias_name,identity,
+		social_digital_num,digital_num_type,profile,balance,jade_cabbage,coin,
+		reward,apprentice,qr_code,level,level_value,password,
+		create_time,update_time,referrer,recommended_time,imei,equipment_type,pig_coin,
+		registration_id,token,ali_num,open_id,account_id,status,reg_imei,channel_code,parent_channel_code,
+		surplus_time,role_type,xq_end_time,wx_num,qq_num,open_activity,high_role ) 
+		values  
+		(#{userId},#{userName},1,"1991-01-01",#{mobile},#{aliasName},#{identity},
+		#{socialDigitalNum},#{digitalNumType},#{profile},#{balance},#{jadeCabbage},#{coin},
+		#{reward},#{apprentice},#{qrCode},#{level},0,#{password},
+		#{createTime},#{updateTime},#{referrer},#{recommendedTime},#{imei},#{equipmentType},#{pigCoin},
+		#{registrationId},#{token},#{aliNum},#{openId},#{accountId},1,#{regImei},#{channelCode},#{parentChannelCode},0,1,0,#{wxNum},#{qqNum},1,1)
+	</insert>
+	
+	<update id="update" parameterType="MUserInfo">
+		update m_user_info 
+		<set>
+			<if test="userName != null and userName != ''">
+				user_name = #{userName},
+			</if>
+			<if test="sex != null and sex != ''">
+				sex = #{sex},
+			</if>
+			<if test="birthday != null and birthday != ''">
+				birthday = #{birthday},
+			</if>
+			<if test="aliasName != null and aliasName != ''">
+				alias_name = #{aliasName},
+			</if>
+			<if test="identity != null and identity != ''">
+				identity = #{identity},
+			</if>
+			<if test="socialDigitalNum != null and socialDigitalNum != ''">
+				social_digital_num = #{socialDigitalNum},
+			</if>
+			<if test="digitalNumType != null and digitalNumType != ''">
+				digital_num_type = #{digitalNumType},
+			</if>
+			<if test="profile != null and profile != ''">
+				profile = #{profile},
+			</if>
+			<if test="balance != null">
+				balance = #{balance},
+			</if>
+			<if test="jadeCabbage != null">
+				jade_cabbage = #{jadeCabbage},
+			</if>
+			<if test="coin != null">
+				coin = #{coin},
+			</if>
+			<if test="reward != null">
+				reward = #{reward},
+			</if>
+			<if test="apprentice != null and apprentice != ''">
+				apprentice = #{apprentice},
+			</if>
+			<if test="level != null and level != ''">
+				level = #{level},
+			</if>
+			<if test="levelValue != null and levelValue != ''">
+				level_value = #{levelValue},
+			</if>
+			<if test="password != null and password != ''">
+				password = #{password},
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				update_time = #{updateTime},
+			</if>
+			<if test="referrer != null and referrer != ''">
+				referrer = #{referrer},
+			</if>
+			<if test="recommendedTime != null and recommendedTime != ''">
+				recommended_time = #{recommendedTime},
+			</if>
+			<if test="pigCoin != null">
+				pig_coin = #{pigCoin},
+			</if>
+			<if test="registrationId != null and registrationId != ''">
+				registration_id = #{registrationId},
+			</if>
+			<if test="token != null and token != ''">
+				token = #{token},
+			</if>
+			<if test="aliNum != null and aliNum != ''">
+				ali_num = #{aliNum},
+			</if>
+			<if test="openId != null and openId != ''">
+				open_id = #{openId},
+			</if>
+			<if test="payPassword != null and payPassword != ''">
+				pay_password = #{payPassword},
+			</if>
+			<if test="surplusTime != null">
+				surplus_time = #{surplusTime},
+			</if>
+			<if test="roleType != null">
+				role_type = #{roleType},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="xqEndTime != null">
+				xq_end_time = #{xqEndTime},
+			</if>
+			<if test="wxNum != null">
+				wx_num = #{wxNum},
+			</if>
+			<if test="qqNum != null">
+				qq_num = #{qqNum},
+			</if>
+			<if test="openActivity != null">
+				open_activity = #{openActivity},
+			</if>
+			<if test="highRole != null">
+				high_role = #{highRole}
+			</if>
+		</set> 
+		where user_id = #{userId}
+	</update>
+
+	<update id="updateBaseInfo" parameterType="MUserInfo">
+		update m_user_info 
+		<set>
+			<if test="userName != null and userName != ''">
+				user_name = #{userName},
+			</if>
+			<if test="sex != null and sex != ''">
+				sex = #{sex},
+			</if>
+			<if test="birthday != null and birthday != ''">
+				birthday = #{birthday},
+			</if>
+			<if test="aliasName != null and aliasName != ''">
+				alias_name = #{aliasName},
+			</if>
+			<if test="identity != null and identity != ''">
+				identity = #{identity},
+			</if>
+			<if test="socialDigitalNum != null and socialDigitalNum != ''">
+				social_digital_num = #{socialDigitalNum},
+			</if>
+			<if test="digitalNumType != null and digitalNumType != ''">
+				digital_num_type = #{digitalNumType},
+			</if>
+			<if test="profile != null and profile != ''">
+				profile = #{profile},
+			</if>
+			<if test="apprentice != null and apprentice != ''">
+				apprentice = #{apprentice},
+			</if>
+			<if test="level != null and level != ''">
+				level = #{level},
+			</if>
+			<if test="levelValue != null and levelValue != ''">
+				level_value = #{levelValue},
+			</if>
+			<if test="password != null and password != ''">
+				password = #{password},
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				update_time = #{updateTime},
+			</if>
+			<if test="referrer != null and referrer != ''">
+				referrer = #{referrer},
+			</if>
+			<if test="recommendedTime != null and recommendedTime != ''">
+				recommended_time = #{recommendedTime},
+			</if>
+			<if test="imei != null and imei != ''">
+				imei = #{imei},
+			</if>
+			<if test="equipmentType != null and equipmentType != ''">
+				equipment_type = #{equipmentType},
+			</if>
+			<if test="registrationId != null and registrationId != ''">
+				registration_id = #{registrationId},
+			</if>
+			<if test="token != null and token != ''">
+				token = #{token},
+			</if>
+			<if test="surplusTime != null">
+				surplus_time = #{surplusTime},
+			</if>
+			<if test="roleType != null">
+				role_type = #{roleType},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="xqEndTime != null">
+				xq_end_time = #{xqEndTime},
+			</if>
+			<if test="qqNum != null">
+				qq_num = #{qqNum},
+			</if>
+			<if test="openId != null and openId != ''">
+				open_id = #{openId},
+			</if>
+			<if test="openActivity != null">
+				open_activity = #{openActivity},
+			</if>
+			<if test="highRole != null">
+				high_role = #{highRole}
+			</if>
+		</set> 
+		where user_id = #{userId}
+	</update>
+	
+	<select id="selectUserBaseInfo" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select <include refid="BaseInfo" /> from m_user_info 
+		<where>
+			<if test="userId != null and userId != ''">
+				and user_id = #{userId}
+			</if>
+			<if test="mobile != null and mobile != ''">
+				and mobile = #{mobile}
+			</if>
+			<if test="password != null and password != ''">
+				and password = #{password}
+			</if>
+			<if test="identity != null and identity != ''">
+				and identity = #{identity}
+			</if>
+			<if test="imei != null and imei != ''">
+				and imei = #{imei}
+			</if>
+			<if test="qrCode != null and qrCode != ''">
+				and qr_code = #{qrCode}
+			</if>
+			<if test="registrationId != null and registrationId != ''">
+				and registration_id = #{registrationId}
+			</if>
+			<if test="token != null and token != ''">
+				and token = #{token}
+			</if>
+			<if test="regImei != null and regImei != ''">
+				and reg_imei = #{regImei}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectUserForLogin" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select <include refid="BaseInfo" /> from m_user_info 
+		<where>
+			<if test="userId != null and userId != ''">
+				and user_id = #{userId}
+			</if>
+			<if test="mobile != null and mobile != ''">
+				and mobile = #{mobile}
+			</if>
+			<if test="password != null and password != ''">
+				and password = #{password}
+			</if>
+			<if test="identity != null and identity != ''">
+				and identity = #{identity}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectOne" parameterType="String" resultMap="BaseResultMap">
+		select u.*,ref.user_name as referrerName,ref.mobile as referrerMobile,IF(IFNULL(u.channel_code,0)='0','非直属用户','直属用户') AS channelRelation from m_user_info u 
+		left join m_user_info ref on u.referrer = ref.user_id
+		where u.user_id = #{userId}
+	</select>
+		
+	<update id="updatecCoin">
+	    update m_user_info
+	    set coin=#{coin}+coin
+	    where user_id=#{userId}
+	</update>
+
+	<select id="selectList" parameterType="MUserInfo" resultMap="BaseResultMap">
+		select * from m_user_info 
+		<where>
+		   mobile != '15911113444'
+			<if test="userId != null and userId != ''">
+				and user_id = #{userId}
+			</if>
+			<if test="channelCode != null and channelCode != ''">
+				and channel_code = #{channelCode}
+			</if>
+			<if test="mobile != null and mobile != ''">
+				and mobile = #{mobile}
+			</if>
+			<if test="socialDigitalNum != null and socialDigitalNum != ''">
+				and social_digital_num = #{socialDigitalNum}
+			</if>
+		</where> 
+	</select>
+
+	<select id="selectByQrCode" parameterType="String" resultType="java.util.Map">
+		select user_id AS refferrer,apprentice,referrer AS referrerId,role_type as roleType,
+		channel_code AS channelCode,parent_channel_code AS parentChannelCode,
+		CONCAT(SUBSTR(mobile FROM 1 FOR 3),'****',SUBSTR(mobile FROM 8 FOR 4)) AS mobile 
+		 from m_user_info where qr_code = #{qrCode}
+	</select>
+	
+	<select id="selectByMobile" parameterType="String" resultMap="BaseResultMap">
+		select * from m_user_info where mobile = #{mobile}
+	</select>
+
+	<update id="batchUpdate" parameterType="java.util.List">
+		 <foreach collection="list" item="item" index= "index" open="" close="" separator =";">
+                update m_user_info
+                <set>
+                   update_time = #{item.updateTime,jdbcType=INTEGER},
+                   balance = balance + #{item.balance,jdbcType=DECIMAL}
+                </set>
+                <where>
+                    user_id=#{item.userId,jdbcType=VARCHAR}
+                </where>
+            </foreach>
+	</update>
+	
+	<!-- 千万别做修改，定时器用的 -->
+	<update id="updatecCoinReduce">
+	    update m_user_info
+	    set coin=coin-#{coin}
+	    where user_id=#{userId}
+	</update>
+	
+	<update id="updatePassword" parameterType="MUserInfo">
+		update m_user_info
+	    set password=#{password}
+	    where mobile=#{mobile}
+	</update>
+	
+	<select id="selectUserAuth" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select <include refid="BaseInfo" /> from m_user_info 
+		where user_id = #{userId} and imei = #{imei} and status = 1 
+	</select>
+	
+	<update id="updatecPigAdd">
+	    update m_user_info
+	    set pig_coin=pig_coin+#{pigCoin}
+	    where user_id=#{userId}
+	</update>
+	
+	<update id="updatecBalanceReduce">
+	    update m_user_info
+	    set balance=balance-#{balance}
+	    where user_id=#{userId}
+	</update>
+	
+	<update id="updatePayPassword" parameterType="MUserInfo">
+	    update m_user_info
+	    set pay_password=#{payPassword}
+	    where user_id=#{userId}
+	</update>
+	
+	<select id="selectChannelUser" parameterType="MChannelUser" resultMap="ChannelResultMap">
+	     SELECT u.account_id AS accountId,CONCAT(LEFT(u.mobile,3), '****', RIGHT(mobile,4)) AS mobile,u.create_time AS createTime,u.channel_code AS channelCode,u.coin AS coin,u.pig_coin AS pigCoin,
+		 b.sumCoin,
+		(SELECT SUM(actual_price) FROM p_pay_log WHERE state=2 AND user_id=u.user_id) AS sumRecharge,
+		(SELECT SUM(amount)/11000 FROM l_coin_change WHERE changed_type=3 AND user_id=u.user_id) AS sumCash,
+		CASE IFNULL(u.channel_code,0)
+		    WHEN #{channelCode} THEN '直属用户' 
+		    WHEN 0 THEN '非直属用户'
+		    END channelRelation,
+		u.role_type,
+		u.user_id,
+		u.remark
+		FROM m_user_info u LEFT JOIN (SELECT SUM(c.amount) sumCoin,c.user_id FROM l_coin_change c WHERE c.flow_type=1 GROUP BY c.user_id) b ON u.user_id=b.user_id
+		<where>
+		   u.mobile != '15911113444'
+		    <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==1">
+				and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==2">
+			    and u.channel_code=#{channelCode}
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==3">
+			    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and u.create_time>=#{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime}>=u.create_time
+			</if>
+			<if test="minCoin != null and minCoin != ''">
+				and b.sumCoin>=#{minCoin}
+			</if>
+			<if test="maxCoin != null and maxCoin != ''">
+				and #{maxCoin}>=b.sumCoin
+			</if>
+		</where> 
+		order by u.create_time desc
+	</select>
+	
+	<select id="selectChannelExclUser" parameterType="MChannelUser" resultType="Map">
+	     SELECT u.account_id AS accountId,CONCAT(LEFT(u.mobile,3), '****', RIGHT(mobile,4)) AS mobile,FROM_UNIXTIME(u.create_time/1000,'%Y-%m-%d %H:%i:%s') AS createTime,u.channel_code AS channelCode,u.coin AS coin,u.pig_coin AS pigCoin,
+		 (SELECT SUM(c.amount) FROM l_coin_change c WHERE c.flow_type=1 AND user_id=u.user_id) AS sumCoin,
+		(SELECT SUM(actual_price) FROM p_pay_log WHERE state=2 AND user_id=u.user_id) AS sumRecharge,
+		(SELECT SUM(amount)/11000 FROM l_coin_change WHERE changed_type=3 AND user_id=u.user_id) AS sumCash,
+		CASE IFNULL(u.channel_code,0)
+		    WHEN #{channelCode} THEN '直属用户' 
+		    WHEN 0 THEN '非直属用户'
+		    END channelRelation,
+		CASE u.role_type 
+		    WHEN 1 THEN '小猪猪'
+		    WHEN 2 THEN '团队长'
+		    WHEN 3 THEN '超级合伙人'
+		    END roleType,
+		    u.level,
+		CASE u.equipment_type 
+		    WHEN 1 THEN '安卓'
+		    WHEN 2 THEN 'ios'
+		    END equipmentType
+		FROM m_user_info u
+		<where>
+		   u.mobile != '15911113444'
+		    <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==1">
+				and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==2">
+			    and u.channel_code=#{channelCode}
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==3">
+			    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+			</if>
+			<if test="level != null and level != ''">
+				and u.level = #{level}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and u.create_time>=#{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime}>=u.create_time
+			</if>
+			<!-- <if test="minCoin != null and minCoin != ''">
+				and b.sumCoin>=#{minCoin}
+			</if>
+			<if test="maxCoin != null and maxCoin != ''">
+				and #{maxCoin}>=b.sumCoin
+			</if> -->
+		</where> 
+		order by u.create_time desc
+		limit 0,5000
+	</select>
+	
+	<update id="updateRoleType" parameterType="MUserInfo">
+		update m_user_info
+		<set>
+			<if test="surplusTime != null">
+				surplus_time = #{surplusTime},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="roleType != null">
+				role_type = #{roleType}
+			</if>
+		</set> 
+		where user_id = #{userId}
+	</update>
+	
+	<select id="selectNew" parameterType="MUserInfo" resultMap="BaseResultMap">
+		select user_id,account_id,alias_name,mobile,level,apprentice,role_type,equipment_type,
+		channel_code,parent_channel_code,balance,coin,pig_coin,u.remark,referrer,
+		IF(IFNULL(channel_code,0)='0','非直属用户','直属用户') AS channelRelation,
+		(select name from m_vip_info where id in (select vip_id from l_user_vip where user_id = u.user_id) ORDER BY order_id desc limit 1) AS vipName,
+		(SELECT SUM(actual_price) FROM p_pay_log WHERE pay_purpose=1 AND state=2 AND user_id=u.user_id) AS vipAmount,
+		u.create_time,
+		CASE u.status
+		    WHEN 1 THEN 2
+		    WHEN 2 THEN 3
+		    END status,
+		u.token,
+		u.imei
+		from m_user_info u 
+		where u.mobile != '15911113444'
+		<if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and u.mobile = #{mobile}
+		</if>
+		<if test="level != null and level != ''">
+			and u.level = #{level}
+		</if>
+		<if test="channelCode != null and channelCode != ''">
+			and (u.channel_code = #{channelCode} OR u.parent_channel_code = #{channelCode})
+		</if>
+		<if test="isRechargeVip != null and isRechargeVip != '' and isRechargeVip == 1">
+		    and u.user_id in (SELECT user_id FROM l_user_vip GROUP BY user_id)
+		</if>
+		<if test="isRechargeVip != null and isRechargeVip != '' and isRechargeVip == 2">
+		    and u.user_id not in (SELECT user_id FROM l_user_vip GROUP BY user_id)
+		</if>
+		
+		<if test="startCreateTime != null and startCreateTime != ''">
+			and u.create_time >= #{startCreateTime}
+		</if>
+		<if test="endCreateTime != null and endCreateTime != ''">
+			and #{endCreateTime} >= u.create_time
+		</if>
+		
+		ORDER BY u.create_time desc
+		limit ${pageIndex},${pageSize}
+	</select>
+
+	<select id="selectNewCount"  parameterType="MUserInfo" resultType="Long">
+		select count(1)
+		from m_user_info u 
+		where u.mobile != '15911113444'
+		<if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and u.mobile = #{mobile}
+		</if>
+		<if test="level != null and level != ''">
+			and u.level = #{level}
+		</if>
+		<if test="channelCode != null and channelCode != ''">
+			and (u.channel_code = #{channelCode} OR u.parent_channel_code = #{channelCode})
+		</if>
+		<if test="isRechargeVip != null and isRechargeVip != '' and isRechargeVip == 1">
+		    and u.user_id in (SELECT user_id FROM l_user_vip GROUP BY user_id)
+		</if>
+		<if test="isRechargeVip != null and isRechargeVip != '' and isRechargeVip == 2">
+		    and u.user_id not in (SELECT user_id FROM l_user_vip GROUP BY user_id)
+		</if>
+		
+		<if test="startCreateTime != null and startCreateTime != ''">
+			and u.create_time >= #{startCreateTime}
+		</if>
+		<if test="endCreateTime != null and endCreateTime != ''">
+			and #{endCreateTime} >= u.create_time
+		</if>
+	</select>
+	
+	<select id="selectFrozen" parameterType="String" resultType="map">
+	   select status,remark
+	   from m_user_info
+	   where user_id=#{userId}
+	</select>
+	
+	<select id="teamPeopleNum" resultType="int">
+	    SELECT count(*)
+		FROM m_user_info
+		<where>
+		   referrer=#{referrer}
+		   <!-- <if test="roleType==1">
+		    and role_type=1
+		   </if> -->
+		   <if test="roleType==2">
+		    and role_type in (2,3)
+		   </if>
+		</where>
+	</select>
+	
+	<select id="teamIndirectNum" resultType="int">
+	    SELECT COUNT(*)
+		FROM m_user_info
+		WHERE role_type IN (2,3) AND referrer IN(
+		  SELECT user_id
+		  FROM m_user_info
+		  WHERE referrer=#{referrer} AND role_type IN (2,3)
+		)
+	</select>
+	
+	<select id="selectChannelUserNew" parameterType="MChannelUser" resultMap="ChannelResultMap">
+	     SELECT u.account_id AS accountId,CONCAT(LEFT(u.mobile,3), '****', RIGHT(mobile,4)) AS mobile,u.create_time AS createTime,u.channel_code AS channelCode,u.coin AS coin,u.pig_coin AS pigCoin,
+		CASE IFNULL(u.channel_code,0)
+		    WHEN #{channelCode} THEN '直属用户' 
+		    WHEN 0 THEN '非直属用户'
+		    END channelRelation,
+		u.role_type,
+		u.user_id,
+		u.remark,
+		u.level,
+		u.equipment_type
+		FROM m_user_info u
+		<where>
+		   u.mobile != '15911113444'
+		    <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==1">
+				and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==2">
+			    and u.channel_code=#{channelCode}
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==3">
+			    and IFNULL(u.channel_code,0)=0 and u.parent_channel_code=#{channelCode}
+			</if>
+			<if test="level != null and level != ''">
+				and u.level = #{level}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and u.create_time>=#{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime}>=u.create_time
+			</if>
+			<!-- <if test="minCoin != null and minCoin != ''">
+				and b.sumCoin>=#{minCoin}
+			</if>
+			<if test="maxCoin != null and maxCoin != ''">
+				and #{maxCoin}>=b.sumCoin
+			</if> -->
+		</where> 
+		order by u.create_time desc 
+		limit ${pageIndex},${pageSize}
+	</select>
+
+	<select id="selectChannelUserCount" parameterType="MChannelUser" resultType="Long">
+	     SELECT count(1)
+		FROM m_user_info u
+		<where>
+		   u.mobile != '15911113444'
+		    <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==1">
+				and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==2">
+			    and u.channel_code=#{channelCode}
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==3">
+			    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+			</if>
+			<if test="level != null and level != ''">
+				and u.level = #{level}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and u.create_time>=#{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime}>=u.create_time
+			</if>
+			<!-- <if test="minCoin != null and minCoin != ''">
+				and b.sumCoin>=#{minCoin}
+			</if>
+			<if test="maxCoin != null and maxCoin != ''">
+				and #{maxCoin}>=b.sumCoin
+			</if> -->
+		</where> 
+	</select>
+	
+	<select id="selectExcl" parameterType="MUserInfo" resultMap="BaseResultMap">
+		SELECT user_id,account_id,alias_name,mobile,LEVEL,apprentice,equipment_type,
+            CASE role_type
+		    WHEN 1 THEN '小猪猪'
+		    WHEN 2 THEN '团队长'
+		    WHEN 3 THEN '超级合伙人'
+		    END roleName,
+		channel_code,parent_channel_code,balance,coin,pig_coin,u.remark,
+		(SELECT account_id FROM m_user_info WHERE user_id = u.referrer) AS referrer,
+		(SELECT NAME FROM m_vip_info WHERE id IN (SELECT vip_id FROM l_user_vip WHERE user_id = u.user_id) ORDER BY order_id DESC LIMIT 1) AS vipName,
+		(SELECT SUM(price) FROM m_vip_info WHERE id IN (SELECT vip_id FROM l_user_vip WHERE user_id = u.user_id)) AS vipAmount,
+		(SELECT COUNT(id) FROM l_user_vip WHERE user_id = u.user_id) AS vipCount,
+		(SELECT SUM(amount) FROM l_coin_change WHERE user_id = u.user_id AND changed_type = 3 AND STATUS = 1) AS txAmount,
+		(SELECT COUNT(id) FROM l_coin_change WHERE user_id = u.user_id AND changed_type = 3 AND STATUS = 1) AS txCount,
+		(SELECT COUNT(id) FROM m_lottery_order WHERE user_id = u.user_id AND STATUS != 2) AS djCount,
+		<!-- (SELECT COUNT(id) FROM tp_callback WHERE user_id = u.user_id AND status = 1) AS yxCount,
+		(SELECT COUNT(c.id) FROM tp_callback c WHERE FROM_UNIXTIME(c.create_time/1000,'%Y-%m-%d')=FROM_UNIXTIME(u.create_time/1000,'%Y-%m-%d') AND c.user_id = u.user_id AND status = 1) AS zcYxCount, -->
+		IF(IFNULL(channel_code,0)='0','非直属用户','直属用户') AS channelRelation,
+		FROM_UNIXTIME(u.create_time/1000,'%Y-%m-%d %H:%i:%s') AS createDate,
+		CASE u.status
+		    WHEN 1 THEN 2
+		    WHEN 2 THEN 3
+		    END STATUS
+		FROM m_user_info u 
+		WHERE u.mobile != '15911113444'
+		<if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and u.mobile = #{mobile}
+		</if>
+		<if test="level != null and level != ''">
+			and u.level = #{level}
+		</if>
+		<if test="channelCode != null and channelCode != ''">
+			and (u.channel_code = #{channelCode} OR u.parent_channel_code = #{channelCode})
+		</if>
+		<if test="isRechargeVip != null and isRechargeVip != '' and isRechargeVip == 1">
+		    and u.user_id in (SELECT user_id FROM l_user_vip GROUP BY user_id)
+		</if>
+		<if test="isRechargeVip != null and isRechargeVip != '' and isRechargeVip == 2">
+		    and u.user_id not in (SELECT user_id FROM l_user_vip GROUP BY user_id)
+		</if>
+		<if test="startCreateTime != null and startCreateTime != ''">
+			and u.create_time >= #{startCreateTime}
+		</if>
+		<if test="endCreateTime != null and endCreateTime != ''">
+			and #{endCreateTime} >= u.create_time
+		</if>
+		
+		ORDER BY u.create_time desc
+		limit 0,5000
+	</select>
+	
+	<select id="selectHtOne" parameterType="String" resultMap="BaseResultMap">
+		select user_id,account_id,alias_name,mobile,level,apprentice,role_type,equipment_type,
+		channel_code,parent_channel_code,balance,coin,pig_coin,u.remark,u.ali_num,u.user_name,
+		(select account_id from m_user_info where user_id = u.referrer) as referrer,
+		(select name from m_vip_info where id in (select vip_id from l_user_vip where user_id = u.user_id) ORDER BY order_id desc limit 1) AS vipName,
+		(select sum(price) from m_vip_info where id in (select vip_id from l_user_vip where user_id = u.user_id)) as vipAmount,
+		(select count(id) from l_user_vip where user_id = u.user_id) as vipCount,
+		(select sum(amount) from l_coin_change where user_id = u.user_id and changed_type = 3 and status = 1) as txAmount,
+		(select count(id) from l_coin_change where user_id = u.user_id and changed_type = 3 and status = 1) as txCount,
+		(select count(id) from m_lottery_order where user_id = u.user_id and status != 2) AS djCount,
+		(SELECT COUNT(id) FROM tp_callback WHERE user_id = u.user_id AND status = 1) AS yxCount,
+		(SELECT COUNT(c.id) FROM tp_callback c WHERE FROM_UNIXTIME(c.create_time/1000,'%Y-%m-%d')=FROM_UNIXTIME(u.create_time/1000,'%Y-%m-%d') AND c.user_id = u.user_id AND status = 1) AS zcYxCount,
+		IF(IFNULL(channel_code,0)='0','非直属用户','直属用户') AS channelRelation,
+		u.create_time,u.qq_num,token,imei,
+		CASE u.status
+		    WHEN 1 THEN 2
+		    WHEN 2 THEN 3
+		    END status
+		from m_user_info u
+		where u.user_id = #{userId}
+	</select>
+	
+	<select id="selectByAccountId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select * from m_user_info where account_id = #{accountId}
+	</select>
+	
+	<update id="updatecPigReduce">
+	    update m_user_info
+	    set pig_coin=pig_coin-#{pigCoin}
+	    where user_id=#{userId}
+	</update>
+	
+	<select id="selectAliNum" parameterType="String" resultType="int">
+	    select count(user_id)
+	    from m_user_info
+	    where ali_num=#{aliNum} and status=1
+	</select>
+	
+	<select id="selectReffer"  resultType="java.util.Map">
+		select account_id as accountId,user_id as userId from m_user_info where user_id in 
+			(
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			)
+	</select>
+	<select id="selectVipAmount" resultType="java.util.Map">
+		SELECT ifnull(SUM(actual_price),0) as vipAmount,user_id as userId FROM p_pay_log WHERE user_id in 
+			(
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			) AND pay_purpose=1 AND state=2 group by user_id
+	</select>
+	<select id="selectVipCount" resultType="java.util.Map">
+		select count(id) as vipCount,user_id as userId from l_user_vip where user_id in 
+			(
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			) group by user_id
+	</select>
+	<select id="selectTxAmount" resultType="java.util.Map">
+		select ifnull(sum(amount),0) as txAmount,user_id as userId from l_coin_change where user_id in 
+			(
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			)  and changed_type = 3 and status = 1 group by user_id
+	</select>
+	<select id="selectTxCount" resultType="java.util.Map">
+		select count(id) as txCount,user_id as userId from l_coin_change where user_id in (
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			)  and changed_type = 3 and status = 1 group by user_id
+	</select>
+	<select id="selectDjCount"  resultType="java.util.Map">
+		select count(id) as djCount,user_id as userId from m_lottery_order where user_id in (
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			)  and status != 2 group by user_id
+	</select>
+	
+	<select id="selectChannelUsers" parameterType="String" resultType="String">
+		select user_id from m_user_info 
+		<where>
+			mobile != '15911113444'
+			<if test="channelCode != null and channelCode != ''">
+				 and channel_code = #{channelCode}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectGameCount"  resultType="java.util.Map">
+		SELECT COUNT(id) as yxCount,user_id AS userId FROM tp_callback where user_id in (
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			)  AND status=1 
+		group by user_id
+	</select>
+	
+	<select id="selectZcGameCount"  resultType="java.util.Map">
+		SELECT COUNT(c.id) AS zcYxCount,c.user_id AS userId 
+        FROM tp_callback c INNER JOIN m_user_info u ON c.user_id=u.user_id 
+        where FROM_UNIXTIME(c.create_time/1000,'%Y-%m-%d')=FROM_UNIXTIME(u.create_time/1000,'%Y-%m-%d') and c.user_id in (
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			)  AND c.status=1 
+		group by c.user_id
+	</select>
+	
+	<select id="selectUserAli" parameterType="String" resultType="int">
+	    SELECT COUNT(*)
+		FROM m_user_info
+		WHERE ali_num=(
+		  SELECT ali_num
+		  FROM m_user_info
+		  WHERE user_id=#{userId}
+		) 
+	</select>
+	
+	<select id="selectOpenId" parameterType="String" resultType="int">
+	    select count(user_id)
+	    from m_user_info
+	    where open_id=#{openId}
+	</select>
+	
+	<select id="selectUserWx" parameterType="String" resultType="int">
+	    SELECT COUNT(*)
+		FROM m_user_info
+		WHERE open_id=(
+		  SELECT open_id
+		  FROM m_user_info
+		  WHERE user_id=#{userId}
+		) 
+	</select>
+	
+	<select id="selectCzAmount" resultType="java.util.Map">
+		SELECT IFNULL(SUM(actual_price),0) AS czAmount,user_id AS userId FROM p_pay_log WHERE state=2 AND user_id IN 
+			(
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			)
+		group by user_id
+	</select>
+	
+	<select id="selectCqCoin" resultType="java.util.Map">
+		SELECT IFNULL(SUM(amount),0) AS zqCoin,user_id AS userId FROM l_coin_change WHERE flow_type=1 AND changed_type!=14 AND user_id IN 
+			(
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			)
+		group by user_id
+	</select>
+	
+	<select id="selectChannelTxAmount" resultType="java.util.Map">
+		select ifnull(FLOOR(SUM(amount)/11000),0) as txAmount,user_id as userId from l_coin_change where user_id in 
+			(
+			<foreach collection="list" index="index" item="item" separator=",">
+				#{item}
+			</foreach>
+			)  and changed_type = 3 and status = 1 group by user_id
+	</select>
+	
+	<select id="selectDrList" parameterType="DarenUserVo" resultMap="BaseResultMap2">
+		select m.user_id,m.user_name,m.account_id,m.mobile,m.alias_name,m.coin,m.channel_code,m.role_type,m.daren_time,
+		FROM_UNIXTIME(m.daren_time/1000,'%Y-%m-%d %H:%i:%s') as darenDate,m.open_activity
+		from m_user_info m 
+		<where>
+			m.role_type = 4
+			<if test="accountId !=null and accountId != ''">
+				and m.account_id = #{accountId}
+			</if>
+			<if test="mobile !=null and mobile != ''">
+				and m.mobile = #{mobile}
+			</if>
+			<if test="darenTime_start !=null and darenTime_start != '' and darenTime_end != null and darenTime_end != ''">
+				and  m.daren_time > #{darenTime_start} and #{darenTime_end} > m.daren_time 
+			</if>
+		</where>
+		order by m.daren_time desc 
+		limit ${pageIndex},${pageSize}
+	</select>
+
+	<select id="selectDrCount" parameterType="DarenUserVo" resultType="long">
+		select count(1)
+		from m_user_info m 
+		<where>
+			m.role_type = 4
+			<if test="accountId !=null and accountId != ''">
+				and m.account_id = #{accountId}
+			</if>
+			<if test="mobile !=null and mobile != ''">
+				and m.mobile = #{mobile}
+			</if>
+			<if test="darenTime_start !=null and darenTime_start != '' and darenTime_end != null and darenTime_end != ''">
+				and  m.daren_time > #{darenTime_start} and #{darenTime_end} > m.daren_time 
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateUserDR" >
+		update m_user_info set role_type = #{roleType} ,daren_time = #{darenTime} where account_id = #{accountId}
+	</update>
+
+	<update id="updateOpenActivity" >
+		update m_user_info set open_activity = #{openActivity} where user_id = #{userId}
+	</update>
+	
+	<select id="selectAccountId" parameterType="int" resultType="map">
+	    select account_id as accountId,CONCAT(LEFT(mobile,3), '****', RIGHT(mobile,4)) AS mobile
+	    from m_user_info
+	    where account_id = #{accountId}
+	</select>
+	
+	<select id="selectBZ28INGCount" parameterType="String" resultType="long">
+		select COUNT(1) AS coun from bz_lottery.m_lottery_order o where o.user_id = #{userId} and o.status = 1
+	</select>
+
+	<select id="selectXY28INGCount" parameterType="String" resultType="long">
+		select COUNT(1) AS coun from dfcp.dfcp_order o where o.uid = #{userId} and o.`status` = 1;
+	</select>
+	
+	<select id="selectBackstage" parameterType="MUserInfo" resultMap="BaseResultMap">
+	    select *
+	    from m_user_info
+	    <where>
+	        <if test="accountId !=null and accountId != ''">
+				and account_id = #{accountId}
+			</if>
+			<if test="mobile !=null and mobile != ''">
+				and mobile = #{mobile}
+			</if>
+	    </where>
+	</select>
+
+	<select id="selectInfoOpenId" parameterType="String" resultMap="BaseResultMap">
+	    select * from m_user_info where open_id = #{openId}
+	</select>
+	
+	<select id="selectUserRelation" resultType="String">
+		select user_id from m_user_info where 
+		<if test="userRelation==1"> 
+			(channel_code=#{channelCode} OR parent_channel_code=#{channelCode})
+		</if>
+		<if test="userRelation==2"> 
+			channel_code=#{channelCode}
+		</if>
+		<if test="userRelation==3"> 
+			(channel_code='' OR u.parent_channel_code=#{channelCode})
+		</if>
+	</select>
+	
+	<select id="selectHighVipXKFCount" parameterType="String" resultType="long">
+		select count(1) from m_user_info where referrer = #{userId} and high_role = 2
+	</select>
+</mapper>

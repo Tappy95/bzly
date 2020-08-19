@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.XWCallbackDao" >
+	
+	<insert id="insert" parameterType="XWCallback">
+		insert into tp_xw_callback
+		(adid,adname,appid,ordernum,dlevel,pagename,deviceid,
+		simid,appsign,merid,event,price,money,itime,keycode,status,createTime)
+		values 
+		(#{adid},#{adname},#{appid},#{ordernum},#{dlevel},#{pagename},#{deviceid},
+		#{simid},#{appsign},#{merid},#{event},#{price},#{money},#{itime},#{keycode},#{status},#{createTime})
+	</insert>
+	
+	<select id="selectByOrderNum" parameterType="String" resultType="XWCallback">
+		select * from tp_xw_callback where ordernum = #{ordernum} and status = 1
+	</select>
+	
+	<select id="selectListPage" parameterType="XWCallback" resultType="XWCallback">
+	    SELECT t.*,u.account_id AS accountId,u.channel_code as channelCode
+        FROM tp_xw_callback t INNER JOIN m_user_info u ON t.appsign=u.user_id
+	    <where>
+	       <if test="accountId!=null and accountId!=''">
+		       and u.account_id=#{accountId}
+		   </if>
+		   <if test="adname!=null and adname!=''">
+		       and t.adname=#{adname}
+		   </if>
+		   <if test="ordernum!=null and ordernum!=''">
+		       and t.ordernum = #{ordernum}
+		   </if>
+		   <if test="status!=null and status!=''">
+		       and t.status=#{status}
+		   </if>
+		   <if test="startTime!=null and startTime!=''">
+		       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+		   </if>
+		   <if test="endTime!=null and endTime!=''">
+		       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+		   </if>
+		   <if test="event != null and event != ''">
+		   		and t.event like concat('%',#{event},'%')
+		   </if>
+	    </where>
+	    order by t.createTime desc
+	    limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="XWCallback" resultType="int">
+	    SELECT count(*)
+        FROM tp_xw_callback t INNER JOIN m_user_info u ON t.appsign=u.user_id
+	    <where>
+	       <if test="accountId!=null and accountId!=''">
+		       and u.account_id=#{accountId}
+		   </if>
+		   <if test="ordernum!=null and ordernum!=''">
+		       and t.ordernum = #{ordernum}
+		   </if>
+		   <if test="adname!=null and adname!=''">
+		       and t.adname=#{adname}
+		   </if>
+		   <if test="status!=null and status!=''">
+		       and t.status=#{status}
+		   </if>
+		   <if test="startTime!=null and startTime!=''">
+		       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+		   </if>
+		   <if test="endTime!=null and endTime!=''">
+		       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+		   </if>
+		   <if test="event != null and event != ''">
+		   		and t.event like concat('%',#{event},'%')
+		   </if>
+	    </where>
+	</select>
+	
+	<select id="selectSmallSum" parameterType="XWCallback" resultType="map">
+	    SELECT COUNT(*) AS smallSuccessCount,SUM(c.price)*10000 AS smallPriceSum,SUM(c.money)*10000 AS smallMoneySum
+	    FROM (  SELECT t.status,t.price,t.money
+		        FROM tp_xw_callback t INNER JOIN m_user_info u ON t.appsign=u.user_id
+			    <where>
+			       <if test="accountId!=null and accountId!=''">
+				       and u.account_id=#{accountId}
+				   </if>
+				   <if test="adname!=null and adname!=''">
+				       and t.adname=#{adname}
+				   </if>
+				   <if test="status!=null and status!=''">
+				       and t.status=#{status}
+				   </if>
+				   <if test="ordernum!=null and ordernum!=''">
+				       and t.ordernum = #{ordernum}
+				   </if>
+				   <if test="startTime!=null and startTime!=''">
+				       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+				   </if>
+				   <if test="endTime!=null and endTime!=''">
+				       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+				   </if>
+				   <if test="event != null and event != ''">
+				   		and t.event like concat('%',#{event},'%')
+				   </if>
+			    </where>
+			    order by t.createTime desc
+			    limit #{pageIndex},#{pageSize}
+		    ) c
+	    WHERE c.status=1
+	</select>
+	
+	<select id="selectCountSum" parameterType="XWCallback" resultType="map">
+	    SELECT COUNT(*) AS successCount,SUM(c.price)*10000 AS priceSum,SUM(c.money)*10000 AS moneySum
+        FROM (  SELECT t.status,t.price,t.money
+		        FROM tp_xw_callback t INNER JOIN m_user_info u ON t.appsign=u.user_id
+			    <where>
+			       <if test="accountId!=null and accountId!=''">
+				       and u.account_id=#{accountId}
+				   </if>
+				   <if test="adname!=null and adname!=''">
+				       and t.adname=#{adname}
+				   </if>
+				   <if test="status!=null and status!=''">
+				       and t.status=#{status}
+				   </if>
+				   <if test="ordernum!=null and ordernum!=''">
+				       and t.ordernum = #{ordernum}
+				   </if>
+				   <if test="startTime!=null and startTime!=''">
+				       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+				   </if>
+				   <if test="endTime!=null and endTime!=''">
+				       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+				   </if>
+				   <if test="event != null and event != ''">
+				   		and t.event like concat('%',#{event},'%')
+				   </if>
+			    </where>
+		    ) c
+	    WHERE c.status=1
+	</select>
+	
+	<select id="selectByOrderNumStatus" resultType="XWCallback">
+		select * from tp_xw_callback where ordernum = #{ordernum} and status = #{status} order by itime desc limit 1
+	</select>
+	
+	<delete id="deleteByOrderNum">
+		delete from tp_xw_callback where ordernum = #{ordernum} and status = 2
+	</delete>
+	
+	<insert id="insertXYZ" parameterType="XWCallback">
+		insert into tp_xw_callback_xyz
+		(adid,adname,appid,ordernum,dlevel,pagename,deviceid,
+		simid,appsign,merid,event,price,money,itime,keycode,status,createTime,xy)
+		values 
+		(#{adid},#{adname},#{appid},#{ordernum},#{dlevel},#{pagename},#{deviceid},
+		#{simid},#{appsign},#{merid},#{event},#{price},#{money},#{itime},#{keycode},#{status},#{createTime},#{xy})
+	</insert>
+	
+	<select id="selectByOrderNumXYZ" parameterType="String" resultType="XWCallback">
+		select * from tp_xw_callback_xyz where ordernum = #{ordernum} and status = 1
+	</select>
+	
+	<select id="selectXyzListPage" parameterType="XWCallback" resultType="XWCallback">
+	    SELECT t.*,u.account_id AS accountId,
+        CASE WHEN u.channel_code IS NULL THEN u.parent_channel_code WHEN channel_code = '' THEN u.parent_channel_code ELSE u.channel_code END channelCode
+        FROM tp_xw_callback_xyz t INNER JOIN m_user_info u ON t.appsign=u.user_id
+	    <where>
+	       <if test="channel !='baozhu'">
+			    <if test="channel != null and channel != '' and relation==1">
+				    and (u.channel_code=#{channel} OR u.parent_channel_code=#{channel})
+				</if>
+				<if test="channel != null and channel != '' and relation==2">
+				    and u.channel_code=#{channel}
+				</if>
+				<if test="channel != null and channel != '' and relation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channel}
+				</if>
+		    </if>
+	       <if test="accountId!=null and accountId!=''">
+		       and u.account_id=#{accountId}
+		   </if>
+		   <if test="adname!=null and adname!=''">
+		       and t.adname=#{adname}
+		   </if>
+		   <if test="ordernum!=null and ordernum!=''">
+		       and t.ordernum = #{ordernum}
+		   </if>
+		   <if test="status!=null and status!=''">
+		       and t.status=#{status}
+		   </if>
+		   <if test="startTime!=null and startTime!=''">
+		       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+		   </if>
+		   <if test="endTime!=null and endTime!=''">
+		       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+		   </if>
+		   <if test="channelCode != null and channelCode !='' ">
+		       and (u.channel_code = #{channelCode} or u.parent_channel_code = #{channelCode})
+		   </if>
+	    </where>
+	    order by t.createTime desc
+	    limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectXyzCount" parameterType="XWCallback" resultType="int">
+	    SELECT count(*)
+        FROM tp_xw_callback_xyz t INNER JOIN m_user_info u ON t.appsign=u.user_id
+	    <where>
+	       <if test="channel !='baozhu'">
+			   <if test="channel != null and channel != '' and relation==1">
+				   and (u.channel_code=#{channel} OR u.parent_channel_code=#{channel})
+			   </if>
+			   <if test="channel != null and channel != '' and relation==2">
+				   and u.channel_code=#{channel}
+			   </if>
+			   <if test="channel != null and channel != '' and relation==3">
+				   and u.channel_code='' and u.parent_channel_code=#{channel}
+			   </if>
+		   </if>
+	       <if test="accountId!=null and accountId!=''">
+		       and u.account_id=#{accountId}
+		   </if>
+		   <if test="ordernum!=null and ordernum!=''">
+		       and t.ordernum = #{ordernum}
+		   </if>
+		   <if test="adname!=null and adname!=''">
+		       and t.adname=#{adname}
+		   </if>
+		   <if test="status!=null and status!=''">
+		       and t.status=#{status}
+		   </if>
+		   <if test="startTime!=null and startTime!=''">
+		       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+		   </if>
+		   <if test="endTime!=null and endTime!=''">
+		       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+		   </if>
+		   <if test="channelCode != null and channelCode !='' ">
+		       and (u.channel_code = #{channelCode} or u.parent_channel_code = #{channelCode})
+		   </if>
+	    </where>
+	</select>
+	
+	<select id="selectXyzSmallSum" parameterType="XWCallback" resultType="map">
+	    SELECT COUNT(*) AS smallSuccessCount,SUM(c.price)*10000 AS smallPriceSum,SUM(c.money)*10000 AS smallMoneySum
+	    FROM (  SELECT t.status,t.price,t.money
+		        FROM tp_xw_callback_xyz t INNER JOIN m_user_info u ON t.appsign=u.user_id
+			    <where>
+			       <if test="channel !='baozhu'">
+					   <if test="channel != null and channel != '' and relation==1">
+						   and (u.channel_code=#{channel} OR u.parent_channel_code=#{channel})
+					   </if>
+					   <if test="channel != null and channel != '' and relation==2">
+						   and u.channel_code=#{channel}
+					   </if>
+					   <if test="channel != null and channel != '' and relation==3">
+						   and u.channel_code='' and u.parent_channel_code=#{channel}
+					   </if>
+				   </if>
+			       <if test="accountId!=null and accountId!=''">
+				       and u.account_id=#{accountId}
+				   </if>
+				   <if test="adname!=null and adname!=''">
+				       and t.adname=#{adname}
+				   </if>
+				   <if test="status!=null and status!=''">
+				       and t.status=#{status}
+				   </if>
+				   <if test="ordernum!=null and ordernum!=''">
+				       and t.ordernum = #{ordernum}
+				   </if>
+				   <if test="startTime!=null and startTime!=''">
+				       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+				   </if>
+				   <if test="endTime!=null and endTime!=''">
+				       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+				   </if>
+				   <if test="channelCode != null and channelCode !='' ">
+				       and (u.channel_code = #{channelCode} or u.parent_channel_code = #{channelCode})
+				   </if>
+			    </where>
+			    order by t.createTime desc
+			    limit #{pageIndex},#{pageSize}
+		    ) c
+	    WHERE c.status=1
+	</select>
+	
+	<select id="selectXyzCountSum" parameterType="XWCallback" resultType="map">
+	    SELECT COUNT(*) AS successCount,SUM(c.price)*10000 AS priceSum,SUM(c.money)*10000 AS moneySum
+        FROM (  SELECT t.status,t.price,t.money
+		        FROM tp_xw_callback_xyz t INNER JOIN m_user_info u ON t.appsign=u.user_id
+			    <where>
+			       <if test="channel !='baozhu'">
+					   <if test="channel != null and channel != '' and relation==1">
+						   and (u.channel_code=#{channel} OR u.parent_channel_code=#{channel})
+					   </if>
+					   <if test="channel != null and channel != '' and relation==2">
+						   and u.channel_code=#{channel}
+					   </if>
+					   <if test="channel != null and channel != '' and relation==3">
+						   and u.channel_code='' and u.parent_channel_code=#{channel}
+					   </if>
+				   </if>
+			       <if test="accountId!=null and accountId!=''">
+				       and u.account_id=#{accountId}
+				   </if>
+				   <if test="adname!=null and adname!=''">
+				       and t.adname=#{adname}
+				   </if>
+				   <if test="status!=null and status!=''">
+				       and t.status=#{status}
+				   </if>
+				   <if test="ordernum!=null and ordernum!=''">
+				       and t.ordernum = #{ordernum}
+				   </if>
+				   <if test="startTime!=null and startTime!=''">
+				       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+				   </if>
+				   <if test="endTime!=null and endTime!=''">
+				       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+				   </if>
+				   <if test="channelCode != null and channelCode !='' ">
+				       and (u.channel_code = #{channelCode} or u.parent_channel_code = #{channelCode})
+				   </if>
+			    </where>
+		    ) c
+	    WHERE c.status=1
+	</select>
+</mapper>

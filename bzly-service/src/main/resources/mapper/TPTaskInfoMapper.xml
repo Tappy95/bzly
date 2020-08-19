@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.TPTaskInfoDao" >
+	<resultMap type="TPTaskInfo" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="name" property="name" jdbcType="VARCHAR"/>		
+		<result column="logo" property="logo" jdbcType="VARCHAR"/>				
+		<result column="type_id" property="typeId" jdbcType="INTEGER"/>				
+		<result column="label" property="label" jdbcType="VARCHAR"/>		
+		<result column="reward" property="reward" jdbcType="DECIMAL"/>
+		<result column="fulfil_time" property="fulfilTime" jdbcType="INTEGER"/>			
+		<result column="time_unit" property="timeUnit" jdbcType="INTEGER"/>	
+		<result column="channel_task_number" property="channelTaskNumber" jdbcType="INTEGER"/>
+		<result column="surplus_channel_task_number" property="surplusChannelTaskNumber" jdbcType="INTEGER"/>
+		<result column="is_upper" property="isUpper" jdbcType="INTEGER"/>	
+		<result column="is_signin" property="isSignin" jdbcType="INTEGER"/>
+		<result column="task_channel" property="taskChannel" jdbcType="VARCHAR"/>
+		<result column="is_order" property="isOrder" jdbcType="INTEGER"/>	
+		<result column="order_time" property="orderTime" jdbcType="INTEGER"/>	
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>	
+		<result column="status" property="status" jdbcType="INTEGER"/>	
+		<result column="drReward" property="drReward" jdbcType="DECIMAL"/>	
+		<result column="orders" property="orders" jdbcType="INTEGER"/>	
+		<result column="task_info_url" property="taskInfoUrl" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<insert id="batchInsert">
+		INSERT INTO tp_task_info
+		(id,name,logo,type_id,label,reward ,channel_task_number ,surplus_channel_task_number,
+		fulfil_time,time_unit,is_order,order_time,
+		is_upper ,is_signin ,task_channel,create_time,drReward,orders,task_info_url)
+        VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+	        (#{item.id},#{item.name},#{item.logo},#{item.typeId},#{item.label},#{item.reward},#{item.channelTaskNumber},#{item.surplusChannelTaskNumber},
+	        #{item.fulfilTime},#{item.timeUnit},#{item.isOrder},#{item.orderTime},
+	        #{item.isUpper},#{item.isSignin},#{item.taskChannel},#{item.createTime},0.00,#{item.orders},#{item.taskInfoUrl})
+        </foreach>
+	</insert>
+	 
+    <update id="update" parameterType="TPTaskInfo">
+      UPDATE tp_task_info
+      <set>
+		 <if test="isOrder != null">
+			is_order=#{isOrder},
+		 </if>
+		 <if test="orderTime != null">
+			order_time=#{orderTime},
+		 </if>
+		 <if test="isUpper != null">
+			is_upper=#{isUpper},
+		 </if>
+		 <if test="isSignin != null">
+			is_signin=#{isSignin},
+		 </if>
+		  <if test="channelTaskNumber != null">
+			channel_task_number=#{channelTaskNumber},
+		 </if>
+		  <if test="drReward != null">
+			drReward=#{drReward},
+		 </if>
+		 <if test="surplusChannelTaskNumber != null">
+			surplus_channel_task_number=#{surplusChannelTaskNumber},
+		 </if>
+		 <if test="orders != null">
+			orders=#{orders},
+		 </if>
+		 <if test="taskInfoUrl != null">
+			task_info_url=#{taskInfoUrl}
+		 </if>
+      </set>
+      where id=#{id}
+    </update>
+    
+    <select id="selectList" parameterType="TPTaskInfo" resultMap="BaseResultMap">
+    	select * from tp_task_info 
+    	<where>
+    		<if test="name != null and name != ''">
+				and name = #{name}
+		 	</if>
+		 	<if test="typeId != null and typeId != ''">
+				and type_id = #{typeId}
+			</if>
+			<if test="isUpper != null and isUpper != ''">
+				and is_upper=#{isUpper}
+			</if>
+			<if test="isSignin != null and isSignin != ''">
+				and is_signin=#{isSignin}
+			</if>
+			<if test="userId != null and userId != ''">
+				and id not in (select tp_task_id from l_user_tp_task where user_id = #{userId} AND status =3)
+			</if>
+    	</where>
+    	order by orders desc
+    </select>
+
+    <select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+    	select * from tp_task_info where id = #{id}
+    </select>
+  
+    <select id="selectFList" parameterType="TPTaskInfo" resultMap="BaseResultMap">
+    	select task.*,(select id from l_user_tp_task  where user_id = #{userId} and tp_task_id = task.id and `status`= 5) as status from tp_task_info task 
+    	<where> 
+		 	<if test="typeId != null and typeId != ''">
+				and task.type_id = #{typeId}
+			</if>
+			<if test="isUpper != null and isUpper != ''">
+				and task.is_upper=#{isUpper}
+			</if>
+    	</where>
+    </select>
+    
+     <update id="updateIsUpper" parameterType="Integer">
+    	update tp_task_info set is_order = 2,is_upper = 1 where id = #{id}
+    </update>
+    
+    <select id="selectUserTask" parameterType="String" resultMap="BaseResultMap">
+        SELECT  *
+		FROM tp_task_info
+		WHERE is_upper=1 AND id = (
+		   SELECT tp_task_id
+		   FROM l_user_tp_task
+		   WHERE status=1 AND user_id=#{userId}
+		   ORDER BY create_time DESC
+		   LIMIT 0,1
+		)
+    </select>
+    
+    <delete id="delete" parameterType="int">
+       DELETE FROM tp_task_info WHERE id=#{id}
+    </delete>
+</mapper>

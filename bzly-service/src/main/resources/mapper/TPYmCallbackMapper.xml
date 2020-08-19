@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.TPYmCallbackDao" >
+	<resultMap type="TPYmCallback" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="coin_callback_id" property="coinCallbackId" jdbcType="VARCHAR"/>		
+		<result column="coin_count" property="coinCount" jdbcType="INTEGER"/>
+		<result column="callback_time" property="callbackTime" jdbcType="INTEGER"/>
+		<result column="sign" property="sign" jdbcType="VARCHAR"/>
+		<result column="state" property="state" jdbcType="INTEGER"/>
+		<result column="creator_time" property="creatorTime" jdbcType="INTEGER"/>	
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterType="TPYmCallback">
+		insert into tp_ym_callback(user_id,coin_callback_id,coin_count,callback_time,sign,state,creator_time)
+		values(#{userId},#{coinCallbackId},#{coinCount},#{callbackTime},#{sign},#{state},#{creatorTime})
+	</insert>
+	
+	<update id="update">
+		update tp_ym_callback
+		set state=#{state}
+		where id = #{id}
+	</update>
+	
+	<select id="selectCallbackId" parameterType="String" resultMap="BaseResultMap">
+		select * from tp_ym_callback where coin_callback_id = #{coinCallbackId}
+	</select>
+	
+	<select id="selectList" parameterType="TPYmCallback" resultMap="BaseResultMap">
+	    SELECT c.*,u.account_id
+        FROM tp_ym_callback c INNER JOIN m_user_info u ON c.user_id=u.user_id
+	    <where>
+	        <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="coinCallbackId != null and coinCallbackId != ''">
+				and c.coin_callback_id = #{coinCallbackId}
+			</if>
+			<if test="state != null and state != ''">
+				and c.state = #{state}
+			</if>
+			<if test="startTime!=null and startTime!=''">
+		        and c.callback_time >= #{startTime}
+		    </if>
+		    <if test="endTime!=null and endTime!=''">
+		        and #{endTime} >= c.callback_time
+		    </if>
+	    </where>
+	    order by c.creator_time desc
+	    limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="TPYmCallback" resultType="int">
+	    SELECT count(*)
+        FROM tp_ym_callback c INNER JOIN m_user_info u ON c.user_id=u.user_id
+	    <where>
+	        <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="coinCallbackId != null and coinCallbackId != ''">
+				and c.coin_callback_id = #{coinCallbackId}
+			</if>
+			<if test="state != null and state != ''">
+				and c.state = #{state}
+			</if>
+			<if test="startTime!=null and startTime!=''">
+		        and c.callback_time >= #{startTime}
+		    </if>
+		    <if test="endTime!=null and endTime!=''">
+		        and #{endTime} >= c.callback_time
+		    </if>
+	    </where>
+	</select>
+	
+	<select id="selectSmallSum" parameterType="TPYmCallback" resultType="map">
+	    SELECT COUNT(*) AS smallSuccessCount,SUM(c.coin_count) AS smallCoinSum
+	    FROM (  SELECT t.coin_count,t.state
+		        FROM tp_ym_callback t INNER JOIN m_user_info u ON t.user_id=u.user_id
+			    <where>
+			        <if test="accountId != null and accountId != ''">
+						and u.account_id = #{accountId}
+					</if>
+					<if test="coinCallbackId != null and coinCallbackId != ''">
+						and t.coin_callback_id = #{coinCallbackId}
+					</if>
+					<if test="state != null and state != ''">
+						and t.state = #{state}
+					</if>
+					<if test="startTime!=null and startTime!=''">
+				        and t.callback_time >= #{startTime}
+				    </if>
+				    <if test="endTime!=null and endTime!=''">
+				        and #{endTime} >= t.callback_time
+				    </if>
+			    </where>
+			     order by t.creator_time desc
+	             limit #{pageIndex},#{pageSize}
+		    ) c
+	    WHERE c.state=1
+	</select>
+	
+	<select id="selectCountSum" parameterType="TPYmCallback" resultType="map">
+	    SELECT COUNT(*) AS successCount,SUM(c.coin_count) AS coinSum
+        FROM (  SELECT t.coin_count,t.state
+		        FROM tp_ym_callback t INNER JOIN m_user_info u ON t.user_id=u.user_id
+			   <where>
+			        <if test="accountId != null and accountId != ''">
+						and u.account_id = #{accountId}
+					</if>
+					<if test="coinCallbackId != null and coinCallbackId != ''">
+						and t.coin_callback_id = #{coinCallbackId}
+					</if>
+					<if test="state != null and state != ''">
+						and t.state = #{state}
+					</if>
+					<if test="startTime!=null and startTime!=''">
+				        and t.callback_time >= #{startTime}
+				    </if>
+				    <if test="endTime!=null and endTime!=''">
+				        and #{endTime} >= t.callback_time
+				    </if>
+			    </where>
+		    ) c
+	    WHERE c.state=1
+	</select>
+</mapper>

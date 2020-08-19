@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.checkin.CCheckinLuckyDao">
+	<resultMap id="BaseResultMap" type="CCheckinLucky">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="INTEGER"/>
+		<result column="img" property="img" jdbcType="INTEGER"/>
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+		<result column="reward_coin" property="rewardCoin" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<select id="selectAppList" resultMap="BaseResultMap">
+	    SELECT img,reward_coin,CONCAT(SUBSTR(mobile FROM 1 FOR 3),'****',SUBSTR(mobile FROM 8 FOR 4)) AS mobile
+		FROM c_checkin_lucky
+		ORDER BY create_time DESC,reward_coin DESC
+		limit 0,3
+	</select>
+	
+</mapper>

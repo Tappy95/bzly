@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserTptaskSubmitDao" >
+	<resultMap type="LUserTptaskSubmit" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="l_tp_task_id" property="lTpTaskId" jdbcType="INTEGER"/>		
+		<result column="tp_task_id" property="tpTaskId" jdbcType="INTEGER"/>		
+		<result column="submit_id" property="submitId" jdbcType="INTEGER"/>		
+		<result column="submit_name" property="submitName" jdbcType="VARCHAR"/>		
+		<result column="submit_value" property="submitValue" jdbcType="INTEGER"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="batchInsert">
+		insert into l_user_tp_task_submit 
+		(id,user_id,l_tp_task_id,tp_task_id,submit_id,
+			submit_name,submit_value,create_time,status)
+		values
+		<foreach collection="list" index="index" item="item" separator=",">
+			(#{item.id},#{item.userId},#{item.lTpTaskId},#{item.tpTaskId},#{item.submitId},
+			#{item.submitName},#{item.submitValue},#{item.createTime},#{item.status})
+		</foreach>
+	</insert>
+	
+	<delete id="delete">
+		delete from l_user_tp_task_submit where user_id = #{userId} and l_tp_task_id = #{lTpTaskId}
+	</delete>
+	
+	<select id="selectList" resultMap="BaseResultMap">
+		select * from l_user_tp_task_submit where user_id = #{userId} and l_tp_task_id = #{lTpTaskId}
+	</select>
+	
+	<select id="selectLUserTptaskSubmitVo" resultType="LUserTptaskSubmitVo">
+		select submit_id as submitId,submit_value as content from l_user_tp_task_submit where l_tp_task_id = #{lTpTaskId} and user_id = #{userId}
+	</select>
+</mapper>

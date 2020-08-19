@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.MUserAddressDao" >
+	<resultMap type="MUserAddress" id="BaseResultMap">
+		<result column="address_id" property="addressId" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="receiver" property="receiver" jdbcType="VARCHAR"/>		
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>	
+		<result column="area_id" property="areaId" jdbcType="INTEGER"/>	
+		<result column="full_name" property="fullName" jdbcType="VARCHAR"/>	
+		<result column="detail_address" property="detailAddress" jdbcType="VARCHAR"/>		
+		<result column="is_default" property="isDefault" jdbcType="INTEGER"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>		
+		<result column="is_disabled" property="isDisabled" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="MUserAddress">
+		insert into m_user_address 
+		(address_id,user_id,receiver,mobile,area_id,full_name,detail_address,
+		is_default,create_time,update_time,is_disabled) 
+		values 
+		(#{addressId},#{userId},#{receiver},#{mobile},#{areaId},#{fullName},#{detailAddress},
+		#{isDefault},#{createTime},#{updateTime},#{isDisabled})
+	</insert>
+	
+	<update id="update" parameterType="MUserAddress">
+		update m_user_address 
+		<set>
+			<if test="receiver != null and receiver != ''">
+				receiver = #{receiver},
+			</if>
+			<if test="mobile != null and mobile != ''">
+				mobile = #{mobile},
+			</if>
+			<if test="areaId != null and areaId != ''">
+				area_id = #{areaId},
+			</if>
+			<if test="fullName != null and fullName != ''">
+				full_name = #{fullName},
+			</if>
+			<if test="detailAddress != null and detailAddress != ''">
+				detail_address = #{detailAddress},
+			</if>
+			<if test="isDefault != null and isDefault != ''">
+				is_default = #{isDefault},
+			</if>
+			<if test="isDisabled != null and isDisabled != ''">
+				is_disabled = #{isDisabled},
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				update_time = #{updateTime}
+			</if>
+		</set> 
+		where address_id = #{addressId}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+	    update m_user_address
+	    set is_disabled=2
+		where address_id = #{addressId}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultType="Map">
+		SELECT u.address_id AS addressId,u.receiver,u.mobile,u.full_name AS fullName,u.detail_address AS detailAddress,u.is_default AS isDefault,u.area_id AS areaId
+		FROM m_user_address u
+		where u.address_id = #{addressId}
+	</select>
+	
+	<select id="selectList" parameterType="MUserAddress" resultMap="BaseResultMap">
+		select * from m_user_address
+		<where>
+		    is_disabled=1
+			<if test="userId != null and userId !=''">
+				and user_id = #{userId}
+			</if>
+			<if test="mobile != null and mobile != ''">
+				and mobile = #{mobile}
+			</if>
+		</where>
+		order by create_time desc 
+	</select>
+	
+	<select id="selectUserList" parameterType="String" resultType="Map">
+	    SELECT u.address_id AS addressId,u.receiver,u.mobile,u.full_name AS fullName,u.detail_address AS detailAddress,u.is_default AS isDefault
+		FROM m_user_address u
+		WHERE u.is_disabled=1 and u.user_id=#{userId}
+		ORDER BY u.is_default
+	</select>
+	
+	<update id="updateIsDefault" parameterType="String">
+	    update m_user_address
+	    set is_default=2
+	    where user_id=#{userId}
+	</update>
+	
+	<select id="selectUserInfo" resultMap="BaseResultMap">
+	   select *
+	   from m_user_address
+	   where user_id=#{userId} and address_id=#{addressId}
+	</select>
+</mapper>

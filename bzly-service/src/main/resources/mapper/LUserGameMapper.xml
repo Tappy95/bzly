@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserGameDao" >
+	<resultMap type="LUserGame" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="game_id" property="gameId" jdbcType="INTEGER"/>		
+		<result column="modify_time" property="modifyTime" jdbcType="INTEGER"/>	
+	</resultMap>
+	<resultMap type="TPGame" id="BaseResultMap2">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="lid" property="lid" jdbcType="INTEGER"/>
+		<result column="interface_id" property="interfaceId" jdbcType="INTEGER"/>		
+		<result column="game_id" property="gameId" jdbcType="INTEGER"/>		
+		<result column="game_title" property="gameTitle" jdbcType="VARCHAR"/>		
+		<result column="icon" property="icon" jdbcType="VARCHAR"/>		
+		<result column="url" property="url" jdbcType="VARCHAR"/>		
+		<result column="enddate" property="enddate" jdbcType="VARCHAR"/>		
+		<result column="game_gold" property="gameGold" jdbcType="DECIMAL"/>
+		<result column="introduce" property="introduce" jdbcType="VARCHAR"/>	
+		<result column="interface_name" property="interfaceName" jdbcType="VARCHAR"/>					
+		<result column="tryTag" property="tryTag" jdbcType="INTEGER"/>					
+		<result column="signinId" property="signinId" jdbcType="INTEGER"/>					
+	</resultMap>
+	
+	<insert id="insert" parameterType="LUserGame">
+		insert into l_user_game 
+		(id,user_id,game_id,modify_time)
+		values 
+		(#{id},#{userId},#{gameId},#{modifyTime})
+	</insert>
+	
+	<update id="update">
+		update l_user_game set modify_time = #{modifyTime} where id = #{id}
+	</update>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+		select * from l_user_game where user_id = #{userId} and game_id = #{gameId}
+	</select>
+	
+	<select id="selectMyTry" parameterType="String" resultMap="BaseResultMap2" >
+		SELECT * FROM (
+			SELECT tpg.*,ug.id AS lid,interface.interface_name,1 AS tryTag,'' AS signinId,ug.modify_time AS createTime FROM l_user_game ug 
+			LEFT JOIN tp_game tpg ON ug.game_id = tpg.id 
+			LEFT JOIN tp_interface interface ON tpg.interface_id = interface.id
+			WHERE user_id = #{userId} and tpg.`status` = 1
+			UNION
+			SELECT tpg.*,ug.id AS lid,interface.interface_name,2 AS tryTag,ug.signin_id AS signinId,ug.create_time AS createTime FROM l_user_sign_game ug    
+			LEFT JOIN tp_game tpg ON ug.game_id = tpg.id 
+			LEFT JOIN tp_interface interface ON tpg.interface_id = interface.id
+			WHERE user_id = #{userId} and tpg.`status` = 1 and ug.is_hide = 1
+			UNION
+			SELECT tpg.*,ug.id AS lid,interface.interface_name,3 AS tryTag,ug.vip_id AS signinId,ug.create_time AS createTime FROM l_user_game_task ug    
+			LEFT JOIN tp_game tpg ON ug.game_id = tpg.id 
+			LEFT JOIN tp_interface interface ON tpg.interface_id = interface.id
+			WHERE user_id =#{userId} AND tpg.`status` = 1 AND ug.task_type=1 AND ug.is_hide=1
+			UNION
+			SELECT tpg.*,ug.id AS lid,interface.interface_name,4 AS tryTag,ug.cash_id AS signinId,ug.create_time AS createTime FROM l_user_game_task ug    
+			LEFT JOIN tp_game tpg ON ug.game_id = tpg.id 
+			LEFT JOIN tp_interface interface ON tpg.interface_id = interface.id
+			WHERE user_id =#{userId} AND tpg.`status` = 1 AND ug.task_type=2 AND ug.is_hide=1
+			UNION
+			SELECT tpg.*,ug.id AS lid,interface.interface_name,5 AS tryTag,ug.id AS signinId,ug.create_time AS createTime FROM l_user_game_task ug    
+			LEFT JOIN tp_game tpg ON ug.game_id = tpg.id 
+			LEFT JOIN tp_interface interface ON tpg.interface_id = interface.id
+			WHERE user_id =#{userId} AND tpg.`status` = 1 AND ug.task_type=3 AND ug.is_hide=1
+        ) a ORDER BY a.createTime desc
+	</select>
+
+	<delete id="delete">
+		delete from l_user_game where id = #{id} and  user_id = #{userId}
+	</delete>
+</mapper>

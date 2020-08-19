@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserCheckinDao" >
+	<resultMap type="LUserCheckin" id="BaseResultMap">
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="total_investment" property="totalInvestment" jdbcType="DOUBLE"/>		
+		<result column="total_success" property="totalSuccess" jdbcType="INTEGER"/>		
+		<result column="total_failure" property="totalFailure" jdbcType="INTEGER"/>		
+		<result column="total_reward" property="totalReward" jdbcType="DOUBLE"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="LUserCheckin">
+		insert into l_user_checkin 
+		(user_id,total_investment,total_success,total_failure,total_reward) 
+		values 
+		(#{userId},#{totalInvestment},#{totalSuccess},#{totalFailure},#{totalReward})
+	</insert>
+	
+	<update id="update" parameterType="LUserCheckin">
+		update l_user_checkin 
+		<set>
+			<if test="totalInvestment != null and totalInvestment != ''">
+				total_investment = #{totalInvestment},
+			</if>
+			<if test="totalSuccess != null and totalSuccess != ''">
+				total_success = #{totalSuccess},
+			</if>
+			<if test="totalFailure != null and totalFailure != ''">
+				total_failure = #{totalFailure},
+			</if>
+			<if test="totalReward != null and totalReward != ''">
+				total_reward = #{totalReward},
+			</if>
+		</set> 
+		where user_id = #{userId}
+	</update>
+	
+	<select id="selectOne" parameterType="String" resultMap="BaseResultMap">
+		select * from l_user_checkin where user_id = #{userId}
+	</select>
+	
+	<select id="selectList" parameterType="LUserCheckin" resultMap="BaseResultMap">
+		select * from l_user_checkin
+		<where>
+			<if test="userId != null and userId ! =''">
+				and user_id = #{userId}
+			</if>
+		</where>
+	</select>
+	
+	<update id="batchUpdate" parameterType="java.util.List">
+		<foreach collection="list" index="index" item="item" open=" " close=" "  separator=";">
+			update l_user_checkin 
+			<set>
+				total_reward = total_reward + #{item.totalReward},
+				total_success = total_success +1
+			</set>
+			<where>
+				user_id = #{item.userId}
+			</where>
+		</foreach>
+	</update>
+	
+	<update id="batchUpdateFailure" parameterType="Integer">
+		update l_user_checkin 
+		set total_failure = total_failure + 1 
+		where user_id in (select checkin_user from m_weakup_checkin where checkin_state is null and log_id = #{logId})
+	</update>
+</mapper>

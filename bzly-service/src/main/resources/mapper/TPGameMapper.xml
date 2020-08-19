@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.TPGameDao" >
+	<resultMap type="TPGame" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="interface_id" property="interfaceId" jdbcType="INTEGER"/>		
+		<result column="game_id" property="gameId" jdbcType="INTEGER"/>		
+		<result column="game_title" property="gameTitle" jdbcType="VARCHAR"/>		
+		<result column="icon" property="icon" jdbcType="VARCHAR"/>		
+		<result column="url" property="url" jdbcType="VARCHAR"/>		
+		<result column="enddate" property="enddate" jdbcType="VARCHAR"/>		
+		<result column="game_gold" property="gameGold" jdbcType="DECIMAL"/>
+		<result column="introduce" property="introduce" jdbcType="VARCHAR"/>			
+		<result column="type_name" property="typeName" jdbcType="VARCHAR"/>			
+		<result column="game_type" property="gameType" jdbcType="INTEGER"/>			
+		<result column="package_name" property="packageName" jdbcType="VARCHAR"/>			
+		<result column="coins" property="coins" jdbcType="INTEGER"/>			
+		<result column="game_tag" property="gameTag" jdbcType="INTEGER"/>			
+		<result column="interface_name" property="interfaceName" jdbcType="VARCHAR"/>			
+		<result column="order_id" property="orderId" jdbcType="INTEGER"/>			
+		<result column="ptype" property="ptype" jdbcType="INTEGER"/>	
+		<result column="cashStatus" property="cashStatus" jdbcType="INTEGER"/>		
+		<result column="label_str" property="labelStr" jdbcType="VARCHAR"/>		
+		<result column="short_intro" property="shortIntro" jdbcType="VARCHAR"/>
+		<result column="gameLabelName" property="gameLabelName" jdbcType="VARCHAR"/>
+		
+		<result column="fulfilTime" property="fulfilTime" jdbcType="INTEGER"/>
+		<result column="timeUnit" property="timeUnit" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="TPGame">
+		insert into tp_game 
+		(id,interface_id,game_id,game_title,icon,url,enddate,game_gold,introduce,package_name,status,game_tag,order_id,ptype)
+		values 
+		(#{id},#{interfaceId},#{gameId},#{gameTitle},#{icon},#{url},#{enddate},#{gameGold},#{introduce},#{packageName},#{status},#{gameTag},#{orderId},#{ptype})
+	</insert>
+
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into tp_game 
+		(id,interface_id,game_id,game_title,icon,url,enddate,game_gold,introduce,package_name,status,game_tag,order_id,ptype)
+		values
+		<foreach collection="list" separator="," index="index" item="item">
+			(#{item.id},#{item.interfaceId},#{item.gameId},#{item.gameTitle},#{item.icon},
+			#{item.url},#{item.enddate},#{item.gameGold},#{item.introduce},#{item.packageName},#{item.status},#{item.gameTag},#{item.orderId},#{item.ptype})
+		</foreach> 
+	</insert>
+	
+	<update id="update" parameterType="TPGame">
+		update tp_game 
+		<set>
+			<if test="interfaceId != null and interfaceId != ''">
+				interface_id = #{interfaceId},
+			</if>
+			<if test="gameId != null and gameId != ''">
+				game_id = #{gameId},
+			</if>
+			<if test="gameTitle != null and gameTitle != ''">
+				game_title = #{gameTitle},
+			</if>
+			<if test="icon != null and icon != ''">
+				icon = #{icon},
+			</if>
+			<if test="url != null and url != ''">
+				url = #{url},
+			</if>
+			<if test="enddate != null and enddate != ''">
+				enddate = #{enddate},
+			</if>
+			<if test="gameGold != null and gameGold != ''">
+				game_gold = #{gameGold},
+			</if>
+			<if test="introduce != null and introduce != ''">
+				introduce = #{introduce},
+			</if>
+			<if test="packageName != null and packageName != ''">
+				package_name = #{packageName},
+			</if>
+			<if test="status != null and status != ''">
+				status = #{status},
+			</if>
+			<if test="orderId != null and orderId != ''">
+				order_id = #{orderId},
+			</if>
+			<if test="labelStr != null and labelStr != ''">
+				label_str = #{labelStr},
+			</if>
+			<if test="shortIntro != null and shortIntro != ''">
+				short_intro = #{shortIntro}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from tp_game where id = #{id}
+	</delete>
+
+	<delete id="deleteByInterface" parameterType="Integer">
+		delete from tp_game where interface_id = #{interfaceId}
+	</delete>
+	
+	<select id="selectByInterface" parameterType="Integer" resultMap="BaseResultMap">
+		select * from tp_game where interface_id = #{interfaceId}
+	</select>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select *,(select interface_name from tp_interface where id = tp.interface_id) as interface_name from tp_game tp where tp.id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="TPGame" resultMap="BaseResultMap">
+		select game.*,interface.coins,type.type_name,interface.interface_name from tp_game game
+		left join tp_interface interface on game.interface_id = interface.id
+		left join tp_game_type type on interface.game_type = type.id
+		where game.status = 1
+			<if test="interfaceId != null">
+				and interface_id = #{interfaceId}
+			</if>
+			<if test="interfaceId != null">
+				and interface.game_type = #{gameType}
+			</if>
+			<if test="gameTag != null and gameTag != '' ">
+				and game.game_tag = #{gameTag}
+			</if>
+			<if test="ptype != null and ptype != '' ">
+				and game.ptype = #{ptype}
+			</if>
+			<if test="typeId != null and typeId != ''">
+				and game.id in (
+					SELECT game_id
+					FROM tp_game_relation_type
+					WHERE type_id=#{typeId}
+				)
+			</if>
+			order by order_id desc,enddate desc
+	</select>
+	
+	<select id="selectBList" parameterType="TPGame" resultMap="BaseResultMap">
+		SELECT g.*,(SELECT GROUP_CONCAT(t.type_name) FROM tp_game_type t INNER JOIN tp_game_relation_type r ON t.id=r.type_id WHERE r.game_id=g.id) AS gameLabelName 
+        FROM tp_game g
+		<where>
+		    <if test="interfaceId != null and interfaceId != ''">
+				and g.interface_id = #{interfaceId}
+			</if>
+			<if test="gameId != null and gameId != ''">
+				and g.game_id = #{gameId}
+			</if>
+			<if test="status != null and status != ''">
+				and g.status = #{status}
+			</if>
+			<if test="gameTag != null and gameTag != '' ">
+				and g.game_tag = #{gameTag}
+			</if>
+			<if test="gameTitle != null and gameTitle != '' ">
+				and game_title like concat('%',#{gameTitle},'%')
+			</if>
+			<if test="ptype != null and ptype != '' ">
+				and g.ptype = #{ptype}
+			</if>
+			<if test="isSetType !=null and isSetType != '' ">
+			    <if test="isSetType == 1 ">
+			       and g.id in (
+			            SELECT distinct game_id
+						FROM tp_game_relation_type
+			         )
+			    </if>
+			    <if test="isSetType == 2 ">
+			       and g.id not in (
+			            SELECT distinct game_id
+						FROM tp_game_relation_type
+			         )
+			    </if>
+			</if>
+		</where>
+		order by status asc,order_id desc
+	</select>
+
+	<select id="recommendGameList" resultMap="BaseResultMap">
+		select id,interface_id,game_id,game_title,icon,url,enddate,game_gold,introduce,package_name,status,game_tag,
+		(select interface_name from tp_interface where id = tp.interface_id) as interface_name
+		 from tp_game tp where tp.game_tag = 1 and status = 1 and tp.ptype = #{ptype}
+		and NOT EXISTS (select game_id from l_user_game where user_id = #{userId} and game_id = tp.id)
+		and NOT EXISTS (select game_id from l_user_sign_game where user_id = #{userId} and game_id = tp.id)
+		and NOT EXISTS (select game_id from l_user_game_task where user_id = #{userId} and game_id = tp.id)
+	</select>
+
+	<select id="selectByGameInterface" resultMap="BaseResultMap">
+		select * from tp_game where game_id = #{gameId} and interface_id = #{interfaceId}
+	</select>
+	
+	<select id="selectOrderId" parameterType="TPGame" resultType="int">
+	    select count(*)
+	    from tp_game
+	    where id!=#{id} and order_id=#{orderId}
+	</select>
+	
+	<select id="selectCashTask" parameterType="int" resultMap="BaseResultMap">
+	    SELECT g.*,t.state AS cashStatus,i.interface_name
+		FROM tp_game g INNER JOIN l_user_game_task t ON g.id=t.game_id INNER JOIN tp_interface i on g.interface_id=i.id
+		WHERE t.task_type=2 AND t.cash_id=#{cashId}
+		ORDER BY t.state DESC
+	</select>
+	
+	<select id="selectSignTask" parameterType="String" resultMap="BaseResultMap">
+	    SELECT g.*,t.state AS cashStatus,i.interface_name
+		FROM tp_game g INNER JOIN l_user_game_task t ON g.id=t.game_id INNER JOIN tp_interface i on g.interface_id=i.id
+		WHERE t.task_type=3 AND  FROM_UNIXTIME(t.create_time/1000,'%Y-%m-%d')=CURDATE() AND t.user_id=#{userId}
+	</select>
+	
+	<select id="recommendGameListNews" resultMap="BaseResultMap">
+		select id,interface_id,game_id,game_title,icon,url,enddate,game_gold,introduce,package_name,status,game_tag,
+		(select interface_name from tp_interface where id = tp.interface_id) as interface_name
+		 from tp_game tp where tp.game_tag = 1 and status = 1 and tp.ptype = #{ptype}
+		and NOT EXISTS (select game_id from l_user_game where user_id = #{userId} and game_id = tp.id)
+		and NOT EXISTS (select game_id from l_user_sign_game where user_id = #{userId} and game_id = tp.id)
+		and NOT EXISTS (select game_id from l_user_game_task where user_id = #{userId} and game_id = tp.id)
+	</select>
+	<select id="recommendTaskListNews" resultMap="BaseResultMap">
+		SELECT  id,NAME AS game_title,logo AS icon,reward AS game_gold,surplus_channel_task_number AS enddate,'task' as interface_name
+		FROM tp_task_info
+		WHERE is_upper=1 AND id NOT IN (
+		   SELECT tp_task_id
+		   FROM l_user_tp_task
+		   WHERE status not in (-2,-1,4) and user_id=#{userId}
+		)
+	</select>
+	
+	<select id="selectHtOne" parameterType="Integer" resultType="map">
+		SELECT tp.id,tp.game_title AS gameTitle,tp.short_intro AS shortIntro,tp.order_id AS orderId,tp.label_str AS labelStr FROM tp_game tp WHERE tp.id = #{id}
+	</select>
+	
+	<select id="selectCashGameTask" parameterType="int" resultMap="BaseResultMap">
+	    SELECT g.*,2 AS cashStatus,i.interface_name
+		FROM tp_game g INNER JOIN l_cash_game_task t ON g.id=t.game_id INNER JOIN tp_interface i ON g.interface_id=i.id
+		WHERE t.cash_id=#{cashId}
+		ORDER BY t.create_time DESC
+	</select>
+	
+	<select id="recommendGameListIOS" resultMap="BaseResultMap">
+		select id,interface_id,game_id,game_title,icon,url,enddate,game_gold,introduce,package_name,status,game_tag,
+		(select interface_name from tp_interface where id = tp.interface_id) as interface_name
+		 from tp_game tp where tp.game_tag = 1 and status = 1 and tp.ptype = #{ptype}
+	</select>
+	
+	<select id="lenovoSelect" parameterType="TPGame" resultMap="BaseResultMap">
+		select game.*,interface.coins,type.type_name,interface.interface_name from tp_game game
+		left join tp_interface interface on game.interface_id = interface.id
+		left join tp_game_type type on interface.game_type = type.id
+		where game.status = 1
+		<if test="gameTitle != null and gameTitle != '' ">
+			and game.game_title like concat('%',#{gameTitle},'%')
+		</if>
+		<if test="ptype != null and ptype != '' ">
+			and game.ptype = #{ptype}
+		</if>
+		order by order_id desc,enddate desc
+	</select>
+
+	<select id="tjList" parameterType="TPGame" resultType="String">
+		select game.game_title as gameTitle from tp_game game
+		where game.status = 1
+		<if test="ptype != null and ptype != '' ">
+			and game.ptype = #{ptype}
+		</if>
+		and game.id in (SELECT game_id FROM tp_game_relation_type WHERE type_id = 6)
+		order by order_id desc,enddate desc 
+		limit 5
+	</select>
+</mapper>

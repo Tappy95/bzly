@@ -1,0 +1,3 @@
+2020-08-19 14:10:51.770 [main] DEBUG com.mc.bzly.dao.fighting.MFightingQuestionDao.selectList - ==>  Preparing: SELECT q.*,p.dic_remark AS questionTypeName FROM m_fighting_question q,p_dictionary p WHERE q.question_type=p.id and q.question_state = 0 order by create_time desc 
+2020-08-19 14:10:51.807 [main] DEBUG com.mc.bzly.dao.fighting.MFightingQuestionDao.selectList - ==> Parameters: 
+2020-08-19 14:10:51.860 [main] DEBUG com.mc.bzly.dao.fighting.MFightingQuestionDao.selectList - <==      Total: 0

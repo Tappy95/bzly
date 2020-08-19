@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserBQDao" >
+	<resultMap type="LUserBQ" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="card_count" property="cardCount" jdbcType="INTEGER"/>
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>
+		<result column="bq_type" property="bqType" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="LUserBQ">
+		insert into l_user_bq (id,user_id,card_count,update_time,bq_type) values 
+		(#{id},#{userId},#{cardCount},#{updateTime},#{bqType})
+	</insert>
+	
+	<update id="update" parameterType="LUserBQ">
+		update l_user_bq 
+		<set>
+			<if test="cardCount != null">
+				card_count = #{cardCount},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<select id="selectByUserId" resultMap="BaseResultMap">
+		select * from l_user_bq	where user_id = #{userId} and bq_type=#{bqType}
+	</select>
+</mapper>

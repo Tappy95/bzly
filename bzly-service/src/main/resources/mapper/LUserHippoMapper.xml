@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserHippoDao" >
+
+	<insert id="insert" parameterType="LUserHippo">
+		insert into l_user_hippo
+		(id,user_id,category,create_time,status)
+		values
+		(#{id},#{userId},#{category},#{createTime},#{status})
+	</insert>
+	
+	<select id="selectCount" parameterType="LUserAdsReward" resultType="Long">
+		select count(id) from l_user_ads_reward l where l.user_id = #{userId} and l.content = #{content} and reward_date = #{rewardDate}  
+	</select>
+	
+	<insert id="insertAdsReward" parameterType="LUserAdsReward">
+		insert into l_user_ads_reward (user_id,content,reward_date,status) values (#{userId},#{content},#{rewardDate},#{status})
+	</insert>
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserSigninDao" >
+	<resultMap type="LUserSignin" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="sign_day" property="signDay" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="game_count" property="gameCount" jdbcType="INTEGER"/>
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="reward" property="reward" jdbcType="INTEGER"/>
+		
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="LUserSignin">
+		insert into l_user_signin 
+		(id,user_id,sign_day,game_count,reward,create_time,status) values
+		(#{id},#{userId},#{signDay},#{gameCount},#{reward},#{createTime},#{status})
+	</insert>
+	
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into l_user_signin 
+		(id,user_id,sign_day,game_count,reward,create_time,status) values
+		<foreach collection="list" index="index" item="item" separator=",">
+			(#{item.id},#{item.userId},#{item.signDay},#{item.gameCount},#{item.reward},#{item.createTime},#{item.status})
+		</foreach>
+	</insert>
+	
+	<update id="update" parameterType="LUserSignin">
+		update l_user_signin 
+		<set>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<select id="selectList" parameterType="LUserSignin" resultMap="BaseResultMap">
+		select * from l_user_signin 
+		<where>
+			<if test="userId != null and userId != ''">
+				and user_id = #{userId}
+			</if>
+			<if test="signDay != null and signDay != ''">
+				and sign_day = #{signDay}
+			</if>
+			<if test="status != null and status != ''">
+				and status = #{status}
+			</if>
+		</where>
+		order by sign_day asc
+	</select>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select * from l_user_signin where id = #{id}
+	</select>
+	
+	<select id="selectSignin" parameterType="String" resultMap="BaseResultMap">
+		select * from l_user_signin where user_id = #{userId} and status = 2 and sign_day in (5,10,15) order by sign_day asc
+	</select>
+
+	<select id="selectSigninFinish" resultMap="BaseResultMap">
+		select * from l_user_signin where user_id = #{userId} and status in (3,4) and sign_day in (5,10,15) and update_time > #{time} order by sign_day asc
+	</select>
+	
+	<select id="selectDBQ" resultMap="BaseResultMap">
+		<![CDATA[select * from l_user_signin where user_id = #{userId} and status < 3 and sign_day < #{signDay} ]]>
+	</select>
+	
+	<update id="updateStatus">
+		update l_user_signin set status = #{status} where user_id = #{userId} and sign_day = #{signDay} and `status` = -1
+	</update>
+	
+	<select id="selectPageList" parameterType="LUserSignin" resultMap="BaseResultMap">
+		SELECT *,m.account_id
+        FROM l_user_signin s INNER JOIN m_user_info m ON s.user_id=m.user_id 
+		<where>
+			<if test="accountId != null and accountId != ''">
+				and m.account_id = #{accountId}
+			</if>
+			<if test="signDay != null and signDay != ''">
+				and s.sign_day = #{signDay}
+			</if>
+			<if test="status != null and status != ''">
+				and s.status = #{status}
+			</if>
+		</where>
+		order by s.sign_day
+		<!-- LIMIT #{pageIndex},#{pageSize} -->
+	</select>
+	
+	<select id="selectPageCount" parameterType="LUserSignin" resultType="int">
+		SELECT count(*)
+        FROM l_user_signin s INNER JOIN m_user_info m ON s.user_id=m.user_id 
+		<where>
+			<if test="accountId != null and accountId != ''">
+				and m.account_id = #{accountId}
+			</if>
+			<if test="signDay != null and signDay != ''">
+				and s.sign_day = #{signDay}
+			</if>
+			<if test="status != null and status != ''">
+				and s.status = #{status}
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserSearchLogDao" >
+	
+	<resultMap type="LUserSearchLog" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="search_name" property="searchName" jdbcType="VARCHAR"/>
+		<result column="search_type" property="searchType" jdbcType="VARCHAR"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="LUserSearchLog">
+		insert into l_user_search_log(id,user_id,search_name,search_type,create_time)
+		values
+		(#{id},#{userId},#{searchName},#{searchType},#{createTime})
+	</insert>
+	
+	<select id="selectList" resultType="String">
+		select search_name as searchName from l_user_search_log
+		where user_id=#{userId} and search_type=#{searchType}
+		order by create_time desc limit 5
+	</select>
+
+	<select id="selectExist" resultType="String">
+		select search_name as searchName from l_user_search_log
+		where user_id=#{userId} and search_type=#{searchType}
+		and search_name = #{searchName}
+	</select>
+	 
+    <delete id="deleteAll">
+        delete from l_user_search_log where user_id=#{userId} and search_type=#{searchType}
+    </delete>
+</mapper>

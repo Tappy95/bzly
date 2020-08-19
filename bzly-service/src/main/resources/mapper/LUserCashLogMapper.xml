@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserCashLogDao" >
+	<resultMap type="LUserCashLog" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>		
+		<result column="cash_coin" property="cashCoin" jdbcType="INTEGER"/>
+		<result column="cash_time" property="cashTime" jdbcType="INTEGER"/>
+		<result column="cash_num" property="cashNum" jdbcType="INTEGER"/>
+		<result column="days" property="days" jdbcType="INTEGER"/>	
+		
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>	
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>	
+		<result column="createDate" property="createDate" jdbcType="VARCHAR"/>
+		<result column="cashDate" property="cashDate" jdbcType="VARCHAR"/>
+		<result column="equipment_type" property="equipmentType" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<select id="selectList" parameterType="LUserCashLog" resultMap="BaseResultMap">
+		select l.*,
+		FROM_UNIXTIME(l.cash_time/1000,'%Y-%m-%d %H:%i:%s') AS cashDate,
+		u.account_id,
+		u.channel_code,
+		FROM_UNIXTIME(u.create_time/1000,'%Y-%m-%d %H:%i:%s') AS createDate,
+		u.equipment_type
+		from l_user_cash_log l inner join m_user_info u on l.user_id=u.user_id 
+		<where>
+		   <if test="channel !='baozhu'">
+			    <if test="channel != null and channel != '' and userRelation==1">
+				    and (u.channel_code=#{channel} OR u.parent_channel_code=#{channel})
+				</if>
+				<if test="channel != null and channel != '' and userRelation==2">
+				    and u.channel_code=#{channel}
+				</if>
+				<if test="channel != null and channel != '' and userRelation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channel}
+				</if>
+			</if>
+			<if test="channelCode != null  and channelCode != ''">
+				and u.channel_code = #{channelCode}			
+			</if>
+			<if test="accountId != null  and accountId != ''">
+				and u.account_id = #{accountId}			
+			</if>
+			<if test="cashNum != null  and cashNum != ''">
+				and l.cash_num = #{cashNum}			
+			</if>
+			<if test="minDays != null and minDays != ''">
+			    <if test="minDays == -1">
+			       and l.days >= 0
+			    </if>
+			    <if test="minDays != -1">
+			       and l.days >= #{minDays}
+			    </if>
+			</if>
+			<if test="maxDays != null and maxDays != ''">
+			    <if test="maxDays == -1">
+			       and  0 >= l.days
+			    </if>
+			    <if test="maxDays != -1">
+			       and #{maxDays} >= l.days
+			    </if>
+			</if>
+			<if test="minCreateDate != null  and minCreateDate != ''">
+				and u.create_time >= #{minCreateDate}			
+			</if>
+			<if test="maxCreateDate != null  and maxCreateDate != ''">
+				and #{maxCreateDate} > u.create_time	
+			</if>
+			<if test="minCashTime != null  and minCashTime != ''">
+				and l.cash_time >= #{minCashTime}			
+			</if>
+			<if test="maxCashTime != null  and maxCashTime != ''">
+				and #{maxCashTime} > l.cash_time	
+			</if>
+		</where>
+		ORDER BY l.user_id,u.create_time DESC
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="LUserCashLog" resultType="int">
+		select count(1)
+		from l_user_cash_log l inner join m_user_info u on l.user_id=u.user_id 
+		<where>
+		   <if test="channel !='baozhu'">
+			    <if test="channel != null and channel != '' and userRelation==1">
+				    and (u.channel_code=#{channel} OR u.parent_channel_code=#{channel})
+				</if>
+				<if test="channel != null and channel != '' and userRelation==2">
+				    and u.channel_code=#{channel}
+				</if>
+				<if test="channel != null and channel != '' and userRelation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channel}
+				</if>
+			</if>
+			<if test="channelCode != null  and channelCode != ''">
+				and u.channel_code = #{channelCode}			
+			</if>
+			<if test="accountId != null  and accountId != ''">
+				and u.account_id = #{accountId}			
+			</if>
+			<if test="cashNum != null  and cashNum != ''">
+				and l.cash_num = #{cashNum}			
+			</if>
+			<if test="minDays != null and minDays != ''">
+			    <if test="minDays == -1">
+			       and l.days >= 0
+			    </if>
+			    <if test="minDays != -1">
+			       and l.days >= #{minDays}
+			    </if>
+			</if>
+			<if test="maxDays != null and maxDays != ''">
+			    <if test="maxDays == -1">
+			       and  0 >= l.days
+			    </if>
+			    <if test="maxDays != -1">
+			       and #{maxDays} >= l.days
+			    </if>
+			</if>
+			<if test="minCreateDate != null  and minCreateDate != ''">
+				and u.create_time >= #{minCreateDate}			
+			</if>
+			<if test="maxCreateDate != null  and maxCreateDate != ''">
+				and #{maxCreateDate} > u.create_time	
+			</if>
+			<if test="minCashTime != null  and minCashTime != ''">
+				and l.cash_time >= #{minCashTime}			
+			</if>
+			<if test="maxCashTime != null  and maxCashTime != ''">
+				and #{maxCashTime} > l.cash_time	
+			</if>
+		</where>
+	</select>
+	
+</mapper>

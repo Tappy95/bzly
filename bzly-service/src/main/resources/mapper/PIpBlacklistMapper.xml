@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.platform.PIpBlacklistDao" >
+	<resultMap type="PIpBlacklist" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="ip" property="ip" jdbcType="VARCHAR"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="PIpBlacklist">
+		insert into p_ip_blacklist 
+		(id,ip,create_time) 
+		values 
+		(#{id},#{ip},#{createTime})
+	</insert>
+	
+	<update id="update" parameterType="PIpBlacklist">
+		update p_ip_blacklist 
+		<set>
+			<if test="ip != null and ip != ''">
+				ip = #{ip} 
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from p_ip_blacklist where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from p_ip_blacklist where id = #{id}
+	</select>
+
+	<select id="selectByIp" parameterType="String" resultMap="BaseResultMap">
+		select * from p_ip_blacklist where ip = #{ip}
+	</select>
+	
+	<select id="selectList" parameterType="PIpBlacklist" resultMap="BaseResultMap">
+		select * from p_ip_blacklist
+		<where>
+			<if test="ip != null">
+				and ip = #{ip}
+			</if>
+		</where>
+		order by create_time desc 
+	</select>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.platform.PCashPriceConfigDao">
+	<resultMap id="BaseResultMap" type="PCashPriceConfig">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="price" property="price" jdbcType="INTEGER"/>
+		<result column="orders" property="orders" jdbcType="INTEGER"/>
+		<result column="is_task" property="isTask" jdbcType="INTEGER"/>
+		<result column="web_type" property="webType" jdbcType="INTEGER"/>
+		<result column="priceDouble" property="priceDouble" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="PCashPriceConfig">
+	   INSERT INTO p_cash_price_config(price,orders,is_task,web_type)
+       VALUES (#{price},#{orders},#{isTask},#{webType})
+	</insert>
+	
+	<select id="selectList" parameterType="PCashPriceConfig" resultMap="BaseResultMap">
+	   select *,price as priceDouble
+	   from p_cash_price_config
+	   <where>
+	      <if test="isTask !=null and isTask !=''">
+		       and is_task=#{isTask}
+		   </if>
+		   <if test="webType !=null and webType !=''">
+		       and web_type=#{webType}
+		   </if>
+	   </where>
+	   order by orders
+	</select>
+	
+	<select id="selectOne" parameterType="int" resultMap="BaseResultMap">
+	   select *
+	   from p_cash_price_config 
+	   where id=#{id}
+	</select>
+	
+	<update id="update" parameterType="PCashPriceConfig">
+	    update p_cash_price_config 
+		<set>
+		    <if test="price != null">
+				price = #{price},
+			</if>
+			<if test="orders != null">
+				orders = #{orders},
+			</if>
+			<if test="isTask != null">
+				is_task = #{isTask},
+			</if>
+			<if test="webType != null">
+				web_type = #{webType}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+	  delete from p_cash_price_config where id = #{id}
+	</delete>
+	
+	<select id="selectPriceOne" resultMap="BaseResultMap">
+	   select *
+	   from p_cash_price_config 
+	   where price=#{price} and web_type=#{webType}
+	</select>
+</mapper>

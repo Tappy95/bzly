@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.TPKsCallbackDao" >
+	
+	<resultMap type="TPKsCallback" id="baseMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="equipment_type" property="equipmentType" jdbcType="INTEGER"/>
+		<result column="imeiMD5" property="imeiMD5" jdbcType="VARCHAR"/>
+		<result column="ip" property="ip" jdbcType="VARCHAR"/>
+		<result column="callback" property="callback" jdbcType="VARCHAR"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="TPKsCallback">
+		insert into tp_ks_callback (id,equipment_type,imeiMD5,ip,callback,create_time,status)
+		values (#{id},#{equipmentType},#{imeiMD5},#{ip},#{callback},#{createTime},#{status})
+	</insert>
+
+	<select id="selectByImei" parameterType="String" resultMap="baseMap">
+		select * from tp_ks_callback where imeiMD5 = #{imeiMD5}
+	</select>
+	
+	<update id="update" parameterType="TPKsCallback">
+		update tp_ks_callback set status = #{status},imeiMD5 = #{imeiMD5},callback = #{callback} where id = #{id}
+	</update>
+</mapper>

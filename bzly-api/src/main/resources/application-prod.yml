@@ -1,0 +1,64 @@
+server:
+  port: 8082
+
+dubbo:
+  registry:
+    address: 106.53.85.158:2181
+logging:
+  level:
+    root: INFO
+
+cashtoutiao:
+    appKey: 155306815946
+    appSecret: NR41l0V1e79ea960223bc4fed9afcc2d414aefb23es472rnx
+    funcation: headLine/articleListApi
+    url: http://content.service.api.cashtoutiao.com/headLine/articleListApi
+pcdd:
+    appkey: PCDDXW_1043
+    baseUrl: http://ifsapp.pceggs.com/Pages/IntegralWall/IW_Awall_adList.aspx
+    pid: 1043
+    pidIOS: 11125
+    appkeyIOS: PCDDXW_11125
+qiniu:
+    url: https://image.bzlyplay.com/
+    url.preffix: pro_
+yole:
+    key: xIV7A9Bpt0XxQEOSm6tF1KNIQtPliNXIr
+
+hippo: 
+    submedia: 5011
+    media: 3523
+    baseUrl: http://api.viaweb.cn/bd/news/list?
+
+xw: 
+    appid: 3587
+    appsecret: z58k7rohzpjf919kmv
+    baseUrl: https://h5.51xianwan.com/try/try_list_plus.aspx?
+    ip: 139.224.165.158,112.17.103.129
+    
+wxPay:
+    url: https://api.bzlyplay.com/weixin/callback
+
+wx:
+    appId: wx0a03b2f3121bab6e
+    appSecret: ce74456abd7dg71f1d0f5ca5dfbbfe28
+    
+bzly: 
+   appKey: baozhu9707172814096
+   userChannel: baozhu
+   
+bz:
+    userChannel: baozhullz
+    appKey: baozhullz4257350923356
+    
+ym:
+    baseCallbackSalt: 8_hRl5ZBqIdxTs1PB_Kb6_KeVF2WY1rJuc-rVa_jcDEhIIyL_xeppZw7R9m4FrBOlQB5Xht75GUiujKpnJ52pC8eg
+    
+csj: 
+    syAppSecurityKey: 10e77c234db3e0828fbb0b02c3265c7fa
+    hbAppSecurityKey: b60dd61a62b26252cab1c5e7496385dc6
+    bqAppSecurityKey: 6281a8e63c16079abb48e8b05541d7118
+    tkAppSecurityKey: 57b3062dfa560f50e4cf1369db57bf82a
+    hbAppSecurityKeyIos: 4ca513b2e92aa476dd4bfc69e38a9c6ae
+    tkAppSecurityKeyIos: 4ca513b2e92aa476dd4bfc69e38a9c6ae
+    

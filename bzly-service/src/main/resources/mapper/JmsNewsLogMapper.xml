@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.jms.JmsNewsLogDao" >
+	<resultMap type="JmsNewsLog" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="jms_wrapper" property="jmsWrapper" jdbcType="VARCHAR"/>		
+		<result column="jms_destination" property="jmsDestination" jdbcType="VARCHAR"/>		
+		<result column="jms_exception" property="jmsException" jdbcType="VARCHAR"/>		
+		<result column="state" property="state" jdbcType="INTEGER"/>		
+		<result column="creater_time" property="createrTime" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="JmsNewsLog">
+		insert into jms_news_log 
+		(jms_wrapper,jms_destination,jms_exception,state,creater_time) 
+		values 
+		(#{jmsWrapper},#{jmsDestination},#{jmsException},#{state},#{createrTime})
+	</insert>
+	
+	<select id="selectListPage" parameterType="JmsNewsLog" resultMap="BaseResultMap">
+	    SELECT *
+        FROM jms_news_log
+        <where>
+           <if test="state!=null and state!=''">
+			    state=#{state}
+		   </if>
+        </where>
+        order by creater_time desc
+        limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="JmsNewsLog" resultType="int">
+	    SELECT count(*)
+        FROM jms_news_log
+        <where>
+           <if test="state!=null and state!=''">
+			    state=#{state}
+		   </if>
+        </where>
+	</select>
+</mapper>

@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.platform.PDataStatisticsDao" >
+    <resultMap id="BaseResultMap" type="PDataStatistics">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+		<result column="total" property="total" jdbcType="INTEGER"/>
+		<result column="seven_day_add" property="sevenDayAdd" jdbcType="INTEGER"/>
+		<result column="same_day_add" property="sameDayAdd" jdbcType="INTEGER"/>
+		<result column="sign" property="sign" jdbcType="INTEGER"/>
+		<result column="bind_ali" property="bindAli" jdbcType="INTEGER"/>
+		<result column="cash" property="cash" jdbcType="INTEGER"/>
+		<result column="game_28" property="game28" jdbcType="INTEGER"/>
+		<result column="creator_time" property="creatorTime" jdbcType="VARCHAR"/>
+	</resultMap>
+
+    <resultMap id="homeTableMap" type="HomePageData">
+		<result column="signCount" property="signCount" jdbcType="INTEGER"/>
+		<result column="vipCounts" property="vipCounts" jdbcType="INTEGER"/>
+		<result column="regUser" property="regUser" jdbcType="INTEGER"/>
+		<result column="loginCount" property="loginCount" jdbcType="INTEGER"/>
+		<result column="firstVip" property="firstVip" jdbcType="INTEGER"/>
+		<result column="bindZFB" property="bindZFB" jdbcType="INTEGER"/>
+		<result column="cjzAmount" property="cjzAmount" jdbcType="DECIMAL"/>
+		<result column="txzAmount" property="txzAmount" jdbcType="DECIMAL"/>
+		<result column="hygxAmount" property="hygxAmount" jdbcType="DECIMAL"/>
+		<result column="vipAmount" property="vipAmount" jdbcType="DECIMAL"/>
+		<result column="tdzAmount" property="tdzAmount" jdbcType="DECIMAL"/>
+		<result column="jzdhAmount" property="jzdhAmount" jdbcType="DECIMAL"/>
+		<result column="zjzAmount" property="zjzAmount" jdbcType="DECIMAL"/>
+		<result column="swAmount" property="swAmount" jdbcType="DECIMAL"/>
+		<result column="lpdjAmount" property="lpdjAmount" jdbcType="DECIMAL"/>
+		<result column="hdjlAmount" property="hdjlAmount" jdbcType="DECIMAL"/>
+		<result column="jczAmount" property="jczAmount" jdbcType="DECIMAL"/>
+	</resultMap>
+	
+	<select id="selectList" parameterType="PDataStatistics" resultMap="BaseResultMap">
+		select *
+		from p_data_statistics
+		<where>
+		   <if test="channelCode!=null and channelCode!=''">
+		       and channel_code=#{channelCode}
+		   </if>
+		   <if test="creatorTime!=null and creatorTime!=''">
+		       and creator_time=#{creatorTime}
+		   </if>
+		</where>
+		order by creator_time desc
+	</select>
+	
+	<select id="selectExcelList" parameterType="PDataStatistics" resultMap="BaseResultMap">
+		select *
+		from p_data_statistics
+		<where>
+		   <if test="channelCode!=null and channelCode!=''">
+		       and channel_code=#{channelCode}
+		   </if>
+		   <if test="creatorTime!=null and creatorTime!=''">
+		       and creator_time=#{creatorTime}
+		   </if>
+		</where>
+		order by creator_time desc
+		limit 0,5000
+	</select>
+	
+	<select id="homeTopData" resultType="java.util.Map">
+		select * from 
+		(
+		(select COUNT(user_id) AS userCount from m_user_info) a,
+		(SELECT COUNT(1) AS txCount FROM l_user_exchange_cash WHERE  state = 1) d,
+		(select count(1) AS dhCount from m_lottery_order where `status` = 1) e
+		)
+	</select>
+	
+	<select id="selectRegCount" parameterType="java.util.Map" resultType="Long">
+		select COUNT(user_id) as regUser from m_user_info 
+			<where>
+				<if test="channelCode != null and channelCode != ''">
+					channel_code = #{channelCode}
+				</if>
+				<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+					<![CDATA[
+						AND create_time > #{startTime} and create_time < #{endTime}
+					]]>
+				</if>
+			</where>
+	</select>
+	<select id="selectSignCount" parameterType="java.util.Map" resultType="Long">
+		select count(1) AS signCount from m_user_info m
+		<where>
+			<if test="channelCode != null and channelCode != ''">
+				and channel_code = #{channelCode}
+			</if> 
+			<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+	 			<![CDATA[
+	 				and user_id in (select user_id from l_user_sign l where sign_time > #{startTime} and sign_time < #{endTime})
+				]]>
+			</if>
+		</where>
+	</select>
+	<select id="selectLoginCount" parameterType="java.util.Map" resultType="Long">
+		select count(1) AS loginCount from m_user_info m
+		<where>
+			<if test="channelCode != null and channelCode != ''">
+				and channel_code = #{channelCode}
+			</if>
+			<if test="dateEnd !=null and dateEnd != ''">
+				and user_id in (select user_id from l_user_active l 
+				<where>
+				    <if test='dateEnd =="1" and dateStr != null and dateStr != ""'>
+				         active_time = #{dateStr}
+				    </if>
+				    <if test='dateEnd !="1"'>
+				        <![CDATA[
+				           and DATE_FORMAT(active_time,'%Y-%m-%d') >=#{dateStr} and DATE_FORMAT(active_time,'%Y-%m-%d')<#{dateEnd}
+				        ]]>
+				    </if>
+				</where> 
+				)
+			</if>
+		</where> 
+		
+	</select>
+	<select id="firstVip" resultType="Long">
+		SELECT COUNT(1) AS firstVip 
+		FROM (SELECT user_id ,COUNT(1) AS con,creator_time
+		      FROM p_pay_log 
+		      WHERE pay_purpose = 1 AND state = 2 
+		      GROUP BY user_id 
+		      HAVING con=1) a
+	    <where>
+			<if test="param.channelCode != null and param.channelCode != ''">
+				and a.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND a.creator_time > #{param.startTime} and a.creator_time < #{param.endTime}
+				]]>
+			</if>
+		</where>
+	</select>
+	
+	<select id="bindZFB" parameterType="java.util.Map" resultType="Long">
+		select count(1) AS bindZFB from m_user_info where (ali_num IS NOT NULL OR open_id IS NOT NULL)
+		<if test="channelCode != null and channelCode != ''">
+			and channel_code = #{channelCode}
+		</if>
+		<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+			<![CDATA[
+				AND create_time > #{startTime} and create_time < #{endTime}
+			]]>
+		</if>
+	</select>
+	
+	<select id="vipCounts" resultType="Long">
+		select count(1) AS vipCounts from (select DISTINCT user_id from p_pay_log p where pay_purpose = 1 and state = 2 
+			<if test="param.channelCode != null and param.channelCode != ''">
+				and p.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND creator_time > #{param.startTime} and creator_time < #{param.endTime}
+				]]>
+			</if>
+		) a
+	</select>
+	
+	<select id="vipAmount" resultType="Double">
+		select sum(actual_price) AS vipAmount from p_pay_log p where pay_purpose = 1 and state = 2 
+		<if test="param.channelCode != null and param.channelCode != ''">
+			and p.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+		</if>
+		<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+			<![CDATA[
+				AND creator_time > #{param.startTime} and creator_time < #{param.endTime}
+			]]>
+		</if>
+	</select>
+	
+	<select id="swAmount" resultType="Double">
+		select sum(amount) AS swAmount from l_coin_change l where changed_type = 7 
+			<if test="param.channelCode != null and param.channelCode != ''">
+				and l.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND changed_time > #{param.startTime} and changed_time < #{param.endTime} 
+				]]>
+			</if>
+	</select>
+	
+	<select id="txzAmount" resultType="Double">
+		select sum(amount) AS txzAmount from l_coin_change l where changed_type = 3 and status = 1 
+			<if test="param.channelCode != null and param.channelCode != ''">
+				and l.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND changed_time > #{param.startTime} and changed_time < #{param.endTime} 
+				]]>
+			</if>
+	</select>
+	
+	<select id="lpdjAmount" resultType="Double">
+		select sum((select price from m_lottery_goods where id = o.goods_id)) AS lpdjAmount from m_lottery_order o 
+		<where>
+			<if test="param.channelCode != null and param.channelCode != ''">
+			 o.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+								#{item}
+							</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+			<![CDATA[
+				AND o.create_time > #{param.startTime} and o.create_time < #{param.endTime} 
+			]]>
+			</if>
+		</where>
+	</select>
+	
+	<select id="tdzAmount" resultType="Double">
+		select sum(actual_price) AS tdzAmount from  p_pay_log where pay_type in (2,3) and state = 2 
+		<if test="param.channelCode != null and param.channelCode != ''">
+			and user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+								#{item}
+							</foreach>)
+		</if>
+		<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+			<![CDATA[
+				AND creator_time > #{param.startTime} and creator_time < #{param.endTime}
+			]]>
+		</if>
+	</select>
+	
+	<select id="hdjlAmount" resultType="Double">
+		select sum(amount) AS hdjlAmount from l_coin_change l where flow_type = 1 
+			<if test="param.channelCode != null and param.channelCode != ''">
+				and l.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND changed_time > #{param.startTime} and changed_time < #{param.endTime}
+				]]>
+			</if>
+	</select>
+	
+	<select id="hygxAmount" resultType="Double">
+		select sum(amount) AS hygxAmount from l_coin_change l where changed_type in (4,5,8) 
+			<if test="param.channelCode != null and param.channelCode != ''">
+				and l.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND changed_time > #{param.startTime} and changed_time < #{param.endTime}
+				]]>
+			</if>
+	</select>
+	
+	<select id="jzdhAmount" resultType="Double">
+		select sum(amount) AS jzdhAmount from l_pig_chanage l where flow_type = 1 and changed_type not in (6,9,10) 
+			<if test="param.channelCode != null and param.channelCode != ''">
+				and l.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND changed_time > #{param.startTime} and changed_time < #{param.endTime}
+				]]>
+			</if>
+	</select>
+	
+	<select id="jczAmount" resultType="Double">
+		select sum(amount) AS jzdhAmount from l_pig_chanage l where changed_type=6 and flow_type = 2  
+			<if test="param.channelCode != null and param.channelCode != ''">
+			 	and l.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+								#{item}
+							</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND changed_time > #{param.startTime} and changed_time < #{param.endTime}
+				]]>
+			</if>
+	</select>
+	
+	<select id="zjzAmount" resultType="Double">
+		select sum(amount) AS jzdhAmount from l_pig_chanage l where changed_type= 6 and flow_type = 1  
+			<if test="param.channelCode != null and param.channelCode != ''">
+			 	and l.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+								#{item}
+							</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND changed_time > #{param.startTime} and changed_time < #{param.endTime}
+				]]>
+			</if>
+	</select>
+	
+	<select id="cjzAmount" resultType="Double">
+		select sum(expend_pig_coin) from m_lottery_order o where status!=2 
+			<if test="param.channelCode != null and param.channelCode != ''">
+				and o.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND create_time > #{param.startTime} and create_time < #{param.endTime}
+				]]>
+			</if>
+	</select>
+	
+	<select id="selectVipCount1" resultType="long">
+		select count(1) from l_user_vip where `status` = 1 
+	</select>
+	
+	<select id="selectVipCount2" resultType="long">
+		select COUNT(1) AS vipCount from (select user_id from l_user_vip where `status` = 1 GROUP BY user_id) b
+	</select>
+	
+	<select id="cashUserNum" resultType="Long">
+	   SELECT COUNT(*)
+		FROM (
+			SELECT user_id
+			FROM l_coin_change l
+			WHERE STATUS=1 AND changed_type=3 
+			<if test="param.channelCode != null and param.channelCode != ''">
+				AND l.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND changed_time > #{param.startTime} and changed_time < #{param.endTime}
+				]]>
+			</if>
+			GROUP BY user_id
+		) a
+	</select>
+	
+	<select id="dtNumber1" resultType="String">
+	    SELECT initiator FROM m_fighting_info WHERE state=4 
+		    <if test="param.channelCode != null and param.channelCode != ''">
+		       and initiator in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND fighting_time > #{param.startTime} and fighting_time < #{param.endTime}
+				]]>
+			</if>
+		 GROUP BY initiator HAVING MAX(fight_id)
+	</select>
+	
+	<select id="dtNumber2" resultType="String">
+	    SELECT defense FROM m_fighting_info WHERE state=4 
+	        <if test="param.channelCode != null and param.channelCode != ''">
+		       and defense in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND fighting_time > #{param.startTime} and fighting_time < #{param.endTime}
+				]]>
+			</if>
+		 GROUP BY defense HAVING MAX(fight_id)
+	</select>
+	
+	<select id="ctNumber" resultType="String">
+	   SELECT creator FROM m_fighting_question WHERE creator IS NOT NULL
+	        <if test="param.channelCode != null and param.channelCode != ''">
+		       and creator in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+				<![CDATA[
+					AND create_time > #{param.startTime} and create_time < #{param.endTime}
+				]]>
+			</if>
+		 GROUP BY creator HAVING MAX(q_id)
+	</select>
+	
+	<select id="kszUserNum" resultType="Long">
+		SELECT COUNT(1) FROM (
+			select DISTINCT userId from tp_task_callback tp
+			<where>
+				<if test="param.channelCode != null and param.channelCode != ''">
+					tp.userId in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+				</if>
+				<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+					<![CDATA[
+						AND createTime > #{param.startTime} and createTime < #{param.endTime}
+					]]>
+				</if>
+			</where>
+		) A
+	</select>
+
+	<select id="qdzUserNum" resultType="long">
+		SELECT COUNT(1) FROM (
+			select DISTINCT signin.user_id from l_user_signin signin 
+			<where>
+				<if test="param.channelCode != null and param.channelCode != ''">
+					signin.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+				</if>
+				<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+					<![CDATA[
+					and ((signin.create_time > #{param.startTime} and signin.create_time < #{param.endTime}) or 
+						 (signin.update_time > #{param.startTime} and signin.update_time < #{param.endTime}) )
+					]]>
+				</if>
+			</where> 
+			) A
+	</select>
+
+	<select id="lxdlNum" resultType="long">
+		select COUNT(1) FROM (
+			select COUNT(1) as count,active.user_id from l_user_active active 
+			<where>
+				<if test="param.channelCode != null and param.channelCode != ''">
+					active.user_id in (<foreach collection="userIds" index="index" item="item" separator=",">
+										#{item}
+									</foreach>)
+				</if>
+				<if test="param.dateEnd !=null and param.dateEnd != ''">
+			    	<if test='param.dateEnd =="1" and param.dateStr != null and param.dateStr != ""'>
+			       		and active_time = #{param.dateStr}
+			    	</if>
+				    <if test='param.dateEnd !="1"'>
+				        <![CDATA[
+				           and DATE_FORMAT(active_time,'%Y-%m-%d') >=#{param.dateStr} and DATE_FORMAT(active_time,'%Y-%m-%d')<#{param.dateEnd}
+				        ]]>
+				    </if>
+				</if>
+			 </where>
+			GROUP BY active.user_id 
+		)a 
+		<where>
+			<if test="param.days != null and param.days != ''">
+				 a.count = #{param.days}
+			</if>
+		</where>
+	</select>
+	
+	<select id="jcrAmount" resultType="long">
+		SELECT COUNT(*)
+		FROM (
+			SELECT DISTINCT user_id from l_pig_chanage where changed_type = 6
+				<if test="param.channelCode != null and param.channelCode != ''">
+				  and user_id in  (<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+				</if>
+				<if test="param.startTime != null and param.startTime != '' and param.endTime != null and param.endTime != ''">
+					<![CDATA[
+						AND changed_time > #{param.startTime} and changed_time < #{param.endTime}
+					]]>
+				</if>
+		) a
+	</select>
+	
+	<select id="selectGameData" parameterType="String" resultType="com.mc.bzly.model.platform.ExcelDataModel">
+		select ordernum,adname,dlevel,`event`,price,money,createTime,account_id,channel_code as channelCode,'pcdd' as platform from tp_pcdd_callback p LEFT JOIN m_user_info m on p.userid = m.user_id
+		 where itime = #{date}
+		UNION all
+		select ordernum,adname,dlevel,`event`,price,money,createTime,account_id,channel_code as channelCode,'xw' as platform  from tp_xw_callback x LEFT JOIN m_user_info m on x.appsign = m.user_id 
+		where createTime like CONCAT(#{date},'%')
+	</select>
+
+	<select id="selectGameDataQD" parameterType="String" resultType="com.mc.bzly.model.platform.ExcelDataModelQD">
+		select adname,dlevel,`event`,price,money,createTime,(select account_id from m_user_info where user_id = p.userid) as accountId from tp_pcdd_callback p 
+		where userid in (select user_id from m_user_info where channel_code = 'jie') 
+		and itime = #{date}
+	</select>
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.wish.GameRewardRateDao" >
+	<resultMap type="GameRewardRate" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="reward_type" property="rewardType" jdbcType="INTEGER"/>
+		<result column="reward_num" property="rewardNum" jdbcType="INTEGER"/>
+		<result column="rate" property="rate" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="GameRewardRate">
+		insert into sr_game_reward_rate (id,reward_type,reward_num,rate,create_time) values
+		(#{id},#{rewardType},#{rewardNum},#{rate},#{createTime})
+	</insert>
+	
+	<update id="update" parameterType="GameRewardRate">
+		update sr_game_reward_rate 
+		<set>
+			<if test="rewardType != null">reward_type = #{rewardType},</if>
+			<if test="rewardNum != null">reward_num = #{rewardNum},</if>
+			<if test="rate != null">rate = #{rate}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from sr_game_reward_rate where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from sr_game_reward_rate where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="GameRewardRate" resultMap="BaseResultMap">
+		select * from sr_game_reward_rate 
+		<where>
+			<if test="rewardType != null and rewardType != ''">and reward_type = #{rewardType}</if>
+		</where>
+		order by create_time desc
+	</select>
+</mapper>

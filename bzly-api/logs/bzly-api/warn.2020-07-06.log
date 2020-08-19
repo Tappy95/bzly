@@ -1,0 +1,1 @@
+2020-07-06 12:52:12.013 [main] WARN  com.alibaba.dubbo.config.spring.beans.factory.annotation.ServiceAnnotationBeanPostProcessor -  [DUBBO] No Spring Bean annotating Dubbo's @Service was found under package[com.mc.bzly], dubbo version: 2.6.2, current host: 192.168.0.151

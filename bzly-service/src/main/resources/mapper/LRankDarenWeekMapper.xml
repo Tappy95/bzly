@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LRankDarenWeekDao" >
+	
+	<resultMap type="LRankDarenWeek" id="BaseMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="alias_name" property="aliasName" jdbcType="VARCHAR"/>
+		<result column="profile" property="profile" jdbcType="VARCHAR"/>
+		<result column="apprentice_count" property="apprenticeCount" jdbcType="INTEGER"/>
+		<result column="rank" property="rank" jdbcType="INTEGER"/>
+		<result column="rank_cycle" property="rankCycle" jdbcType="VARCHAR"/>
+		<result column="reward" property="reward" jdbcType="INTEGER"/>
+		<result column="create_date" property="createDate" jdbcType="VARCHAR"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<select id="selectNowlist" resultMap="BaseMap">
+		select a.referrer_id as user_id ,a.countR as apprentice_count,m.alias_name,m.profile from (
+		select referrer_id,count(referrer_id) as countR from m_user_apprentice 
+			where apprentice_type = 2 and reward_status = 2 and create_time > #{createTime}
+		GROUP BY referrer_id) a
+		LEFT JOIN m_user_info m on a.referrer_id = m.user_id 
+		order BY a.countR desc
+	</select>
+	
+	<select id="selectList" parameterType="LRankDarenWeek" resultMap="BaseMap">
+	   SELECT d.*,u.account_id
+       FROM l_rank_daren_weak d INNER JOIN m_user_info u ON d.user_id=u.user_id
+       <where>
+          <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+		  </if>
+		  <if test="apprenticeCount != null and apprenticeCount != ''">
+				and d.apprentice_count = #{apprenticeCount}
+		  </if>
+		  <if test="rank != null and rank != ''">
+				and d.rank = #{rank}
+		  </if>
+		  <if test="rankCycle != null and rankCycle != ''">
+				and d.rank_cycle = #{rankCycle}
+		  </if>
+		  <if test="status != null and status != ''">
+				and d.status = #{status}
+		  </if>
+       </where>
+	   ORDER BY d.create_date DESC,d.rank
+	   limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="LRankDarenWeek" resultType="int">
+	   SELECT count(*)
+       FROM l_rank_daren_weak d INNER JOIN m_user_info u ON d.user_id=u.user_id
+       <where>
+          <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+		  </if>
+       </where>
+	</select>
+	
+	<select id="selectCycle" resultType="map">
+	   SELECT DISTINCT rank_cycle as rankCycle
+       FROM l_rank_daren_weak
+       order by create_date DESC
+	</select>
+	
+	<select id="selectLaster5" resultType="String">
+		select GROUP_CONCAT(rank_cycle) from (
+		select DISTINCT rank_cycle as rank_cycle from l_rank_daren_weak order by create_date desc limit 5)a
+	</select>
+	
+	<select id="selectByCycel" resultMap="BaseMap">
+		select l.user_id,l.apprentice_count,IFNULL(m.alias_name,'小猪猪') as alias_name,m.`profile`,l.rank
+		from l_rank_daren_weak l
+		LEFT JOIN m_user_info m on l.user_id = m.user_id
+		where l.rank_cycle = #{rankCycle} ORDER BY l.apprentice_count desc
+	</select>
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.egg.EGoldEggTypeDao">
+	<resultMap id="BaseResultMap" type="EGoldEggType">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="name" property="name" jdbcType="VARCHAR"/>
+		<result column="pig_coin" property="pigCoin" jdbcType="INTEGER"/>
+		<result column="creator_time" property="creatorTime" jdbcType="INTEGER"/>
+		<result column="orders" property="orders" jdbcType="INTEGER"/>
+		<result column="service_pig_coin" property="servicePigCoin" jdbcType="INTEGER"/>
+		<result column="card_sign" property="cardSign" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="EGoldEggType">
+	   INSERT INTO e_gold_egg_type(name,pig_coin,creator_time,orders,service_pig_coin,card_sign)
+       VALUES (#{name},#{pigCoin},#{creatorTime},#{orders},#{servicePigCoin},#{cardSign})
+	</insert>
+	
+	<select id="selectList" resultMap="BaseResultMap">
+	   select *
+	   from e_gold_egg_type
+	   order by orders
+	</select>
+	
+	<select id="selectOne" parameterType="int" resultMap="BaseResultMap">
+	   select *
+	   from e_gold_egg_type 
+	   where id=#{id}
+	</select>
+	
+	<update id="update" parameterType="EGoldEggType">
+	    update e_gold_egg_type 
+		<set>
+		    <if test="name != null">
+				name = #{name},
+			</if>
+			<if test="pigCoin != null">
+				pig_coin = #{pigCoin},
+			</if>
+			<if test="orders != null">
+				orders = #{orders},
+			</if>
+			<if test="servicePigCoin != null">
+				service_pig_coin = #{servicePigCoin},
+			</if>
+			<if test="cardSign != null">
+				card_sign = #{cardSign}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+	  delete from e_gold_egg_type where id = #{id}
+	</delete>
+</mapper>

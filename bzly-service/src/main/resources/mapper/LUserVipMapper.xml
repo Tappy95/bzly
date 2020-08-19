@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserVipDao" >
+	<resultMap type="LUserVip" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="vip_id" property="vipId" jdbcType="INTEGER"/>		
+		<result column="surplus_day" property="surplusDay" jdbcType="INTEGER"/>		
+		<result column="expire_time" property="expireTime" jdbcType="VARCHAR"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>		
+	</resultMap>
+
+	<insert id="insert" parameterType="LUserVip">
+		insert into l_user_vip 
+		(id,user_id,vip_id,surplus_day,expire_time,create_time,status) 
+		values 
+		(#{id},#{userId},#{vipId},#{surplusDay},#{expireTime},#{createTime},#{status})
+	</insert>
+	
+	<update id="update" parameterType="LUserVip">
+		update l_user_vip 
+		<set>
+			<if test="surplusDay != null and surplusDay != ''">
+				surplus_day = #{surplusDay},
+			</if>
+			<if test="status != null and status != ''">
+				status = #{status},
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from l_user_vip where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from l_user_vip where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="LUserVip" resultMap="BaseResultMap">
+		select * from l_user_vip 
+		<where>
+			<if test="status != null and status !=''">
+				and status = #{status}
+			</if>
+			<if test="userId != null and userId !=''">
+				and user_id = #{userId}
+			</if>
+			<if test="surplusDay != null and surplusDay !=''">
+				and surplus_day = #{surplusDay}
+			</if>
+		</where>
+		order by create_time desc 
+	</select>
+	
+	<update id="batchUpdate" parameterType="java.util.List">
+		 <foreach collection="list" item="item" index= "index" open="" close="" separator =";">
+             update l_user_vip
+             <set>
+                surplus_day = #{item.surplusDay,jdbcType=INTEGER},
+                status = #{item.status,jdbcType=INTEGER}
+             </set>
+             <where>
+                 id = #{item.id,jdbcType=INTEGER}
+             </where>
+         </foreach>
+	</update>
+	
+	<select id="selectVip" resultType="int">
+		SELECT COUNT(*)
+		FROM l_user_vip
+		WHERE STATUS=1 AND user_id=#{userId} and vip_id=#{vipId}
+	</select>
+	
+	<select id="selectVipNews" resultType="Map">
+	    SELECT CONCAT(CONCAT(LEFT(u.mobile,3), '****', RIGHT(u.mobile,4)),'购买了一张',i.name) AS content,FLOOR((UNIX_TIMESTAMP(NOW())*1000-v.create_time)/1000/60/60/24) AS days
+		FROM l_user_vip v INNER JOIN m_user_info u ON v.user_id=u.user_id INNER JOIN m_vip_info i ON v.vip_id=i.id
+		WHERE v.status=1
+		<if test="channelCode != 'zhongqing'">
+		  and i.vip_type=1
+		</if>
+		<if test="channelCode == 'zhongqing'">
+		  and i.vip_type=2
+		</if>
+		
+		ORDER BY v.create_time DESC
+		LIMIT 0,10
+	</select>
+	
+	<select id="selectByUser" parameterType="String" resultType="java.util.Map">
+		select uv.id AS uvId,v.* from l_user_vip uv
+		left join m_vip_info v on uv.vip_id = v.id
+		where uv.user_id = #{userId} and uv.status = 1 
+		ORDER BY v.game_addition desc
+	</select>
+	
+	<select id="selectIdList" resultMap="BaseResultMap">
+	    SELECT *
+		FROM l_user_vip
+		WHERE status=1 and user_id=#{userId}
+	</select>
+	
+	<select id="selectOverdue" resultMap="BaseResultMap">
+	    SELECT *
+		FROM l_user_vip
+		WHERE status=2 AND user_id=#{userId} and vip_id=#{vipId}
+		ORDER BY create_time DESC
+		LIMIT 0,1
+	</select>
+
+	<select id="selectByUserOrder" parameterType="String" resultType="java.util.Map">
+		select uv.id AS uvId,v.id,v.name,v.logo,v.price from l_user_vip uv
+		left join m_vip_info v on uv.vip_id = v.id
+		where uv.user_id = #{userId} and uv.status = 1 
+		ORDER BY v.order_id desc
+	</select>
+	
+	<select id="selectVipUserNum" resultType="int">
+	    SELECT DISTINCT(vip_id)
+		FROM l_user_vip
+		WHERE user_id=#{userId}
+	</select>
+	
+	<select id="selectByUserAll" parameterType="String" resultType="java.util.Map">
+		select uv.id,uv.user_id as userId,vi.name,uv.expire_time as expireTime,uv.`status`,uv.vip_id as vipId,
+			vi.logo,vi.order_id as orderId,vi.one_withdrawals as oneWithdrawals,vi.background_img as backgroundImg,vi.overdue_img as overdueImg
+		 from l_user_vip uv 
+		left join m_vip_info vi on uv.vip_id = vi.id 
+		where uv.user_id = #{userId} ORDER BY uv.create_time desc
+	</select>
+	
+	<select id="selectCountVip" resultType="int">
+		SELECT COUNT(*)
+		FROM l_user_vip
+		WHERE user_id=#{userId}
+	</select>
+	
+	<select id="selectReliefPig" parameterType="String" resultType="java.util.Map">
+	    SELECT v.everyday_relief_pig AS everydayReliefPig,v.everyday_relief_pig_times AS everydayReliefPigTimes
+		FROM l_user_vip u INNER JOIN m_vip_info v ON u.vip_id=v.id
+		WHERE u.status=1 and u.user_id=#{userId}
+		ORDER BY v.everyday_relief_pig DESC
+		LIMIT 0,1
+	</select>
+	
+	<select id="pigAddition" parameterType="String" resultType="Double">
+		SELECT v.coin_to_pig_addition AS addition
+		FROM l_user_vip u INNER JOIN m_vip_info v ON u.vip_id=v.id
+		WHERE u.status=1 AND u.user_id=#{userId}
+		ORDER BY v.coin_to_pig_addition DESC
+		LIMIT 0,1
+	</select>
+	
+	<select id="selectMaxVip" resultType="String">
+		SELECT name
+		FROM m_vip_info
+		WHERE id IN (SELECT vip_id FROM l_user_vip WHERE STATUS=1 AND user_id=#{userId})
+		ORDER BY order_id
+		LIMIT 0,1
+	</select>
+	
+	<select id="selectUserCount" parameterType="String" resultType="int">
+	    SELECT COUNT(*)
+		FROM l_user_vip
+		WHERE status=1 AND user_id=#{userId}
+	</select>
+	
+	<select id="selectUserVip" resultMap="BaseResultMap">
+	    SELECT *
+		FROM l_user_vip
+		WHERE status=1 and user_id=#{userId} and vip_id=#{vipId}
+	</select>
+	
+	<select id="selectOpenHighVipCount" parameterType="String" resultType="long">
+		select count(1) from l_user_vip where `status` = 1 
+		and user_id in (select user_id from m_user_info where referrer = #{userId})
+		and vip_id in (select id from m_vip_info where high_vip = 2)
+	</select>
+
+	<select id="selectHighVipHasBuy" parameterType="String" resultType="long">
+		select count(1) from l_user_vip where `status` = 1 
+		and user_id = #{userId}
+		and vip_id in (select id from m_vip_info where high_vip = 2)
+	</select>
+</mapper>

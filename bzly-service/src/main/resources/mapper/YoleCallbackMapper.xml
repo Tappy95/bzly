@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.YoleCallbackDao" >
+	
+	<insert id="insert" parameterType="YoleCallback">
+		insert into tp_yole_callback
+		(yoleid,userid,appid,imei,chid,gmid,gmname,rewardid,
+		rewarddesc,gmgold,chgold,rewardtype,menuorder,sign,status,createTime)
+		values 
+		(#{yoleid},#{userid},#{appid},#{imei},#{chid},#{gmid},#{gmname},#{rewardid},
+		#{rewarddesc},#{gmgold},#{chgold},#{rewardtype},#{menuorder},#{sign},#{status},#{createTime})
+	</insert>
+
+	<select id="selectByYoLeId" parameterType="String" resultType="com.mc.bzly.model.thirdparty.YoleCallback">
+		select * from tp_yole_callback where yoleid = #{yoleid} and status = 1
+	</select>
+	
+	<select id="selectListPage" parameterType="com.mc.bzly.model.thirdparty.YoleCallback" resultType="com.mc.bzly.model.thirdparty.YoleCallback">
+	    SELECT t.*,u.account_id AS accountId
+        FROM tp_yole_callback t INNER JOIN m_user_info u ON t.appid=u.user_id
+	    <where>
+	       <if test="accountId!=null and accountId!=''">
+		       and u.account_id=#{accountId}
+		   </if>
+		   <if test="yoleid!=null and yoleid!=''">
+		       and t.yoleid = #{yoleid}
+		   </if>
+		   <if test="gmname!=null and gmname!=''">
+		       and t.gmname=#{gmname}
+		   </if>
+		   <if test="status!=null and status!=''">
+			   and t.status=#{status}
+		   </if>
+		   <if test="startTime!=null and startTime!=''">
+		       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+		   </if>
+		   <if test="endTime!=null and endTime!=''">
+		       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+		   </if>
+	    </where>
+	    ORDER BY t.createTime desc
+	    limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="com.mc.bzly.model.thirdparty.YoleCallback" resultType="int">
+	    SELECT count(*)
+        FROM tp_yole_callback t INNER JOIN m_user_info u ON t.appid=u.user_id
+	    <where>
+	       <if test="accountId!=null and accountId!=''">
+		       and u.account_id=#{accountId}
+		   </if>
+		   <if test="yoleid!=null and yoleid!=''">
+		       and t.yoleid = #{yoleid}
+		   </if>
+		   <if test="gmname!=null and gmname!=''">
+		       and t.gmname=#{gmname}
+		   </if>
+		   <if test="status!=null and status!=''">
+			   and t.status=#{status}
+		   </if>
+		   <if test="startTime!=null and startTime!=''">
+		       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+		   </if>
+		   <if test="endTime!=null and endTime!=''">
+		       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+		   </if>
+	    </where>
+	</select>
+	
+	<select id="selectSmallSum" parameterType="com.mc.bzly.model.thirdparty.YoleCallback" resultType="map">
+	    SELECT COUNT(*) AS smallSuccessCount,SUM(c.chgold) AS smallPriceSum,SUM(c.gmgold) AS smallMoneySum
+	    FROM  ( SELECT t.status,t.chgold,t.gmgold
+		        FROM tp_yole_callback t INNER JOIN m_user_info u ON t.appid=u.user_id
+			    <where>
+			       <if test="accountId!=null and accountId!=''">
+				       and u.account_id=#{accountId}
+				   </if>
+				   <if test="gmname!=null and gmname!=''">
+				       and t.gmname=#{gmname}
+				   </if>
+				   <if test="status!=null and status!=''">
+					   and t.status=#{status}
+				   </if>
+				   <if test="yoleid!=null and yoleid!=''">
+				       and t.yoleid = #{yoleid}
+				   </if>
+				   <if test="startTime!=null and startTime!=''">
+				       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+				   </if>
+				   <if test="endTime!=null and endTime!=''">
+				       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+				   </if>
+			    </where>
+			    ORDER BY t.createTime desc
+			    limit #{pageIndex},#{pageSize}
+			    ) c
+		WHERE c.status=1
+	</select>
+	
+	<select id="selectCountSum" parameterType="com.mc.bzly.model.thirdparty.YoleCallback" resultType="map">
+	    SELECT COUNT(*) AS successCount,SUM(c.chgold) AS priceSum,SUM(c.gmgold) AS moneySum
+        FROM  ( SELECT t.status,t.chgold,t.gmgold
+		        FROM tp_yole_callback t INNER JOIN m_user_info u ON t.appid=u.user_id
+			    <where>
+			       <if test="accountId!=null and accountId!=''">
+				       and u.account_id=#{accountId}
+				   </if>
+				   <if test="gmname!=null and gmname!=''">
+				       and t.gmname=#{gmname}
+				   </if>
+				   <if test="status!=null and status!=''">
+					   and t.status=#{status}
+				   </if>
+				   <if test="yoleid!=null and yoleid!=''">
+				       and t.yoleid = #{yoleid}
+				   </if>
+				   <if test="startTime!=null and startTime!=''">
+				       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+				   </if>
+				   <if test="endTime!=null and endTime!=''">
+				       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+				   </if>
+			    </where>
+			    ) c
+		WHERE c.status=1
+	</select>
+	
+	<select id="selectByYoleidStatus" resultType="com.mc.bzly.model.thirdparty.YoleCallback">
+		select * from tp_yole_callback where yoleid = #{yoleid} and status = #{status} limit 1
+	</select>
+	
+	<delete id="deleteByYoleid" parameterType="String">
+		delete from tp_yole_callback where yoleid = #{yoleid} and status = 2
+	</delete>
+</mapper>

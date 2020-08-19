@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserTptaskDao" >
+	<resultMap type="LUserTptask" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>		
+		<result column="tp_task_id" property="tpTaskId" jdbcType="INTEGER"/>		
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>		
+		<result column="expire_time" property="expireTime" jdbcType="INTEGER"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>		
+		<result column="flew_num" property="flewNum" jdbcType="VARCHAR"/>		
+	</resultMap>
+	
+	<resultMap type="LUserTptaskSimple" id="BaseResultMap2">
+		<result column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>	
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>	
+		
+		<result column="tp_task_id" property="tpTaskId" jdbcType="INTEGER"/>	
+		<result column="name" property="name" jdbcType="VARCHAR"/>		
+		<result column="logo" property="logo" jdbcType="VARCHAR"/>				
+		<result column="label" property="label" jdbcType="VARCHAR"/>		
+		<result column="reward" property="reward" jdbcType="DECIMAL"/>
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>		
+		<result column="expire_time" property="expireTime" jdbcType="INTEGER"/>		
+		<result column="order_time" property="orderTime" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<sql id="baseSql">
+		id,user_id,tp_task_id,update_time,expire_time,create_time,remark,status
+	</sql>
+
+	<insert id="insert" parameterType="LUserTptask" keyProperty="id" useGeneratedKeys="true">
+		insert into l_user_tp_task (id,user_id,tp_task_id,update_time,expire_time,create_time,remark,status,account_id,flew_num) values
+		(#{id},#{userId},#{tpTaskId},#{updateTime},#{expireTime},#{createTime},#{remark},#{status},#{accountId},#{flewNum})
+	</insert>
+	
+	<update id="update" parameterType="LUserTptask">
+		update l_user_tp_task 
+		<set>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+			<if test="expireTime != null">
+				expire_time = #{expireTime},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<select id="selectByUser" parameterType="LUserTptask" resultMap="BaseResultMap" >
+		select * from l_user_tp_task 
+		<where>
+			<if test="userId != null and userId != ''">
+				and user_id = #{userId}
+			</if>
+			<if test="tpTaskId != null and tpTaskId != ''">
+				and tp_task_id = #{tpTaskId}
+			</if>
+			<if test="status != null and status != ''">
+				and status = #{status}
+			</if>
+		</where> 
+	</select>
+	
+	<select id="selectByTaskId" resultMap="BaseResultMap" >
+		select * from l_user_tp_task where tp_task_id = #{tpTaskId} and user_id = #{userId} <if test="status != null and status != ''">and status = #{status}</if>
+	</select>
+	
+	<select id="selectTaskCount" resultType="long">
+		select count(1) from l_user_tp_task where user_id = #{userId} and status = #{status}
+	</select>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from l_user_tp_task where id = #{id}
+	</select>
+	
+	<select id="selectByTaskIdAccount" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+		select * from l_user_tp_task where tp_task_id = #{tpTaskId} and account_id = #{accountId} <if test="status != null and status != ''">and status = #{status}</if>
+	</select>
+
+	<select id="selectListByTaskId" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+		select * from l_user_tp_task where tp_task_id = #{tpTaskId} and status = 5
+	</select>
+	
+	<update id="batchUpdateStatus">
+		update l_user_tp_task set expire_time = #{expireTime}, status = 1 where tp_task_id = #{tpTaskId} and status = 5
+	</update>
+	
+	<select id="selectFList" parameterType="LUserTptask" resultMap="BaseResultMap2">
+		select 
+		l.id as id,l.`status` ,l.tp_task_id,l.remark,
+		task.name,task.label,task.reward,task.logo,task.order_time,
+		l.update_time,l.expire_time
+		from l_user_tp_task l
+		left join tp_task_info task on l.tp_task_id = task.id
+		where user_id = #{userId} 
+		<if test="status != null and status != ''">
+			<if test="status == 3">
+				and l.status in (3,4)
+			</if>
+			<if test="status !=3">
+				and l.status = #{status}
+			</if>
+		</if>
+		order by l.create_time desc
+	</select>
+
+	<select id="selectByTaskIdHasFinish" resultMap="BaseResultMap" >
+		select * from l_user_tp_task where tp_task_id = #{tpTaskId} and user_id = #{userId} and status in(2,3)
+	</select>
+
+	<select id="selectByUserHasFinish" resultMap="BaseResultMap" >
+		select * from l_user_tp_task where user_id = #{userId} and status in (2,3)
+	</select>
+	
+	<select id="selectUserCount" parameterType="String" resultType="int">
+	    SELECT COUNT(1) 
+		FROM (SELECT DISTINCT tp_task_id
+		FROM l_user_tp_task 
+		WHERE STATUS IN (2,3,4) AND user_id = #{userId}
+		) a
+	</select>
+	
+	<select id="selectByFlewNum" parameterType="String" resultMap="BaseResultMap">
+		select * from l_user_tp_task where flew_num = #{flewNum}
+	</select>
+	
+	<update id="updateStatus" parameterType="LUserTptask">
+		update l_user_tp_task
+		<set>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+			<if test="expireTime != null">
+				expire_time = #{expireTime},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+		</set>
+		where flew_num = #{flewNum}
+	</update>
+</mapper>

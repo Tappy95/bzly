@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.checkin.CCheckinLogDao">
+	<resultMap id="BaseResultMap" type="CCheckinLog">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="INTEGER"/>
+		<result column="pay_coin" property="payCoin" jdbcType="INTEGER"/>
+		<result column="reward_coin" property="rewardCoin" jdbcType="INTEGER"/>
+		<result column="user_type" property="userType" jdbcType="INTEGER"/>
+		<result column="state" property="state" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="checkin_time" property="checkinTime" jdbcType="INTEGER"/>
+		<result column="user_time" property="userTime" jdbcType="INTEGER"/>
+		<result column="last_time" property="lastTime" jdbcType="INTEGER"/>
+		<result column="continuity_days" property="continuityDays" jdbcType="INTEGER"/>
+		<result column="is_tips" property="isTips" jdbcType="INTEGER"/>
+		<result column="is_coupon" property="isCoupon" jdbcType="INTEGER"/>
+		
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="CCheckinLog">
+	   INSERT INTO c_checkin_log(user_id,pay_coin,reward_coin,user_type,state,create_time,checkin_time,user_time,last_time,continuity_days,is_tips,is_coupon)
+       VALUES (#{userId},#{payCoin},#{rewardCoin},#{userType},#{state},#{createTime},#{checkinTime},#{userTime},#{lastTime},#{continuityDays},#{isTips},#{isCoupon})
+	</insert>
+	
+	<select id="selectCreate" parameterType="String" resultMap="BaseResultMap">
+	   select *
+	   from c_checkin_log 
+	   where user_id=#{userId} and FROM_UNIXTIME(create_time/1000,'%Y-%m-%d')=CURDATE()
+	</select>
+	
+	<update id="update" parameterType="CCheckinLog">
+	    update c_checkin_log 
+		<set>
+			<if test="state != null">
+				state = #{state},
+			</if>
+			<if test="userTime != null">
+				user_time = #{userTime},
+			</if>
+			<if test="lastTime != null">
+				last_time = #{lastTime},
+			</if>
+			<if test="isCoupon != null">
+				is_coupon = #{isCoupon},
+			</if>
+			<if test="continuityDays != null">
+				continuity_days = #{continuityDays}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<select id="selectCheckin" parameterType="String" resultMap="BaseResultMap">
+	   select *
+	   from c_checkin_log 
+	   where user_id=#{userId} and FROM_UNIXTIME(checkin_time/1000,'%Y-%m-%d')=CURDATE()
+	</select>
+	
+	<select id="selectCreateCount" resultType="map">
+	    SELECT COUNT(1) AS number,IFNULL(SUM(pay_coin),0) AS coin
+        FROM c_checkin_log
+        WHERE FROM_UNIXTIME(create_time/1000,'%Y-%m-%d')=CURDATE()
+	</select>
+	
+	<select id="selectCheckinCount" resultType="map">
+	    SELECT COUNT(1) AS number,IFNULL(SUM(pay_coin),0) AS coin
+        FROM c_checkin_log
+        WHERE FROM_UNIXTIME(checkin_time/1000,'%Y-%m-%d')=CURDATE()
+	</select>
+	
+	<update id="updateTips" parameterType="int">
+	    update c_checkin_log 
+		set is_tips=2
+		where id = #{id}
+	</update>
+	
+	<select id="selectLast" parameterType="String" resultMap="BaseResultMap">
+	    select *
+	    from c_checkin_log
+	    where user_id=#{userId} and state=2 and FROM_UNIXTIME(user_time/1000,'%Y-%m-%d')=DATE_SUB(curdate(),INTERVAL 1 DAY)
+	</select>
+	
+	<select id="selectUserList" parameterType="CCheckinLog" resultType="map">
+	    SELECT state,FROM_UNIXTIME(checkin_time/1000,'%Y-%m-%d') AS checkinTime,
+		CASE state
+		WHEN 2 THEN IFNULL(reward_coin,0)
+		WHEN 3 THEN IFNULL(reward_coin,0)-pay_coin
+		END rewardCoin
+		FROM c_checkin_log
+		where user_id=#{userId}
+		ORDER BY checkin_time DESC 
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectUserCount" parameterType="CCheckinLog" resultType="int">
+	    SELECT count(1)
+		FROM c_checkin_log
+		where user_id=#{userId}
+	</select>
+	
+	<select id="selectUserSum" parameterType="String" resultType="map">
+	   SELECT IFNULL(SUM(pay_coin),0) AS payCoin,IFNULL(SUM(reward_coin),0) AS rewardCoin
+       FROM c_checkin_log
+       where user_id=#{userId}
+	</select>
+	
+	<select id="selectList" parameterType="CCheckinLog" resultMap="BaseResultMap">
+	   SELECT u.account_id,c.*
+       FROM c_checkin_log c LEFT JOIN m_user_info u ON c.user_id=u.user_id
+	   <where>
+	      user_type=1
+	      <if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		  </if>
+		  <if test="state != null and state != ''">
+			and c.state = #{state}
+		  </if>
+		  <if test="startCreateTime != null and startCreateTime != ''">
+			and c.create_time >= #{startCreateTime}
+		  </if>
+		  <if test="endCreateTime != null and endCreateTime != ''">
+			and #{endCreateTime}>c.create_time
+		  </if>
+	   </where>
+	   order by c.create_time desc
+	   limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="CCheckinLog" resultType="int">
+	   SELECT count(1)
+       FROM c_checkin_log c LEFT JOIN m_user_info u ON c.user_id=u.user_id
+	   <where>
+	      user_type=1
+	      <if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		  </if>
+		  <if test="state != null and state != ''">
+			and c.state = #{state}
+		  </if>
+		  <if test="startCreateTime != null and startCreateTime != ''">
+			and c.create_time >= #{startCreateTime}
+		  </if>
+		  <if test="endCreateTime != null and endCreateTime != ''">
+			and #{endCreateTime}>c.create_time
+		  </if>
+	   </where>
+	</select>
+	
+	<select id="selectSubtotal" parameterType="CCheckinLog" resultType="map">
+	   
+	   SELECT IFNULL(SUM(a.pay),0) AS payCoin,IFNULL(SUM(a.reward),0) AS rewardCoin
+       FROM (
+       SELECT c.pay_coin AS pay,c.reward_coin as reward
+       FROM c_checkin_log c LEFT JOIN m_user_info u ON c.user_id=u.user_id
+	   <where>
+	      user_type=1
+	      <if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		  </if>
+		  <if test="state != null and state != ''">
+			and c.state = #{state}
+		  </if>
+		  <if test="startCreateTime != null and startCreateTime != ''">
+			and c.create_time >= #{startCreateTime}
+		  </if>
+		  <if test="endCreateTime != null and endCreateTime != ''">
+			and #{endCreateTime}>c.create_time
+		  </if>
+	   </where>
+	   order by c.create_time desc
+	   limit #{pageIndex},#{pageSize}
+	   ) a
+	</select>
+	
+	<select id="selectTotal" parameterType="CCheckinLog" resultType="map">
+	   SELECT IFNULL(SUM(c.pay_coin),0) AS payCoin,IFNULL(SUM(c.reward_coin),0) AS rewardCoin
+       FROM c_checkin_log c LEFT JOIN m_user_info u ON c.user_id=u.user_id
+	   <where>
+	      user_type=1
+	      <if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		  </if>
+		  <if test="state != null and state != ''">
+			and c.state = #{state}
+		  </if>
+		  <if test="startCreateTime != null and startCreateTime != ''">
+			and c.create_time >= #{startCreateTime}
+		  </if>
+		  <if test="endCreateTime != null and endCreateTime != ''">
+			and #{endCreateTime}>c.create_time
+		  </if>
+	   </where>
+	</select>
+</mapper>

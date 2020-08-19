@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.checkin.CCheckinRewardRuleDao">
+	<resultMap id="BaseResultMap" type="CCheckinRewardRule">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="min_number" property="minNumber" jdbcType="INTEGER"/>
+		<result column="max_number" property="maxNumber" jdbcType="INTEGER"/>
+		<result column="reward_ratio" property="rewardRatio" jdbcType="INTEGER"/>
+		<result column="extra_reward" property="extraReward" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="min_reward" property="minReward" jdbcType="INTEGER"/>
+		<result column="max_reward" property="maxReward" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="CCheckinRewardRule">
+	   INSERT INTO c_checkin_reward_rule(min_number,max_number,reward_ratio,extra_reward,create_time,min_reward,max_reward)
+       VALUES (#{minNumber},#{maxNumber},#{rewardRatio},#{extraReward},#{createTime},#{minReward},#{maxReward})
+	</insert>
+	
+	<select id="selectList" resultMap="BaseResultMap">
+	   select *
+	   from c_checkin_reward_rule
+	   order by min_number
+	</select>
+	
+	<select id="selectOne" parameterType="int" resultMap="BaseResultMap">
+	   select *
+	   from c_checkin_reward_rule 
+	   where id=#{id}
+	</select>
+	
+	<update id="update" parameterType="CCheckinRewardRule">
+	    update c_checkin_reward_rule 
+		<set>
+			min_number = #{minNumber},
+			max_number = #{maxNumber},
+			reward_ratio = #{rewardRatio},
+			<if test="extraReward != null">
+				extra_reward = #{extraReward},
+			</if>
+			min_reward = #{minReward},
+			max_reward = #{maxReward}
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+	  delete from c_checkin_reward_rule where id = #{id}
+	</delete>
+	
+	<select id="selectNumber" parameterType="int" resultMap="BaseResultMap">
+	   select * from c_checkin_reward_rule where #{number}>=min_number and max_number>=#{number}
+	</select>
+</mapper>

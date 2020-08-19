@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.BZCallbackDao" >
+	
+	<insert id="insert" parameterType="BZCallback">
+		insert into tp_bz_callback
+		(adid,adname,appid,ordernum,dlevel,pagename,deviceid,
+		simid,appsign,merid,event,price,money,itime,keycode,status,createTime)
+		values 
+		(#{adid},#{adname},#{appid},#{ordernum},#{dlevel},#{pagename},#{deviceid},
+		#{simid},#{appsign},#{merid},#{event},#{price},#{money},#{itime},#{keycode},#{status},#{createTime})
+	</insert>
+	
+	<select id="selectByOrderNum" parameterType="String" resultType="BZCallback">
+		select * from tp_bz_callback where ordernum = #{ordernum} and status = 1
+	</select>
+	
+	<select id="selectListPage" parameterType="BZCallback" resultType="BZCallback">
+	     SELECT t.adid,t.adname,t.appid,t.appsign,t.deviceid,t.dlevel,t.event,t.keycode,t.merid,t.ordernum,t.pagename,t.price,t.simid,t.status,t.createTime,
+		 u.account_id AS accountId,
+		 t.money
+		 FROM tp_bz_callback t INNER JOIN m_user_info u ON t.appsign=u.user_id
+	    <where>
+	       <if test="accountId!=null and accountId!=''">
+		       and u.account_id=#{accountId}
+		   </if>
+		   <if test="adname!=null and adname!=''">
+		       and t.adname=#{adname}
+		   </if>
+		   <if test="ordernum!=null and ordernum!=''">
+		       and t.ordernum = #{ordernum}
+		   </if>
+		   <if test="status!=null and status!=''">
+		       and t.status=#{status}
+		   </if>
+		   <if test="startTime!=null and startTime!=''">
+		       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+		   </if>
+		   <if test="endTime!=null and endTime!=''">
+		       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+		   </if>
+	    </where>
+	    order by t.itime desc
+	    limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="BZCallback" resultType="int">
+	    SELECT count(*)
+        FROM tp_bz_callback t INNER JOIN m_user_info u ON t.appsign=u.user_id
+	    <where>
+	       <if test="accountId!=null and accountId!=''">
+		       and u.account_id=#{accountId}
+		   </if>
+		   <if test="ordernum!=null and ordernum!=''">
+		       and t.ordernum = #{ordernum}
+		   </if>
+		   <if test="adname!=null and adname!=''">
+		       and t.adname=#{adname}
+		   </if>
+		   <if test="status!=null and status!=''">
+		       and t.status=#{status}
+		   </if>
+		   <if test="startTime!=null and startTime!=''">
+		       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+		   </if>
+		   <if test="endTime!=null and endTime!=''">
+		       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+		   </if>
+	    </where>
+	</select>
+	
+	<select id="selectSmallSum" parameterType="BZCallback" resultType="map">
+	    SELECT COUNT(*) AS smallSuccessCount,SUM(c.price)*10000 AS smallPriceSum,SUM(c.money)*10000 AS smallMoneySum
+	    FROM (  SELECT t.status,t.price,t.money
+		        FROM tp_bz_callback t INNER JOIN m_user_info u ON t.appsign=u.user_id
+			    <where>
+			       <if test="accountId!=null and accountId!=''">
+				       and u.account_id=#{accountId}
+				   </if>
+				   <if test="adname!=null and adname!=''">
+				       and t.adname=#{adname}
+				   </if>
+				   <if test="status!=null and status!=''">
+				       and t.status=#{status}
+				   </if>
+				   <if test="ordernum!=null and ordernum!=''">
+				       and t.ordernum = #{ordernum}
+				   </if>
+				   <if test="startTime!=null and startTime!=''">
+				       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+				   </if>
+				   <if test="endTime!=null and endTime!=''">
+				       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+				   </if>
+			    </where>
+			    order by t.itime desc
+			    limit #{pageIndex},#{pageSize}
+		    ) c
+	    WHERE c.status=1
+	</select>
+	
+	<select id="selectCountSum" parameterType="BZCallback" resultType="map">
+	    SELECT COUNT(*) AS successCount,SUM(c.price)*10000 AS priceSum,SUM(c.money)*10000 AS moneySum
+        FROM (  SELECT t.status,t.price,t.money
+		        FROM tp_bz_callback t INNER JOIN m_user_info u ON t.appsign=u.user_id
+			    <where>
+			       <if test="accountId!=null and accountId!=''">
+				       and u.account_id=#{accountId}
+				   </if>
+				   <if test="adname!=null and adname!=''">
+				       and t.adname=#{adname}
+				   </if>
+				   <if test="status!=null and status!=''">
+				       and t.status=#{status}
+				   </if>
+				   <if test="ordernum!=null and ordernum!=''">
+				       and t.ordernum = #{ordernum}
+				   </if>
+				   <if test="startTime!=null and startTime!=''">
+				       and t.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+				   </if>
+				   <if test="endTime!=null and endTime!=''">
+				       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= t.createTime
+				   </if>
+			    </where>
+		    ) c
+	    WHERE c.status=1
+	</select>
+	
+	<select id="selectByOrderNumStatus" resultType="BZCallback">
+		select * from tp_bz_callback where ordernum = #{ordernum} and status = #{status} order by itime desc limit 1
+	</select>
+	
+	<delete id="deleteByOrderNum">
+		delete from tp_bz_callback where ordernum = #{ordernum} and status = 2
+	</delete>
+</mapper>

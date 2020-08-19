@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.TaskCallbackDao" >
+	
+	<resultMap type="TaskCallback" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="orderNum" property="orderNum" jdbcType="VARCHAR"/>
+		<result column="taskId" property="taskId" jdbcType="INTEGER"/>
+		<result column="name" property="name" jdbcType="VARCHAR"/>
+		<result column="userId" property="userId" jdbcType="VARCHAR"/>
+		<result column="chReward" property="chReward" jdbcType="DECIMAL"/>
+		<result column="userReward" property="userReward" jdbcType="DECIMAL"/>
+		<result column="totalCoin" property="totalCoin" jdbcType="INTEGER"/>
+		<result column="resultCode" property="resultCode" jdbcType="INTEGER"/>
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+		<result column="date" property="date" jdbcType="INTEGER"/>
+		<result column="sign" property="sign" jdbcType="VARCHAR"/>
+		<result column="createTime" property="createTime" jdbcType="INTEGER"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+	</resultMap>
+	<insert id="insert" parameterType="TaskCallback">
+		insert into tp_task_callback
+		(id,orderNum,taskId,name,userId,chReward,userReward,totalCoin,resultCode,remark,date,sign,createTime,status)
+		values 
+		(#{id},#{orderNum},#{taskId},#{name},#{userId},#{chReward},#{userReward},#{totalCoin},#{resultCode},#{remark},#{date},#{sign},#{createTime},#{status})
+	</insert>
+	
+	<select id="selectByOrderNum" resultMap="BaseResultMap">
+		select * from tp_task_callback where orderNum = #{orderNum} and status = 1
+	</select>
+	
+	<select id="selectList" parameterType="TaskCallback" resultMap="BaseResultMap">
+	    select *
+	    from tp_task_callback
+	    <where>
+	        <if test="orderNum != null and orderNum != ''">
+	            and orderNum=#{orderNum}
+	        </if>
+	        <if test="name != null and name != ''">
+	            and name=#{name}
+	        </if>
+	        <if test="userId != null and userId != ''">
+	            and userId=#{userId}
+	        </if>
+	        <if test="resultCode != null and resultCode != ''">
+	            and resultCode=#{resultCode}
+	        </if>
+	    </where>
+	    order by createTime desc
+	    limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="TaskCallback" resultType="int">
+	    select count(*)
+	    from tp_task_callback
+	    <where>
+	        <if test="orderNum != null and orderNum != ''">
+	            and orderNum=#{orderNum}
+	        </if>
+	        <if test="name != null and name != ''">
+	            and name=#{name}
+	        </if>
+	        <if test="userId != null and userId != ''">
+	            and userId=#{userId}
+	        </if>
+	        <if test="resultCode != null and resultCode != ''">
+	            and resultCode=#{resultCode}
+	        </if>
+	    </where>
+	</select>
+</mapper>

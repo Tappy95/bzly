@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.wish.UserWishValueDao" >
+	<resultMap type="UserWishValue" id="BaseResultMap">
+	    <id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="wish_value" property="wishValue" jdbcType="INTEGER"/>		
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>			
+	</resultMap>
+	
+	<insert id="insert" parameterType="UserWishValue">
+		insert into sr_user_wish_value (user_id,wish_value,update_time) 
+		values(#{userId},#{wishValue},#{updateTime})
+	</insert>
+	
+	<update id="updateAdd" parameterType="UserWishValue">
+	    update sr_user_wish_value
+	    set wish_value=wish_value+1,
+	    update_time=#{updateTime}
+	    where user_id=#{userId}
+	</update>
+
+	<update id="update" parameterType="UserWishValue">
+	    update sr_user_wish_value
+	    set wish_value = wish_value+#{wishValue},
+	    update_time=#{updateTime}
+	    where user_id=#{userId}
+	</update>
+	
+	<select id="selectOne" parameterType="String" resultMap="BaseResultMap">
+	    select *
+	    from sr_user_wish_value
+	    where user_id=#{userId}
+	</select>
+	   
+</mapper>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserStatisticDao" >
+	<resultMap type="LUserStatistic" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="one_game" property="oneGame" jdbcType="INTEGER"/>		
+		<result column="two_game" property="twoGame" jdbcType="INTEGER"/>		
+		<result column="total_game" property="totalGame" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="LUserStatistic">
+		insert into l_user_statistic(user_id,one_game,two_game,total_game) 
+		values(#{userId},#{oneGame},#{twoGame},#{totalGame})
+	</insert>
+	
+	<update id="update" parameterType="LUserStatistic">
+		update l_user_statistic 
+		<set>
+		    <if test="oneGame != null and oneGame != ''">
+				one_game = #{oneGame},
+			</if>
+		    <if test="twoGame != null and twoGame != ''">
+				two_game = #{twoGame},
+			</if>
+			<if test="totalGame != null and totalGame != ''">
+				total_game = #{totalGame}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<select id="selectOne" parameterType="String" resultMap="BaseResultMap">
+		select * from l_user_statistic where user_id = #{userId}
+	</select>
+	
+	<select id="selectUserList" parameterType="LUserReconciliation" resultType="map">
+	    SELECT u.account_id AS 'accountId',u.channel_code AS 'channelCode',s.one_game AS 'zcYxGame',s.total_game AS 'yxGame',FROM_UNIXTIME(u.create_time/1000,'%Y-%m-%d %H:%i:%s') AS 'createTime'
+		FROM l_user_statistic s LEFT JOIN m_user_info u ON s.user_id=u.user_id
+		<where>
+		   <if test="channel !='baozhu'">
+			    <if test="channel != null and channel != '' and userRelation==1">
+				    and (u.channel_code=#{channel} OR u.parent_channel_code=#{channel})
+				</if>
+				<if test="channel != null and channel != '' and userRelation==2">
+				    and u.channel_code=#{channel}
+				</if>
+				<if test="channel != null and channel != '' and userRelation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channel}
+				</if>
+		   </if>
+		   <if test="accountId != null and accountId != ''">
+			 and u.account_id = #{accountId}
+		   </if>
+		   <if test="channelCode != null and channelCode != ''">
+			 and u.channel_code = #{channelCode}
+		   </if>
+		   <if test="minZcYxCount != null and minZcYxCount != ''">
+		     and s.one_game>=#{minZcYxCount}
+		   </if>
+		   <if test="maxZcYxCount != null and maxZcYxCount != ''">
+		     and #{maxZcYxCount}>=s.one_game
+		   </if>
+		   <if test="minYxCount != null and minYxCount != ''">
+		     and s.total_game>=#{minYxCount}
+		   </if>
+		   <if test="maxYxCount != null and maxYxCount != ''">
+		     and #{maxYxCount}>=s.total_game
+		   </if>
+		   <if test="startTime != null and startTime != ''">
+			 and u.create_time>=#{startTime}
+		   </if>
+		   <if test="endTime != null and endTime != ''">
+			 and #{endTime}>=u.create_time
+		   </if>
+		</where>
+		ORDER BY u.create_time DESC 
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectUserCount" parameterType="LUserReconciliation" resultType="int">
+	    SELECT count(1)
+		FROM l_user_statistic s LEFT JOIN m_user_info u ON s.user_id=u.user_id
+		<where>
+		   <if test="channel !='baozhu'">
+			    <if test="channel != null and channel != '' and userRelation==1">
+				    and (u.channel_code=#{channel} OR u.parent_channel_code=#{channel})
+				</if>
+				<if test="channel != null and channel != '' and userRelation==2">
+				    and u.channel_code=#{channel}
+				</if>
+				<if test="channel != null and channel != '' and userRelation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channel}
+				</if>
+		   </if>
+		   <if test="accountId != null and accountId != ''">
+			 and u.account_id = #{accountId}
+		   </if>
+		   <if test="channelCode != null and channelCode != ''">
+			 and u.channel_code = #{channelCode}
+		   </if>
+		   <if test="minZcYxCount != null and minZcYxCount != ''">
+		     and s.one_game>=#{minZcYxCount}
+		   </if>
+		   <if test="maxZcYxCount != null and maxZcYxCount != ''">
+		     and #{maxZcYxCount}>=s.one_game
+		   </if>
+		   <if test="minYxCount != null and minYxCount != ''">
+		     and s.total_game>=#{minYxCount}
+		   </if>
+		   <if test="maxYxCount != null and maxYxCount != ''">
+		     and #{maxYxCount}>=s.total_game
+		   </if>
+		   <if test="startTime != null and startTime != ''">
+			 and u.create_time>=#{startTime}
+		   </if>
+		   <if test="endTime != null and endTime != ''">
+			 and #{endTime}>=u.create_time
+		   </if>
+		</where>
+	</select>
+	
+</mapper>

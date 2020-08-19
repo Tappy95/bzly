@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.fighting.LFightingInfoDao">
+	<resultMap id="BaseResultMap" type="LFightingInfo">
+		<id column="log_id" property="logId" jdbcType="INTEGER"/>
+		<result column="fight_id" property="fightId" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="question_id" property="questionId" jdbcType="INTEGER"/>
+		<result column="answer_id" property="answerId" jdbcType="INTEGER"/>
+		<result column="is_correct" property="isCorrect" jdbcType="INTEGER"/>
+		<result column="score" property="Score" jdbcType="INTEGER"/>
+		<result column="answer_time" property="answerTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="LFightingInfo">
+	   INSERT INTO l_fighting_info(fight_id,user_id,question_id,answer_id,is_correct,score,answer_time) 
+       VALUES (#{fightId},#{userId},#{questionId},#{answerId},#{isCorrect},#{score},#{answerTime})
+	</insert>
+	
+	<select id="selectUserId" resultMap="BaseResultMap">
+	   select *
+	   from l_fighting_info
+	   where user_id=#{userId}
+	</select>
+</mapper>

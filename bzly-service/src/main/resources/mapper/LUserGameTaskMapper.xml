@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserGameTaskDao" >
+	<resultMap type="LUserGameTask" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="game_id" property="gameId" jdbcType="INTEGER"/>		
+		<result column="vip_id" property="vipId" jdbcType="INTEGER"/>		
+		<result column="state" property="state" jdbcType="INTEGER"/>		
+		<result column="task_type" property="taskType" jdbcType="INTEGER"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="is_hide" property="isHide" jdbcType="INTEGER"/>
+		<result column="money" property="money" jdbcType="DOUBLE"/>
+		<result column="cash_id" property="cashId" jdbcType="INTEGER"/>
+		<result column="vipName" property="vipName" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="LUserGameTask">
+		insert into l_user_game_task(user_id,game_id,vip_id,state,task_type,create_time,is_hide,cash_id) 
+		values(#{userId},#{gameId},#{vipId},#{state},#{taskType},#{createTime},1,#{cashId})
+	</insert>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+	    SELECT * FROM l_user_game_task WHERE FROM_UNIXTIME(create_time/1000,'%Y-%m-%d')=CURDATE() and user_id=#{userId} and vip_id=#{vipId} and task_type=#{taskType}
+	</select>
+	
+	<update id="update" parameterType="LUserGameTask">
+	    update l_user_game_task 
+		<set>
+			<if test="userId != null">
+				user_id = #{userId},
+			</if>
+			<if test="gameId != null">
+				game_id = #{gameId},
+			</if>
+			<if test="state != null">
+				state = #{state},
+			</if>
+			<if test="taskType != null">
+				task_type = #{taskType},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+			<if test="money != null">
+				money = #{money}
+			</if>
+		</set>
+		where id = #{id} and vip_id=#{vipId}
+	</update>
+	
+	<select id="selectGameOne" resultMap="BaseResultMap">
+	    SELECT * FROM l_user_game_task WHERE FROM_UNIXTIME(create_time/1000,'%Y-%m-%d')=CURDATE() and user_id=#{userId} and game_id=#{gameId} and task_type=#{taskType}
+	</select>
+	
+	<select id="selectlist" resultType="map">
+	    SELECT t.id,u.account_id AS accountId,t.game_id AS gameId,(SELECT game_title FROM tp_game WHERE id=t.game_id) AS gameName,(SELECT NAME FROM m_vip_info WHERE id=t.vip_id) AS vipName,t.state,FROM_UNIXTIME(t.create_time/1000,'%Y-%m-%d %H:%i:%s') AS createTime,t.task_type AS taskType
+        FROM l_user_game_task t INNER JOIN m_user_info u ON t.user_id=u.user_id
+        <where>
+            <if test="createTime != null and createTime != ''">
+                and FROM_UNIXTIME(t.create_time/1000,'%Y-%m-%d')=#{createTime}
+            </if>
+            <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+        </where>
+        order by t.id
+	</select>
+	
+	<update id="updateState">
+	   update l_user_game_task 
+	   set state = #{state}
+	   where id = #{id}
+	</update>
+	
+	<update id="updateHide" parameterType="LUserGameTask">
+	   update l_user_game_task 
+	   set is_hide = #{isHide}
+	   where game_id = #{gameId} and user_id=#{userId}
+	</update>
+	
+	<select id="selectInfo" resultMap="BaseResultMap">
+	    SELECT * FROM l_user_game_task WHERE user_id=#{userId} and game_id = #{gameId}
+	</select>
+	
+	<select id="selectCashCount" parameterType="int" resultType="int">
+	    SELECT count(*) 
+	    FROM l_user_game_task 
+	    WHERE state=2 and cash_id = #{cashId}
+	</select>
+	
+	<select id="selectGameOne2" resultMap="BaseResultMap">
+	    SELECT * FROM l_user_game_task WHERE FROM_UNIXTIME(create_time/1000,'%Y-%m-%d')=CURDATE() and user_id=#{userId} and game_id=#{gameId}
+	</select>
+	
+	<select id="selectSginOne" resultMap="BaseResultMap">
+	    SELECT * FROM l_user_game_task WHERE FROM_UNIXTIME(create_time/1000,'%Y-%m-%d')=CURDATE() and user_id=#{userId} and task_type=#{taskType}
+	</select>
+	
+	<select id="selectCashGameOne" resultMap="BaseResultMap">
+	    SELECT * FROM l_user_game_task WHERE FROM_UNIXTIME(create_time/1000,'%Y-%m-%d')=CURDATE() and user_id=#{userId} and task_type=#{taskType} and state=#{state}
+	</select>
+	
+	<select id="selectId" parameterType="int" resultMap="BaseResultMap">
+	    select *
+	    from l_user_game_task
+	    where id=#{id}
+	</select>
+</mapper>

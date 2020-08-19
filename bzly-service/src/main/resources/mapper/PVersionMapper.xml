@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.platform.PVersionDao" >
+	<resultMap type="PVersion" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>		
+		<result column="version_no" property="versionNo" jdbcType="VARCHAR"/>	
+		<result column="ios_version_no" property="iosVersionNo" jdbcType="VARCHAR"/>		
+		<result column="open_28" property="open28" jdbcType="INTEGER"/>		
+		<result column="need_update" property="needUpdate" jdbcType="INTEGER"/>		
+		<result column="update_url" property="updateUrl" jdbcType="VARCHAR"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>	
+		<result column="open_novice_task" property="openNoviceTask" jdbcType="INTEGER"/>			
+		<result column="update_remark" property="updateRemark" jdbcType="VARCHAR"/>			
+		<result column="ios_update_url" property="iosUpdateUrl" jdbcType="VARCHAR"/>	
+		<result column="channel_update" property="channelUpdate" jdbcType="INTEGER"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterType="PVersion">
+		insert into p_version 
+		(id,channel_code,version_no,ios_version_no,open_28,need_update,update_url,ios_update_url,create_time,status,open_novice_task,update_remark,channel_update) 
+		values 
+		(#{id},#{channelCode},#{versionNo},#{iosVersionNo},#{open28},#{needUpdate},#{updateUrl},#{iosUpdateUrl},#{createTime},#{status},#{openNoviceTask},#{updateRemark},#{channelUpdate})
+	</insert>
+	
+	<update id="update" parameterType="PVersion">
+		update p_version 
+		<set>
+			<if test="channelCode != null">
+				channel_code = #{channelCode},
+			</if>
+			<if test="versionNo != null">
+				version_no = #{versionNo},
+			</if>
+			<if test="iosVersionNo != null">
+				ios_version_no = #{iosVersionNo},
+			</if>
+			<if test="open28 != null">
+				open_28 = #{open28},
+			</if>
+			<if test="needUpdate != null">
+				need_update = #{needUpdate},
+			</if>
+			<if test="updateUrl != null">
+				update_url = #{updateUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="openNoviceTask != null">
+				open_novice_task = #{openNoviceTask},
+			</if>
+			<if test="updateRemark != null">
+				update_remark = #{updateRemark},
+			</if>
+			<if test="iosUpdateUrl != null">
+				ios_update_url = #{iosUpdateUrl},
+			</if>
+			<if test="channelUpdate != null">
+				channel_update = #{channelUpdate}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from p_version where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from p_version where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="PVersion" resultMap="BaseResultMap">
+		select * from p_version 
+		<where>
+			<if test="channelCode != null and channelCode != ''">
+				channel_code = #{channelCode}
+			</if>
+		</where>
+		order by channel_update,create_time desc 
+	</select>
+
+	<select id="selectByVersionAndChannelCode" parameterType="PVersion" resultMap="BaseResultMap">
+		select * from p_version where version_no = #{versionNo,jdbcType=VARCHAR} 
+		and channel_code = #{channelCode,jdbcType=VARCHAR} 
+	</select>
+	
+	<select id="selectByChannelCode" parameterType="PVersion" resultMap="BaseResultMap">
+		select * from p_version where channel_code = #{channelCode,jdbcType=VARCHAR} order by id desc limit 1
+	</select>
+	
+	<select id="selectVersionChannnel" parameterType="String" resultMap="BaseResultMap">
+	    select * from p_version where channel_code = #{channelCode,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectByIosVersionAndChannelCode" resultMap="BaseResultMap">
+		select * from p_version where ios_version_no = #{iosVersionNo,jdbcType=VARCHAR} 
+		and channel_code = #{channelCode,jdbcType=VARCHAR} 
+	</select>
+</mapper>

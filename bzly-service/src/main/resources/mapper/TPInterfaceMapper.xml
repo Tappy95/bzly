@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.TPInterfaceDao" >
+	<resultMap type="TPInterface" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="company_id" property="companyId" jdbcType="INTEGER"/>		
+		<result column="name" property="name" jdbcType="VARCHAR"/>		
+		<result column="interface_name" property="interfaceName" jdbcType="VARCHAR"/>		
+		<result column="interface_code" property="interfaceCode" jdbcType="VARCHAR"/>		
+		<result column="base_url" property="baseUrl" jdbcType="VARCHAR"/>		
+		<result column="req_type" property="reqType" jdbcType="INTEGER"/>		
+		<result column="is_cycle" property="isCycle" jdbcType="INTEGER"/>	
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>			
+		<result column="weight" property="weight" jdbcType="INTEGER"/>			
+		<result column="coins" property="coins" jdbcType="INTEGER"/>		
+		<result column="game_type" property="gameType" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="TPInterface">
+		insert into tp_interface 
+		(id,company_id,interface_name,interface_code,base_url,req_type,is_cycle,create_time,weight,coins,game_type)
+		values 
+		(#{id},#{companyId},#{interfaceName},#{interfaceCode},#{baseUrl},#{reqType},#{isCycle},#{createTime},#{weight},#{coins},#{gameType})
+	</insert>
+	
+	<update id="update" parameterType="TPInterface">
+		update tp_interface 
+		<set>
+			<if test="interfaceName != null and interfaceName != ''">
+				interface_name = #{interfaceName},
+			</if>
+			<if test="interfaceCode != null and interfaceCode != ''">
+				interface_code = #{interfaceCode},
+			</if>
+			<if test="baseUrl != null and baseUrl != ''">
+				base_url = #{baseUrl},
+			</if>
+			<if test="isCycle != null and isCycle != ''">
+				is_cycle = #{isCycle},
+			</if>
+			<if test="reqType != null and reqType != ''">
+				req_type = #{reqType},
+			</if>
+			<if test="weight != null and weight != ''">
+				weight = #{weight},
+			</if>
+			<if test="coins != null and coins != ''">
+				coins = #{coins},
+			</if>
+			<if test="gameType != null and gameType != ''">
+				game_type = #{gameType},
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from tp_interface where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from tp_interface where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="TPInterface" resultMap="BaseResultMap">
+		select tpi.*,tpc.name from tp_interface tpi 
+		left join tp_company tpc on tpi.company_id = tpc.id
+		<where>
+			<if test="companyId != null">
+				and tpi.company_id = #{companyId}
+			</if>
+			<if test="isCycle != null">
+				and tpi.is_cycle = #{isCycle}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectDown" resultType="map">
+	    SELECT i.id,c.name
+		FROM tp_company c INNER JOIN tp_interface i ON c.id=i.company_id
+		WHERE c.status=1
+	</select>
+</mapper>

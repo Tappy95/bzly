@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.PCDDCallbackDao" >
+	
+	<insert id="insert" parameterType="PCDDCallback">
+		insert into tp_pcdd_callback
+		(adid,adname,pid,ordernum,dlevel,pagename,
+		deviceid,simid,userid,merid,event,price,money,
+		itime,keycode,status,createTime)
+		values 
+		(#{adid},#{adname},#{pid},#{ordernum},#{dlevel},#{pagename},
+		#{deviceid},#{simid},#{userid},#{merid},#{event},#{price},#{money},
+		#{itime},#{keycode},#{status},#{createTime})
+	</insert>
+	
+	<select id="selectByOrderNum" parameterType="String" resultType="com.mc.bzly.model.thirdparty.PCDDCallback">
+		select * from tp_pcdd_callback where ordernum = #{ordernum} and status = 2
+	</select>
+	
+	<select id="selectListPage" parameterType="com.mc.bzly.model.thirdparty.PCDDCallback" resultType="com.mc.bzly.model.thirdparty.PCDDCallback">
+	    SELECT p.adid,p.adname,p.pid,p.ordernum,p.dlevel,p.pagename,p.deviceid,p.simid,p.userid,p.merid,p.event,p.price,p.money,p.status,p.createTime,DATE_FORMAT(p.itime,'%Y-%m-%d %H:%i:%s') AS itimeTime,u.account_id AS accountId
+        FROM tp_pcdd_callback p INNER JOIN m_user_info u ON p.userid=u.user_id
+	    <where>
+	       <if test="accountId!=null and accountId!=''">
+		       and u.account_id=#{accountId}
+		   </if>
+		   <if test="adname!=null and adname!=''">
+		       and p.adname=#{adname}
+		   </if>
+		   <if test="ordernum!=null and ordernum!=''">
+		       and p.ordernum = #{ordernum}
+		   </if>
+		   <if test="status!=null and status!=''">
+		       and p.status=#{status}
+		   </if>
+		   <if test="startTime!=null and startTime!=''">
+		       and p.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+		   </if>
+		   <if test="endTime!=null and endTime!=''">
+		       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= p.createTime
+		   </if>
+		   <if test="event != null and event != ''">
+		   		and p.event like concat('%',#{event},'%')
+		   </if>
+	    </where>
+	    order by p.createTime desc
+	    limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="com.mc.bzly.model.thirdparty.PCDDCallback" resultType="int">
+	    SELECT count(*)
+        FROM tp_pcdd_callback p INNER JOIN m_user_info u ON p.userid=u.user_id
+	    <where>
+	       <if test="accountId!=null and accountId!=''">
+		       and u.account_id=#{accountId}
+		   </if>
+		   <if test="adname!=null and adname!=''">
+		       and p.adname=#{adname}
+		   </if>
+		   <if test="ordernum!=null and ordernum!=''">
+		       and p.ordernum = #{ordernum}
+		   </if>
+		   <if test="status!=null and status!=''">
+		       and p.status=#{status}
+		   </if>
+		   <if test="startTime!=null and startTime!=''">
+		       and p.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+		   </if>
+		   <if test="endTime!=null and endTime!=''">
+		       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= p.createTime
+		   </if>
+		   <if test="event != null and event != ''">
+		   		and p.event like concat('%',#{event},'%')
+		   </if>
+	    </where>
+	</select>
+	
+	<select id="selectSmallSum" parameterType="com.mc.bzly.model.thirdparty.PCDDCallback" resultType="map">
+	    SELECT COUNT(*) AS smallSuccessCount,SUM(c.price)*10000 AS smallPriceSum,SUM(c.money)*10000 AS smallMoneySum
+        from (SELECT p.price,p.money,p.status
+	        FROM tp_pcdd_callback p INNER JOIN m_user_info u ON p.userid=u.user_id
+		    <where>
+		       <if test="accountId!=null and accountId!=''">
+			       and u.account_id=#{accountId}
+			   </if>
+			   <if test="ordernum!=null and ordernum!=''">
+			       and p.ordernum = #{ordernum}
+			   </if>
+			   <if test="adname!=null and adname!=''">
+			       and p.adname=#{adname}
+			   </if>
+			   <if test="status!=null and status!=''">
+			       and p.status=#{status}
+			   </if>
+			   <if test="startTime!=null and startTime!=''">
+			       and p.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+			   </if>
+			   <if test="endTime!=null and endTime!=''">
+			       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= p.createTime
+			   </if>
+			   <if test="event != null and event != ''">
+			   		and p.event like concat('%',#{event},'%')
+			   </if>
+		    </where>
+		    order by p.createTime desc
+		    limit #{pageIndex},#{pageSize}
+	    ) c
+	    where c.status=2
+	</select>
+	
+	<select id="selectCountSum" parameterType="com.mc.bzly.model.thirdparty.PCDDCallback" resultType="map">
+	    SELECT COUNT(*) AS successCount,SUM(c.price)*10000 AS priceSum,SUM(c.money)*10000 AS moneySum
+        from (SELECT p.price,p.money,p.status
+	        FROM tp_pcdd_callback p INNER JOIN m_user_info u ON p.userid=u.user_id
+		    <where>
+		       <if test="accountId!=null and accountId!=''">
+			       and u.account_id=#{accountId}
+			   </if>
+			   <if test="adname!=null and adname!=''">
+			       and p.adname=#{adname}
+			   </if>
+			   <if test="ordernum!=null and ordernum!=''">
+			       and p.ordernum = #{ordernum}
+			   </if>
+			   <if test="status!=null and status!=''">
+			       and p.status=#{status}
+			   </if>
+			   <if test="startTime!=null and startTime!=''">
+			       and p.createTime >= FROM_UNIXTIME(#{startTime}/1000,'%Y-%m-%d %H:%i:%s')
+			   </if>
+			   <if test="endTime!=null and endTime!=''">
+			       and FROM_UNIXTIME(#{endTime}/1000,'%Y-%m-%d %H:%i:%s') >= p.createTime
+			   </if>
+			   <if test="event != null and event != ''">
+			   		and p.event like concat('%',#{event},'%')
+			   </if>
+		    </where>
+	    ) c
+	    where c.status=2
+	</select>
+	
+	<select id="selectByOrderNumStatus" resultType="com.mc.bzly.model.thirdparty.PCDDCallback">
+		select * from tp_pcdd_callback where ordernum = #{ordernum} and status = #{status} order by createTime desc limit 1
+	</select>
+	
+	<delete id="deleteByOrderNum" parameterType="String">
+		delete from tp_pcdd_callback where ordernum = #{ordernum} and status = 1
+	</delete>
+</mapper>

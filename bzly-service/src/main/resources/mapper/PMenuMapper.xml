@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.platform.PMenuDao" >
+	<resultMap type="PMenu" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="icon" property="icon" jdbcType="VARCHAR"/>
+		<result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+		<result column="menu_url" property="menuUrl" jdbcType="VARCHAR"/>		
+		<result column="parent_id" property="parentId" jdbcType="INTEGER"/>		
+		<result column="parent_name" property="parentName" jdbcType="VARCHAR"/>		
+		<result column="order_id" property="orderId" jdbcType="INTEGER"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>		
+		<result column="file_name" property="fileName" jdbcType="VARCHAR"/>		
+	</resultMap>
+	
+	<resultMap type="RightCollection" id="rightCollectionResultMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="url" column="url"/>
+		<result property="parentId" column="parentId"/>
+		<result property="type" column="type"/>
+		<result property="sonCount" column="sonCount"/>
+		<collection property="rightCollections" column="{parentId = id,type=type}" ofType="RightCollection" select="selectRightCollection">
+			<id property="id" column="id"/>
+			<result property="name" column="name"/>
+			<result property="url" column="url"/>
+			<result property="parentId" column="parentId"/>
+			<result property="type" column="type"/>
+			<result property="sonCount" column="sonCount"/>
+		</collection>
+	</resultMap>
+	
+	<resultMap type="RightCollection" id="rightCollectionResultMap2">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="url" column="url"/>
+		<result property="parentId" column="parentId"/>
+		<result property="type" column="type"/>
+		<result property="sonCount" column="sonCount"/>
+		<result property="icon" column="icon"/>
+		<result property="fileName" column="fileName"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="PMenu">
+		insert into p_menu 
+		(id,icon,menu_name,menu_url,file_name,parent_id,order_id,create_time,status) 
+		values 
+		(#{id},#{icon},#{menuName},#{menuUrl},#{fileName},#{parentId},#{orderId},#{createTime},#{status})
+	</insert>
+	
+	<update id="update" parameterType="PMenu">
+		update p_menu 
+		<set>
+			<if test="icon != null and icon != ''">
+				icon = #{icon},
+			</if>
+			<if test="menuName != null and menuName != ''">
+				menu_name = #{menuName},
+			</if>
+			<if test="menuUrl != null and menuUrl != ''">
+				menu_url = #{menuUrl},
+			</if>
+			<if test="fileName != null and fileName != ''">
+				file_name = #{fileName},
+			</if>
+			<if test="parentId != null and parentId != ''">
+				parent_id = #{parentId},
+			</if>
+			<if test="orderId != null and orderId != ''">
+				order_id = #{orderId},
+			</if>
+			<if test="status != null and status != ''">
+				status = #{status}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from p_menu where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from p_menu where id = #{id}
+	</select>
+	
+	
+	<select id="selectList" parameterType="PMenu" resultMap="BaseResultMap">
+		select m.*,
+		case when m.parent_id = 0 then '顶级菜单' else (select menu_name from p_menu where id = m.parent_id) end parent_name 
+		from p_menu m
+		<where>
+			<if test="menuName != null and menuName != ''">
+				and m.menu_name = #{menuName}
+			</if>
+			<choose>
+				<when test="parentId != null and parentId != ''">
+					and m.parent_id = #{parentId}
+				</when>
+				<when test="parentId == 0">
+					and m.parent_id = 0
+				</when>
+			</choose>
+			<if test="status != null and status != ''">
+				and m.status = #{status}
+			</if>
+		</where>
+		order by m.create_time desc 
+	</select>
+	
+	<select id="selectParentMenu" resultMap="BaseResultMap">
+		select id,menu_name from p_menu 
+		<where>
+			parent_id = 0
+		</where>
+		order by order_id
+	</select>
+	
+	<select id="selectRightCollection" resultMap="rightCollectionResultMap" parameterType="java.util.Map">
+		<if test="_parameter != null">
+			select id,menu_name as name,menu_url as url,parent_id as parentId,1 as type,0 as sonCount from p_menu where status=1 AND parent_id = #{parentId} order by order_id
+		</if>
+		<if test="_parameter == null">
+			select id,menu_name as name,menu_url as url,parent_id as parentId,1 as type,
+			(select count(1) from p_menu where parent_id = p.id) as sonCount
+			from p_menu p where  p.status=1 AND parent_id = 0 order by order_id 
+		</if>
+	</select>
+	
+	<select id="selectMenus" resultMap="rightCollectionResultMap2">
+		<if test="parentId != 0">
+			select menu.id,menu.menu_name as name,menu.menu_url as url,menu.parent_id as parentId,menu.icon,menu.file_name as fileName
+			 from p_role_menu_btn btn 
+			left join p_menu menu on btn.ref_id = menu.id
+			 where menu.status=1 and role_id = #{roleId} and type = 1 and menu.parent_id = #{parentId} order by menu.order_id 
+		</if>
+		<if test="parentId == 0">
+			select menu.id,menu.menu_name as name,menu.menu_url as url,menu.parent_id as parentId,menu.icon,menu.file_name as fileName
+			from p_role_menu_btn btn 
+			left join p_menu menu on btn.ref_id = menu.id
+			 where menu.status=1 and role_id = #{roleId} and type = 1 and menu.parent_id = 0 order by menu.order_id 
+		</if>
+	</select>
+	 
+</mapper>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LBalanceChangeDao" >
+	<resultMap type="LBalanceChange" id="BaseResultMap">
+		<result column="log_id" property="logId" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>		
+		<result column="amount" property="amount" jdbcType="DOUBLE"/>		
+		<result column="user_name" property="userName" jdbcType="VARCHAR"/>		
+		<result column="account" property="account" jdbcType="VARCHAR"/>		
+		<result column="account_type" property="accountType" jdbcType="INTEGER"/>		
+		<result column="flow_type" property="flowType" jdbcType="INTEGER"/>		
+		<result column="changed_type" property="changedType" jdbcType="INTEGER"/>		
+		<result column="changed_time" property="changedTime" jdbcType="INTEGER"/>		
+		<result column="is_auditing" property="isAuditing" jdbcType="INTEGER"/>		
+		<result column="review_time" property="reviewTime" jdbcType="INTEGER"/>		
+		<result column="reason" property="reason" jdbcType="VARCHAR"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="LBalanceChange">
+		insert into l_balance_change 
+		(log_id,user_id,amount,account,account_type,flow_type,
+		changed_type,changed_time,is_auditing,review_time) 
+		values 
+		(#{logId},#{userId},#{amount},#{account},#{accountType},#{flowType},
+		#{changedType},#{changedTime},#{isAuditing},#{reviewTime})
+	</insert>
+	
+	<update id="update" parameterType="LBalanceChange">
+		update l_balance_change 
+		<set>
+			<if test="isAuditing != null and isAuditing != ''">
+				is_auditing = #{isAuditing},
+			</if>
+			<if test="reviewTime != null and reviewTime != ''">
+				review_time = #{reviewTime},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason = #{reason},
+			</if>
+		</set> 
+		where log_id = #{logId}
+	</update>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select changes.*,info.mobile,info.user_name 
+		from l_balance_change changes
+		left join m_user_info info on changes.user_id = info.user_id
+		 where log_id = #{logId}
+	</select>
+	
+	<select id="selectList" parameterType="LBalanceChange" resultMap="BaseResultMap">
+		select changes.*,info.mobile,info.user_name 
+		from l_balance_change changes
+		left join m_user_info info on changes.user_id = info.user_id
+		<where>
+			<if test="userId != null and userId !=''">
+				and changes.user_id = #{userId}
+			</if>
+			<if test="changedType != null and changedType !=''">
+				and changes.changed_type = #{changedType}
+			</if>
+			<if test="mobile != null and mobile !=''">
+				and info.mobile = #{mobile}
+			</if>
+			<if test="isAuditing != null and isAuditing !=''">
+				and changes.is_auditing = #{isAuditing}
+			</if>
+			<if test="amount != null and amount !=''">
+				and changes.amount > 0
+			</if>
+		</where>
+		order by changes.changed_time desc 
+	</select>
+	
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into l_balance_change 
+		(log_id,user_id,amount,account,account_type,flow_type,
+		changed_type,changed_time,is_auditing,review_time) 
+		values 
+		<foreach collection="list" item="item" index="index" separator=",">
+    		(#{item.logId},#{item.userId},#{item.amount},#{item.account},#{item.accountType},#{item.flowType},
+				#{item.changedType},#{item.changedTime},#{item.isAuditing},#{item.reviewTime})
+   		</foreach>		
+		
+	</insert>
+	
+	<select id="selectRecord" resultMap="BaseResultMap">
+		select * from l_balance_change
+		where user_id = #{userId} and changed_type = #{changedType}
+		order by changed_time desc 
+	</select>
+	
+</mapper>

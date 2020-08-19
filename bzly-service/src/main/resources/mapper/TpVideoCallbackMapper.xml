@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.thirdparty.TpVideoCallbackDao">
+	<resultMap id="BaseResultMap" type="TpVideoCallback">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="user_id" jdbcType="VARCHAR"/>
+		<result column="operate_type" property="operateType" jdbcType="INTEGER"/>
+		<result column="trans_id" property="trans_id" jdbcType="VARCHAR"/>
+		<result column="reward_amount" property="reward_amount" jdbcType="INTEGER"/>
+		<result column="reward_name" property="reward_name" jdbcType="VARCHAR"/>
+		<result column="creator_time" property="creatorTime" jdbcType="INTEGER"/>
+		<result column="sign" property="sign" jdbcType="VARCHAR"/>
+		<result column="state" property="state" jdbcType="INTEGER"/>
+		<result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="TpVideoCallback">
+	   INSERT INTO tp_video_callback(user_id,operate_type,trans_id,reward_amount,reward_name,creator_time,sign,state,remarks)
+       VALUES (#{user_id},#{operateType},#{trans_id},#{reward_amount},#{reward_name},#{creatorTime},#{sign},#{state},#{remarks})
+	</insert>
+	
+	<select id="selectOne" parameterType="String" resultMap="BaseResultMap">
+	   select * from tp_video_callback where trans_id=#{transId}
+	</select>
+	
+	<select id="selectCount" resultType="int">
+	   select count(1) from tp_video_callback where state=1 and user_id=#{userId} and FROM_UNIXTIME(creator_time/1000,'%Y-%m-%d')=CURDATE() and operate_type=#{operateType}
+	</select>
+	
+	<select id="selectTime" parameterType="String" resultMap="BaseResultMap">
+	   select * 
+	   from tp_video_callback 
+	   where state=1 and user_id=#{userId} and operate_type=2
+	   order by creator_time desc
+	   limit 0,1
+	</select>
+	
+	<select id="selectList" parameterType="TpVideoCallback" resultMap="BaseResultMap">
+	   SELECT v.*,u.account_id
+       FROM tp_video_callback v INNER JOIN m_user_info u ON v.user_id=u.user_id
+       <where>
+          <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+		  </if>
+		  <if test="trans_id != null and trans_id != ''">
+				and v.trans_id = #{trans_id}
+		  </if>
+		  <if test="operateType != null and operateType != ''">
+				and v.operate_type = #{operateType}
+		  </if>
+		  <if test="state != null and state != ''">
+				and v.state = #{state}
+		  </if>
+		  <if test="startCreatorTime != null and startCreatorTime != ''">
+				and v.creator_time >= #{startCreatorTime}
+		  </if>
+		  <if test="endCreatorTime != null and endCreatorTime != ''">
+				and #{endCreatorTime} > v.creator_time
+		  </if>
+       </where>
+       order by v.creator_time desc
+       limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectListCount" parameterType="TpVideoCallback" resultType="int">
+	   SELECT count(1)
+       FROM tp_video_callback v INNER JOIN m_user_info u ON v.user_id=u.user_id
+       <where>
+          <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+		  </if>
+		  <if test="trans_id != null and trans_id != ''">
+				and v.trans_id = #{trans_id}
+		  </if>
+		  <if test="operateType != null and operateType != ''">
+				and v.operate_type = #{operateType}
+		  </if>
+		  <if test="state != null and state != ''">
+				and v.state = #{state}
+		  </if>
+		  <if test="startCreatorTime != null and startCreatorTime != ''">
+				and v.creator_time >= #{startCreatorTime}
+		  </if>
+		  <if test="endCreatorTime != null and endCreatorTime != ''">
+				and #{endCreatorTime} > v.creator_time
+		  </if>
+       </where>
+	</select>
+	
+	<select id="selectSmallSum" parameterType="TpVideoCallback" resultType="map">
+	   SELECT count(1) AS smallSuccessCount,SUM(a.reward_amount) AS smallCoinSum
+	   from (SELECT v.reward_amount,v.state
+	      FROM tp_video_callback v INNER JOIN m_user_info u ON v.user_id=u.user_id
+	      <where>
+	         <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+		  </if>
+		  <if test="trans_id != null and trans_id != ''">
+				and v.trans_id = #{trans_id}
+		  </if>
+		  <if test="operateType != null and operateType != ''">
+				and v.operate_type = #{operateType}
+		  </if>
+		  <if test="state != null and state != ''">
+				and v.state = #{state}
+		  </if>
+		  <if test="startCreatorTime != null and startCreatorTime != ''">
+				and v.creator_time >= #{startCreatorTime}
+		  </if>
+		  <if test="endCreatorTime != null and endCreatorTime != ''">
+				and #{endCreatorTime} > v.creator_time
+		  </if>
+	      </where>
+	      order by v.creator_time desc
+	      limit #{pageIndex},#{pageSize}
+       ) a
+       where a.state=1
+	</select>
+	
+	<select id="selectCountSum" parameterType="TpVideoCallback" resultType="map">
+	   SELECT count(1) AS successCount,SUM(a.reward_amount) AS coinSum
+	   from (SELECT v.reward_amount,v.state
+	      FROM tp_video_callback v INNER JOIN m_user_info u ON v.user_id=u.user_id
+	      <where>
+	         <if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+		  </if>
+		  <if test="trans_id != null and trans_id != ''">
+				and v.trans_id = #{trans_id}
+		  </if>
+		  <if test="operateType != null and operateType != ''">
+				and v.operate_type = #{operateType}
+		  </if>
+		  <if test="state != null and state != ''">
+				and v.state = #{state}
+		  </if>
+		  <if test="startCreatorTime != null and startCreatorTime != ''">
+				and v.creator_time >= #{startCreatorTime}
+		  </if>
+		  <if test="endCreatorTime != null and endCreatorTime != ''">
+				and #{endCreatorTime} > v.creator_time
+		  </if>
+	      </where>
+       ) a
+       where a.state=1
+	</select>
+	
+	<select id="selectNewUserVideo" parameterType="String" resultType="int">
+	   select count(1)
+	   from tp_video_callback
+	   where user_id=#{userId} and operate_type=4
+	</select>
+	
+	<select id="selectNewUserVideoCoin" parameterType="String" resultType="int">
+	   select IFNULL(reward_amount,0) as rewardAmount
+	   from tp_video_callback
+	   where user_id=#{userId} and operate_type=4
+	   order by creator_time
+	   limit 0,1
+	</select>
+</mapper>

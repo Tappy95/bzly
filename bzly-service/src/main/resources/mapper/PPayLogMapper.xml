@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.pay.PPayLogDao" >
+	<resultMap type="PPayLog" id="BaseResultMap">
+	    <id column="id" property="id" jdbcType="INTEGER"/>	
+	    <result column="user_id" property="userId" jdbcType="VARCHAR"/>	
+		<result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>
+		<result column="price" property="price" jdbcType="DECIMAL"/>
+		<result column="balance" property="balance" jdbcType="DECIMAL"/>
+		<result column="actual_Price" property="actualPrice" jdbcType="DECIMAL"/>		
+		<result column="descripte" property="descripte" jdbcType="VARCHAR"/>		
+		<result column="pay_mode" property="payMode" jdbcType="VARCHAR"/>		
+		<result column="pay_type" property="payType" jdbcType="VARCHAR"/>		
+		<result column="pay_ip" property="payIp" jdbcType="VARCHAR"/>		
+		<result column="coupon_id" property="couponId" jdbcType="INTEGER"/>		
+		<result column="open_id" property="openId" jdbcType="VARCHAR"/>		
+		<result column="state" property="state" jdbcType="INTEGER"/>
+		<result column="creator_time" property="creatorTime" jdbcType="INTEGER"/>
+		<result column="pay_time" property="payTime" jdbcType="INTEGER"/>
+		<result column="cancel_time" property="cancelTime" jdbcType="INTEGER"/>
+		<result column="pay_purpose" property="payPurpose" jdbcType="INTEGER"/>	
+		<result column="vip_id" property="vipId" jdbcType="INTEGER"/>
+		<result column="is_balance" property="isBalance" jdbcType="INTEGER"/>	
+		<result column="web_state" property="webState" jdbcType="INTEGER"/>	
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+		<result column="userChannelCode" property="userChannelCode" jdbcType="VARCHAR"/>
+		<result column="payDate" property="payDate" jdbcType="VARCHAR"/>	
+		
+		<result column="user_name" property="userName" jdbcType="VARCHAR"/>
+		<result column="discount" property="discount" jdbcType="DECIMAL"/>
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>
+		<result column="stateName" property="stateName" jdbcType="VARCHAR"/>
+		<result column="typeName" property="typeName" jdbcType="VARCHAR"/>
+		<result column="changedDate" property="changedDate" jdbcType="VARCHAR"/>
+		<result column="purposeName" property="purposeName" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="PPayLog">
+		INSERT INTO p_pay_log(user_id,out_trade_no,price,actual_Price,balance,descripte,pay_mode,pay_type,pay_ip,coupon_id,open_id,state,creator_time,pay_purpose,vip_id,is_balance,channel_code)
+		values (#{userId},#{outTradeNo},#{price},#{actualPrice},#{balance},#{descripte},#{payMode},#{payType},#{payIp},#{couponId},#{openId},#{state},#{creatorTime},#{payPurpose},#{vipId},#{isBalance},#{channelCode})
+	</insert>
+	
+	<update id="update" parameterType="PPayLog">
+		update p_pay_log 
+		<set>
+			<if test="state != null and state != ''">
+				state = #{state},
+			</if>
+			<if test="payMode != null and payMode != ''">
+				pay_mode = #{payMode},
+			</if>
+			<if test="payTime != null and payTime != ''">
+				pay_time = #{payTime},
+			</if>
+			<if test="cancelTime != null and cancelTime != ''">
+				cancel_time = #{cancelTime},
+			</if>
+			<if test="webState != null and webState != ''">
+				web_state = #{webState},
+			</if>
+		</set> 
+		where out_trade_no = #{outTradeNo}
+	</update>
+	
+	<update id="delete" parameterType="Integer">
+		update p_pay_log 
+		set is_delete=2
+		where id = #{id}
+	</update>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+		select * from p_pay_log where out_trade_no = #{outTradeNo}
+	</select>
+	
+	<select id="selectList" parameterType="PPayLog" resultMap="BaseResultMap">
+		select * from p_pay_log
+		<where>
+			<if test="outTradeNo != null and outTradeNo != ''">
+				and out_trade_no = #{outTradeNo}
+			</if>
+			<if test="userId != null and userId != ''">
+				and user_id = #{userId}
+			</if>
+		</where>
+		order by create_time desc 
+	</select>
+	
+	<select id="selectPageList" parameterType="PPayLog" resultMap="BaseResultMap">
+		SELECT p.*,
+		u.user_name,
+		p.price-p.actual_price-p.balance AS discount,
+		u.account_id,
+		CASE p.pay_mode
+		WHEN 1 THEN '支付宝'
+		WHEN 2 THEN '微信'
+		WHEN 3 THEN '余额支付'
+		END typeName,
+		CASE p.pay_purpose
+		WHEN 1 THEN (SELECT NAME FROM m_vip_info WHERE id=p.vip_id)
+		WHEN 2 THEN '升级运营总监'
+		WHEN 3 THEN '运营总监续费'
+		END purposeName,
+		u.channel_code as userChannelCode
+		FROM p_pay_log p INNER JOIN m_user_info u ON p.user_id=u.user_id
+		<where>
+			<if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="outTradeNo != null and outTradeNo != ''">
+				and p.out_trade_no = #{outTradeNo}
+			</if>
+			<if test="state != null and state != ''">
+				and p.state = #{state}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and p.creator_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime}>p.creator_time
+			</if>
+			<if test="channelCode != null and channelCode != ''">
+				and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+			</if>
+			<if test="startPayTime != null and startPayTime != ''">
+				and p.pay_time >= #{startPayTime}
+			</if>
+			<if test="endPayTime != null and endPayTime != ''">
+				and #{endPayTime}>p.pay_time
+			</if>
+		</where>
+		order by p.creator_time desc
+		limit #{pageIndex},#{pageSize} 
+	</select>
+	
+	<select id="selectSum" parameterType="PPayLog" resultType="map">
+	    select count(*) as cou,sum(actual_price) as sumParice from (
+		SELECT p.actual_price,p.state
+		FROM p_pay_log p INNER JOIN m_user_info u ON p.user_id=u.user_id
+		<where>
+			<if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="outTradeNo != null and outTradeNo != ''">
+				and p.out_trade_no = #{outTradeNo}
+			</if>
+			<if test="state != null and state != ''">
+				and p.state = #{state}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and p.creator_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime}>p.creator_time
+			</if>
+			<if test="channelCode != null and channelCode != '' ">
+				and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+			</if>
+			<if test="startPayTime != null and startPayTime != ''">
+				and p.pay_time >= #{startPayTime}
+			</if>
+			<if test="endPayTime != null and endPayTime != ''">
+				and #{endPayTime}>p.pay_time
+			</if>
+		</where>
+		ORDER BY p.creator_time DESC
+		limit #{pageIndex},#{pageSize} 
+		) a
+		WHERE state=2
+	</select>
+	
+	<select id="selectCountPrice" parameterType="PPayLog" resultType="map">
+		SELECT count(*) as cou,sum(p.actual_price) totalPrice
+		FROM p_pay_log p INNER JOIN m_user_info u ON p.user_id=u.user_id
+		<where>
+		    p.state=2
+			<if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="outTradeNo != null and outTradeNo != ''">
+				and p.out_trade_no = #{outTradeNo}
+			</if>
+			<!-- <if test="state != null and state != ''">
+				and p.state = #{state}
+			</if> -->
+			<if test="startTime != null and startTime != ''">
+				and p.creator_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime}>p.creator_time
+			</if>
+			<if test="channelCode != null and channelCode != '' ">
+				and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+			</if>
+			<if test="startPayTime != null and startPayTime != ''">
+				and p.pay_time >= #{startPayTime}
+			</if>
+			<if test="endPayTime != null and endPayTime != ''">
+				and #{endPayTime}>p.pay_time
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+	
+	<select id="selectCount" parameterType="PPayLog" resultType="map">
+		SELECT count(*) as cou,sum(p.actual_price) totalPrice
+		FROM p_pay_log p INNER JOIN m_user_info u ON p.user_id=u.user_id
+		<where>
+			<if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="outTradeNo != null and outTradeNo != ''">
+				and p.out_trade_no = #{outTradeNo}
+			</if>
+			<if test="state != null and state != ''">
+				and p.state = #{state}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and p.creator_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime}>p.creator_time
+			</if>
+			<if test="channelCode != null and channelCode != '' ">
+				and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+			</if>
+			<if test="startPayTime != null and startPayTime != ''">
+				and p.pay_time >= #{startPayTime}
+			</if>
+			<if test="endPayTime != null and endPayTime != ''">
+				and #{endPayTime}>p.pay_time
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+	
+	<select id="selectInfo" resultMap="BaseResultMap">
+	    SELECT p.*,u.user_name,p.price-p.actual_price-p.balance AS discount
+        FROM p_pay_log p,m_user_info u
+        where p.user_id=u.user_id and p.id=#{id}
+	</select>
+	<select id="selectNoPay" resultType="int">
+	    SELECT count(*)
+		FROM p_pay_log
+		WHERE web_state=1 AND state=1 AND user_id=#{userId}
+	</select>
+	
+	<select id="selectSumRecharge" parameterType="String" resultType="int">
+	    SELECT ROUND(SUM(actual_price))
+		FROM p_pay_log
+		WHERE state=2 AND pay_purpose=1 AND user_id=#{userId}
+	</select>
+	
+	<select id="selectExcl" parameterType="PPayLog" resultMap="BaseResultMap">
+		SELECT p.*,
+		u.user_name,
+		p.price-p.actual_price-p.balance AS discount,
+		u.account_id,
+		CASE p.state
+		WHEN 1 THEN '待支付'
+		WHEN 2 THEN '已支付'
+		WHEN 3 THEN '已取消'
+		END stateName,
+		CASE p.pay_mode
+		WHEN 1 THEN '支付宝'
+		WHEN 2 THEN '微信'
+		WHEN 3 THEN '余额支付'
+		END typeName,
+		FROM_UNIXTIME(p.creator_time/1000,'%Y-%m-%d %H:%i:%s') AS changedDate,
+		CASE p.pay_purpose
+		WHEN 1 THEN (SELECT NAME FROM m_vip_info WHERE id=p.vip_id)
+		WHEN 2 THEN '升级运营总监'
+		WHEN 3 THEN '运营总监续费'
+		END purposeName,
+		FROM_UNIXTIME(p.pay_time/1000,'%Y-%m-%d %H:%i:%s') AS payDate,
+		u.channel_code as userChannelCode
+		FROM p_pay_log p INNER JOIN m_user_info u ON p.user_id=u.user_id
+		<where>
+			<if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="outTradeNo != null and outTradeNo != ''">
+				and p.out_trade_no = #{outTradeNo}
+			</if>
+			<if test="state != null and state != ''">
+				and p.state = #{state}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and p.creator_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime}>p.creator_time
+			</if>
+			<if test="channelCode != null and channelCode != '' ">
+				and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+			</if>
+			<if test="startPayTime != null and startPayTime != ''">
+				and p.pay_time >= #{startPayTime}
+			</if>
+			<if test="endPayTime != null and endPayTime != ''">
+				and #{endPayTime}>p.pay_time
+			</if>
+		</where>
+		order by create_time desc 
+		limit 0,5000
+	</select>
+	
+	<select id="selectSumUserRecharge" parameterType="String" resultType="double">
+	    SELECT IFNULL(SUM(actual_price),0)
+		FROM p_pay_log
+		WHERE state=2 AND user_id=#{userId}
+	</select>
+</mapper>

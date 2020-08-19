@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.lottery.MLotteryOrderDao" >
+	<resultMap type="MLotteryOrder" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="type_id" property="typeId" jdbcType="INTEGER"/>		
+		<result column="goods_id" property="goodsId" jdbcType="INTEGER"/>		
+		<result column="address_id" property="addressId" jdbcType="INTEGER"/>
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>	
+		<result column="express_company" property="expressCompany" jdbcType="VARCHAR"/>		
+		<result column="express_numbers" property="expressNumbers" jdbcType="VARCHAR"/>	
+		<result column="remarks" property="remarks" jdbcType="VARCHAR"/>	
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>				
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="operator_mobile" property="operatorMobile" jdbcType="VARCHAR"/>				
+		<result column="locking_mobile" property="lockingMobile" jdbcType="VARCHAR"/>		
+		<result column="is_locking" property="isLocking" jdbcType="INTEGER"/>
+		
+		<result column="admin" property="admin" jdbcType="VARCHAR"/>		
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+		<result column="price" property="price" jdbcType="DECIMAL"/>				
+		<result column="receiver" property="receiver" jdbcType="VARCHAR"/>		
+		<result column="operatorName" property="operatorName" jdbcType="VARCHAR"/>
+		<result column="locking" property="locking" jdbcType="INTEGER"/>
+		<result column="expend_pig_coin" property="expendPigCoin" jdbcType="INTEGER"/>
+		
+		<result column="goods_type" property="goodsType" javaType="INTEGER"/>
+		
+		<result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>	
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>			
+		<result column="detailAddress" property="detailAddress" jdbcType="VARCHAR"/>		
+		<result column="lottery_sort" property="lotterySort" jdbcType="INTEGER"/>
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>	
+		
+		<result column="statusName" property="statusName" jdbcType="VARCHAR"/>				
+		<result column="creatorDate" property="creatorDate" jdbcType="VARCHAR"/>		
+		<result column="updateDate" property="updateDate" jdbcType="VARCHAR"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="MLotteryOrder" keyProperty="id" useGeneratedKeys="true">
+		insert into m_lottery_order 
+		(id,user_id,type_id,goods_id,address_id,account_id,expend_pig_coin,price,express_company,express_numbers,remarks,create_time,update_time,status,is_locking) 
+		values 
+		(#{id},#{userId},#{typeId},#{goodsId},#{addressId},#{accountId},#{expendPigCoin},#{price},#{expressCompany},#{expressNumbers},#{remarks},#{createTime},#{updateTime},#{status},2)
+	</insert>
+	
+	<update id="update" parameterType="MLotteryOrder">
+		update m_lottery_order 
+		<set>
+			<if test="addressId != null">
+				address_id = #{addressId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=INTEGER},
+			</if>
+			<if test="expressCompany != null">
+				express_company = #{expressCompany,jdbcType=VARCHAR},
+			</if>
+			<if test="expressNumbers != null">
+				express_numbers = #{expressNumbers,jdbcType=VARCHAR},
+			</if>
+			<if test="remarks != null">
+				remarks = #{remarks,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="operatorMobile != null">
+				operator_mobile = #{operatorMobile,jdbcType=VARCHAR},
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+
+    <update id="updateLocking" parameterType="LUserExchangeCash">
+	    update m_lottery_order
+	    <set>
+			<if test="lockingMobile != null">
+				locking_mobile  = #{lockingMobile},				
+			</if>
+			<if test="isLocking != null">
+				is_locking  = #{isLocking}			
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<update id="updateLockingList" parameterType="java.util.List">
+		 <foreach collection="list" item="item" index= "index" open="" close="" separator =";">
+             update m_lottery_order
+             <set>
+                locking_mobile  = #{item.lockingMobile},
+                is_locking  = 1
+             </set>
+             <where>
+                id=#{item.id}
+             </where>
+         </foreach>
+	</update>
+
+	<select id="selectOne" parameterType="Integer" resultType="Map">
+		SELECT o.id,
+		o.user_id AS userId,
+		o.type_id AS typeId,
+		o.account_id AS accountId,
+		g.goods_name AS goodsName,
+		o.expend_pig_coin AS expendPigCoin,
+		a.mobile,
+		CONCAT(a.full_name,a.detail_address) AS detailAddress,
+		o.create_time AS createTime,
+		o.status,
+		o.remarks,
+		o.express_company AS expressCompany,
+		o.express_numbers AS expressNumbers,
+		t.lottery_sort AS lotterySort,
+		t.type_name AS typeName,
+		g.image_url AS imageUrl,
+		g.goods_type AS goodsType,
+		a.address_id AS addressId,
+		a.receiver AS receiver,
+		a.mobile AS mobile,
+		a.detail_address AS detailAddress
+        FROM m_lottery_order o LEFT JOIN m_user_address a ON o.address_id=a.address_id,m_lottery_type t,m_lottery_goods g
+        WHERE o.type_id=t.id AND o.goods_id=g.id AND o.id = #{id}
+	</select>
+	
+	<select id="selectOrder" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT *
+        FROM m_lottery_order
+        WHERE id = #{id}
+	</select>
+
+	<select id="selectList" parameterType="MLotteryOrder" resultMap="BaseResultMap">
+		SELECT o.id,o.account_id,g.goods_name,o.expend_pig_coin,a.mobile,
+		CONCAT(a.full_name,a.detail_address) AS detailAddress,
+		o.create_time,o.status,o.remarks,g.image_url,
+		u.channel_code,
+		o.price,
+		o.update_time,
+		a.receiver,
+		(SELECT realname FROM p_admin WHERE mobile=o.operator_mobile) AS operatorName,
+		CASE IFNULL(o.locking_mobile,0)
+		WHEN 0 THEN 1
+		WHEN #{admin} THEN 2
+		ELSE 3
+		END locking,
+		o.is_locking,
+		g.goods_type,
+		o.address_id,
+		(SELECT realname FROM p_admin WHERE mobile=o.locking_mobile) AS admin
+		FROM m_lottery_order o LEFT JOIN m_user_address a ON o.address_id=a.address_id INNER JOIN m_lottery_type t ON t.id=o.type_id INNER JOIN m_lottery_goods g ON o.goods_id=g.id INNER JOIN m_user_info u ON u.user_id=o.user_id
+	    <where>
+	        o.create_time != 1556506633200
+		    <if test="id != null and id !=''">
+				and o.id = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="accountId != null and accountId !=''">
+				and o.account_id = #{accountId,jdbcType=VARCHAR}
+			</if>
+			<if test="mobile != null and mobile !=''">
+				and a.mobile = #{mobile,jdbcType=INTEGER}
+			</if>
+			<if test="status != null and status !=''">
+				and o.status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="userId != null and userId !=''">
+				and o.user_id = #{userId,jdbcType=INTEGER}
+			</if>
+			<if test="minPrice != null and minPrice !=''">
+				and o.price >= #{minPrice}
+			</if>
+			<if test="maxPrice != null and maxPrice !=''">
+				and #{maxPrice}>=o.price
+			</if>
+			<if test="startTime != null and startTime !=''">
+				and o.create_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+				and #{endTime}>=o.create_time
+			</if>
+		</where>
+		order by o.create_time desc
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectSum" parameterType="MLotteryOrder" resultType="map">
+	    SELECT SUM(price) subTotalPrice,COUNT(*) AS pageCount
+		FROM 
+		(SELECT o.price
+		FROM m_lottery_order o LEFT JOIN m_user_address a ON o.address_id=a.address_id INNER JOIN m_lottery_type t ON t.id=o.type_id INNER JOIN m_lottery_goods g ON o.goods_id=g.id INNER JOIN m_user_info u ON u.user_id=o.user_id
+		WHERE o.status=4 and o.create_time != 1556506633200
+		<if test="id != null and id !=''">
+			and o.id = #{id,jdbcType=INTEGER}
+		</if>
+		<if test="accountId != null and accountId !=''">
+			and o.account_id = #{accountId,jdbcType=VARCHAR}
+		</if>
+		<if test="mobile != null and mobile !=''">
+			and a.mobile = #{mobile,jdbcType=INTEGER}
+		</if>
+		<if test="status != null and status !=''">
+			and o.status = #{status,jdbcType=INTEGER}
+		</if>
+		<if test="userId != null and userId !=''">
+			and o.user_id = #{userId,jdbcType=INTEGER}
+		</if>
+		<if test="minPrice != null and minPrice !=''">
+			and o.price >= #{minPrice}
+		</if>
+		<if test="maxPrice != null and maxPrice !=''">
+			and #{maxPrice}>=o.price
+		</if>
+		<if test="startTime != null and startTime !=''">
+			and o.create_time >= #{startTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			and #{endTime}>=o.create_time
+		</if>
+		limit #{pageIndex},#{pageSize}) a
+	</select>
+	
+	<select id="selectCountSum" parameterType="MLotteryOrder" resultType="map">
+	    SELECT SUM(price) totalPrice,COUNT(*) AS totalPageCount
+		FROM 
+		(SELECT o.price
+		FROM m_lottery_order o LEFT JOIN m_user_address a ON o.address_id=a.address_id INNER JOIN m_lottery_type t ON t.id=o.type_id INNER JOIN m_lottery_goods g ON o.goods_id=g.id INNER JOIN m_user_info u ON u.user_id=o.user_id
+		WHERE o.status=4 and o.create_time != 1556506633200
+		<if test="id != null and id !=''">
+			and o.id = #{id,jdbcType=INTEGER}
+		</if>
+		<if test="accountId != null and accountId !=''">
+			and o.account_id = #{accountId,jdbcType=VARCHAR}
+		</if>
+		<if test="mobile != null and mobile !=''">
+			and a.mobile = #{mobile,jdbcType=INTEGER}
+		</if>
+		<if test="status != null and status !=''">
+			and o.status = #{status,jdbcType=INTEGER}
+		</if>
+		<if test="userId != null and userId !=''">
+			and o.user_id = #{userId,jdbcType=INTEGER}
+		</if>
+		<if test="minPrice != null and minPrice !=''">
+			and o.price >= #{minPrice}
+		</if>
+		<if test="maxPrice != null and maxPrice !=''">
+			and #{maxPrice}>=o.price
+		</if>
+		<if test="startTime != null and startTime !=''">
+			and o.create_time >= #{startTime}
+		</if>
+		<if test="endTime != null and endTime !=''">
+			and #{endTime}>=o.create_time
+		</if>
+		) a
+	</select>
+	
+	<select id="selectCount" parameterType="MLotteryOrder" resultType="String">
+	    SELECT COUNT(*) AS cou
+        FROM m_lottery_order o LEFT JOIN m_user_address a ON o.address_id=a.address_id INNER JOIN m_lottery_type t ON t.id=o.type_id INNER JOIN m_lottery_goods g ON o.goods_id=g.id INNER JOIN m_user_info u ON u.user_id=o.user_id
+	    <where>
+	        o.create_time != 1556506633200
+		    <if test="id != null and id !=''">
+				and o.id = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="accountId != null and accountId !=''">
+				and o.account_id = #{accountId,jdbcType=VARCHAR}
+			</if>
+			<if test="mobile != null and mobile !=''">
+				and a.mobile = #{mobile,jdbcType=INTEGER}
+			</if>
+			<if test="status != null and status !=''">
+				and o.status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="userId != null and userId !=''">
+				and o.user_id = #{userId,jdbcType=INTEGER}
+			</if>
+			<if test="minPrice != null and minPrice !=''">
+				and o.price >= #{minPrice}
+			</if>
+			<if test="maxPrice != null and maxPrice !=''">
+				and #{maxPrice}>=o.price
+			</if>
+			<if test="startTime != null and startTime !=''">
+				and o.create_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+				and #{endTime}>=o.create_time
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectNews" resultType="Map">
+	    SELECT CONCAT('恭喜',CONCAT(SUBSTR(u.mobile FROM 1 FOR 3),'****',SUBSTR(u.mobile FROM 8 FOR 4)),'抽中了') AS content,
+	    CASE g.goods_type
+		WHEN 1 THEN goods_name
+		WHEN 2 THEN abbreviation
+		END goodsName
+		FROM m_lottery_order o,m_lottery_goods g,m_user_info u
+		WHERE o.goods_id=g.id AND o.user_id=u.user_id
+		ORDER BY o.create_time desc
+		LIMIT 0,10
+	</select>
+	
+	<select id="userTodayCount" resultType="Long">
+		select count(1) from m_lottery_order where user_id = #{userId,jdbcType=VARCHAR} and type_id = #{typeId,jdbcType=INTEGER} and create_time > #{createTime,jdbcType=INTEGER} 
+	</select>
+
+	<select id="typeTodayCount" resultType="Long">
+		select count(1) from m_lottery_order where type_id = #{typeId,jdbcType=INTEGER} and create_time > #{createTime,jdbcType=INTEGER} 
+	</select>
+	
+	<select id="selectIdOne" parameterType="Integer" resultMap="BaseResultMap">
+	    SELECT *
+		FROM m_lottery_order
+		WHERE id=#{id}
+	</select>
+	
+	<select id="selectExcl" parameterType="MLotteryOrder" resultMap="BaseResultMap">
+		SELECT o.id,o.account_id,g.goods_name,o.expend_pig_coin,a.mobile,
+		CONCAT(a.full_name,a.detail_address) AS detailAddress,
+		o.remarks,g.image_url,
+		u.channel_code,
+		o.price,
+		a.receiver,
+		CASE o.status
+		WHEN 1 THEN '待审核'
+		WHEN 2 THEN '拒绝'
+		WHEN 3 THEN '待发货'
+		WHEN 4 THEN '已发货'
+		END statusName,
+		(SELECT realname FROM p_admin WHERE mobile=o.operator_mobile) AS operatorName,
+		FROM_UNIXTIME(o.create_time/1000,'%Y-%m-%d %H:%i:%s') AS creatorDate,
+		FROM_UNIXTIME(o.update_time/1000,'%Y-%m-%d %H:%i:%s') AS updateDate
+		FROM m_lottery_order o LEFT JOIN m_user_address a ON o.address_id=a.address_id INNER JOIN m_lottery_type t ON t.id=o.type_id INNER JOIN m_lottery_goods g ON o.goods_id=g.id INNER JOIN m_user_info u ON u.user_id=o.user_id
+	    <where>
+	        o.create_time != 1556506633200
+		    <if test="id != null and id !=''">
+				and o.id = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="accountId != null and accountId !=''">
+				and o.account_id = #{accountId,jdbcType=VARCHAR}
+			</if>
+			<if test="mobile != null and mobile !=''">
+				and a.mobile = #{mobile,jdbcType=INTEGER}
+			</if>
+			<if test="status != null and status !=''">
+				and o.status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="userId != null and userId !=''">
+				and o.user_id = #{userId,jdbcType=INTEGER}
+			</if>
+			<if test="minPrice != null and minPrice !=''">
+				and o.price >= #{minPrice}
+			</if>
+			<if test="maxPrice != null and maxPrice !=''">
+				and #{maxPrice}>=o.price
+			</if>
+			<if test="startTime != null and startTime !=''">
+				and o.create_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+				and #{endTime}>=o.create_time
+			</if>
+		</where>
+		order by o.create_time desc
+		limit 0,5000
+	</select>
+	
+	<select id="selectUserGoods" resultMap="BaseResultMap">
+	    SELECT *
+		FROM m_lottery_order
+		WHERE id=#{id} and user_id=#{userId}
+	</select>
+	
+	<select id="selectOrderTime" parameterType="String" resultType="int">
+	    SELECT COUNT(1)
+		FROM m_lottery_order
+		WHERE user_id=#{userId} AND (FROM_UNIXTIME(create_time/1000,'%Y-%m-%d')=CURDATE() OR FROM_UNIXTIME(create_time/1000,'%Y-%m-%d')=DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+	</select>
+	
+	<select id="selectUserCount" parameterType="String" resultType="int">
+	    select count(1)
+	    from m_lottery_order
+	    where user_id=#{userId}
+	</select>
+</mapper>

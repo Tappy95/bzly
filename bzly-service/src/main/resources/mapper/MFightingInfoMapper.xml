@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.fighting.MFightingInfoDao" >
+	<resultMap type="MFightingInfo" id="BaseResultMap">
+		<id column="fight_id" property="fightId" jdbcType="INTEGER"/>		
+		<result column="fighting_type" property="fightingType" jdbcType="INTEGER"/>		
+		<result column="initiator" property="initiator" jdbcType="VARCHAR"/>				
+		<result column="defense" property="defense" jdbcType="VARCHAR"/>
+		<result column="initiator_coin" property="initiatorCoin" jdbcType="INTEGER"/>				
+		<result column="defense_coin" property="defenseCoin" jdbcType="INTEGER"/>
+		<result column="fighting_time" property="fightingTime" jdbcType="INTEGER"/>	
+		<result column="winner" property="winner" jdbcType="VARCHAR"/>	
+		<result column="victory_score" property="victoryScore" jdbcType="INTEGER"/>	
+		<result column="failure_score" property="failureScore" jdbcType="INTEGER"/>	
+		<result column="use_time" property="useTime" jdbcType="INTEGER"/>	
+		<result column="entry_code" property="entryCode" jdbcType="VARCHAR"/>
+		<result column="state" property="state" jdbcType="INTEGER"/>
+		<result column="is_receive" property="isReceive" jdbcType="INTEGER"/>
+		
+		<result column="initiatorName" property="initiatorName" jdbcType="VARCHAR"/>
+		<result column="defenseName" property="defenseName" jdbcType="VARCHAR"/>
+		<result column="winnerName" property="winnerName" jdbcType="VARCHAR"/>						
+	</resultMap>
+	
+	<insert id="save" useGeneratedKeys="true" keyProperty="fightId" parameterType="MFightingInfo">
+	   INSERT INTO m_fighting_info(fighting_type,initiator,defense,initiator_coin,defense_coin,fighting_time,winner,victory_score,failure_score,use_time,entry_code,state,is_receive)
+       VALUES (#{fightingType},#{initiator},#{defense},#{initiatorCoin},#{defenseCoin},#{fightingTime},#{winner},#{victoryScore},#{failureScore},#{useTime},#{entryCode},#{state},2)
+	</insert>
+	
+	<select id="selectList" parameterType="MFightingInfo" resultMap="BaseResultMap">
+	    SELECT m.*,(SELECT user_name FROM m_user_info WHERE m.initiator=user_id) AS initiatorName,(SELECT user_name FROM m_user_info WHERE m.defense=user_id) AS defenseName,(SELECT user_name FROM m_user_info WHERE m.winner=user_id) as winnerName
+        FROM m_fighting_info m
+        <where>
+           <if test="state != null and state != ''">
+				state = #{state}
+		   </if>
+        </where>
+        order by m.fighting_time desc
+	</select>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+	    SELECT *
+        FROM m_fighting_info
+        where fight_id=#{fightId}
+	</select>
+	
+	<select id="selectCode" resultMap="BaseResultMap">
+	   select *
+	   from m_fighting_info
+	   where entry_code=#{entryCode}
+	</select>
+	
+	<update id="update" parameterType="MFightingInfo">
+	    update m_fighting_info
+	    <set>
+			<if test="defense != null and defense != ''">
+				defense = #{defense},
+			</if>
+			<if test="defenseCoin != null and defenseCoin != ''">
+				defense_coin = #{defenseCoin},
+			</if>
+			<if test="fightingTime != null and fightingTime != ''">
+				fighting_time = #{fightingTime},
+			</if>
+			<if test="winner != null and winner != ''">
+				winner = #{winner},
+			</if>
+			<if test="victoryScore != null and victoryScore != ''">
+				victory_score = #{victoryScore},
+			</if>
+			<if test="failureScore != null and failureScore != ''">
+				failure_score = #{failureScore},
+			</if>
+			<if test="useTime != null and useTime != ''">
+				use_time = #{useTime},
+			</if>
+			<if test="state != null and state != ''">
+				state = #{state},
+			</if>
+			<if test="isReceive != null and isReceive != ''">
+				is_receive = #{isReceive}
+			</if>
+		</set>
+		where fight_id=#{fightId}
+	</update>
+	
+	<delete id="delete">
+	    delete from m_fighting_info
+	    where fight_id=#{fightId}
+	</delete>
+	
+	<select id="selectUserCount" resultType="int">
+		SELECT COUNT(*)
+		FROM m_fighting_info 
+		WHERE initiator=#{userId} OR defense=#{userId}
+	</select>
+</mapper>

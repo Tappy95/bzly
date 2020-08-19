@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.MChannelConfigDao" >
+	<resultMap type="MChannelConfig" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>		
+		<result column="fission_id" property="fissionId" jdbcType="INTEGER"/>				
+		<result column="charge_mode" property="chargeMode" jdbcType="INTEGER"/>				
+		<result column="effective_object" property="effectiveObject" jdbcType="INTEGER"/>		
+		<result column="open_game" property="openGame" jdbcType="VARCHAR"/>	
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>	
+		<result column="apply_task" property="applyTask" jdbcType="INTEGER"/>
+		<result column="game_28" property="game28" jdbcType="INTEGER"/>
+		<result column="pcdd_28" property="pcdd28" jdbcType="INTEGER"/>
+		<result column="jnd_28" property="jnd28" jdbcType="INTEGER"/>	
+		
+		<result column="fissionName" property="fissionName" jdbcType="VARCHAR"/>			
+	</resultMap>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="MChannelConfig">
+		INSERT INTO m_channel_config(channel_code,fission_id,charge_mode,effective_object,open_game,create_time,apply_task,game_28,pcdd_28,jnd_28)
+        VALUE(#{channelCode},#{fissionId},#{chargeMode},#{effectiveObject},#{openGame},#{createTime},#{applyTask},#{game28},#{pcdd28},#{jnd28})
+	</insert>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select *
+		from m_channel_config
+		where id=#{id}
+	</select>
+	
+	<select id="selectList" parameterType="MChannelConfig" resultMap="BaseResultMap">
+		SELECT c.*,(SELECT NAME FROM m_fission_scheme WHERE id=c.fission_id) AS fissionName
+		FROM m_channel_config c
+		<where>
+		   <if test="channelCode != null and channelCode != ''">
+				c.channel_code  = #{channelCode}				
+			</if>
+		</where>
+		ORDER BY c.create_time DESC
+	</select>
+	
+	<update id="update" parameterType="MChannelConfig">
+		update m_channel_config 
+		<set>
+			<if test="channelCode != null">
+				channel_code  = #{channelCode},				
+			</if>
+			<if test="fissionId != null">
+				fission_id  = #{fissionId},				
+			</if>
+			<if test="chargeMode != null">
+				charge_mode  = #{chargeMode},				
+			</if>
+			<if test="effectiveObject != null">
+				effective_object  = #{effectiveObject},				
+			</if>
+			<if test="openGame != null">
+				open_game  = #{openGame},				
+			</if>
+			<if test="applyTask != null">
+				apply_task  = #{applyTask},				
+			</if>
+			<if test="game28 != null">
+				game_28  = #{game28},				
+			</if>
+			<if test="pcdd28 != null">
+				pcdd_28  = #{pcdd28},				
+			</if>
+			<if test="jnd28 != null">
+				jnd_28  = #{jnd28},				
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from m_channel_config where id = #{id}
+	</delete>
+	
+	<select id="selectByChannelCode" parameterType="String" resultMap="BaseResultMap">
+		select * from m_channel_config where channel_code = #{channelCode}
+	</select>
+	
+	<select id="selectFissionId" parameterType="int" resultType="int">
+	    select count(*) from m_channel_config where fission_id=#{fissionId}
+	</select>
+</mapper>

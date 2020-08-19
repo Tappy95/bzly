@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.user.LActiveGoldLogDao">
+	<resultMap id="BaseResultMap" type="LActiveGoldLog">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="vip_id" property="vipId" jdbcType="INTEGER"/>
+		<result column="active_coin" property="activeCoin" jdbcType="INTEGER"/>
+		<result column="active_pig" property="activePig" jdbcType="INTEGER"/>
+		<result column="days" property="days" jdbcType="INTEGER"/>
+		<result column="creator_time" property="creatorTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="LActiveGoldLog">
+	   INSERT INTO l_active_gold_log(user_id,vip_id,active_coin,active_pig,days,creator_time)
+       VALUES (#{userId},#{vipId},#{activeCoin},#{activePig},#{days},#{creatorTime})
+	</insert>
+	
+	<insert id="saveList" parameterType="java.util.List">
+	   INSERT INTO l_active_gold_log(user_id,vip_id,active_coin,active_pig,days,creator_time)
+       VALUES 
+       <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.userId},#{item.vipId},#{item.activeCoin},#{item.activePig},#{item.days},#{item.creatorTime})
+       </foreach>
+	</insert>
+	
+	<select id="selectTimeMax" resultMap="BaseResultMap">
+	    SELECT *
+		FROM l_active_gold_log
+		WHERE user_id=#{userId} and vip_id=#{vipId}
+		ORDER BY creator_time DESC
+		LIMIT 0,1
+	</select>
+
+   <select id="selectDay" resultType="int">
+        SELECT count(*)
+		FROM l_active_gold_log
+		WHERE CURDATE()=FROM_UNIXTIME(creator_time/1000,"%Y-%m-%d") and user_id=#{userId}
+   </select>
+   
+   <select id="selectDayNews" resultType="int">
+        SELECT count(*)
+		FROM l_active_gold_log
+		WHERE CURDATE()=FROM_UNIXTIME(creator_time/1000,"%Y-%m-%d") and user_id=#{userId} and vip_id=#{vipId}
+   </select>
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.platform.PMenuBtnDao" >
+	<resultMap type="PMenuBtn" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="menu_id" property="menuId" jdbcType="INTEGER"/>
+		<result column="btn_name" property="btnName" jdbcType="VARCHAR"/>
+		<result column="btn_code" property="btnCode" jdbcType="VARCHAR"/>		
+	</resultMap>
+	
+	<resultMap type="RightCollection" id="rightCollectionResultMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="url" column="url"/>
+		<result property="parentId" column="parentId"/>
+		<result property="type" column="type"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="PMenuBtn">
+		insert into p_menu_btn 
+		(id,menu_id,btn_name,btn_code) 
+		values 
+		(#{id},#{menuId},#{btnName},#{btnCode})
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from p_menu_btn where id = #{id}
+	</delete>
+	
+	<select id="selectList" parameterType="PMenuBtn" resultMap="BaseResultMap">
+		select m.*
+		from p_menu_btn m
+		<where>
+			menu_id = #{menuId}
+		</where>
+	</select>
+
+	<select id="selectMenuBtnList" parameterType="PMenuBtn" resultMap="rightCollectionResultMap">
+		select id,btn_name as name ,btn_code as url,menu_id as parentId,'2' as type from p_menu_btn where menu_id = #{menuId}
+	</select>
+	
+	<select id="selectBtns" resultMap="BaseResultMap">
+		select mb.btn_name,mb.btn_code,mb.id from p_role_menu_btn btns 
+		left join p_menu_btn mb on btns.ref_id = mb.id 
+		where role_id = #{roleId} and type = 2 and mb.menu_id  = #{menuId}
+	</select>
+</mapper>

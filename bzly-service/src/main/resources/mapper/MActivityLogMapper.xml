@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.activity.MActivityLogDao" >
+	<resultMap type="MActivityLog" id="BaseResultMap">
+		<result column="l_id" property="lId" jdbcType="INTEGER"/>
+		<result column="activity_id" property="activityId" jdbcType="VARCHAR"/>		
+		<result column="cycle_num" property="cycleNum" jdbcType="INTEGER"/>		
+		<result column="participants_num" property="participantsNum" jdbcType="INTEGER"/>		
+		<result column="participants_amount" property="participantsAmount" jdbcType="DECIMAL"/>		
+		<result column="allocation_amount" property="allocationAmount" jdbcType="DECIMAL"/>		
+		<result column="success_num" property="successNum" jdbcType="INTEGER"/>		
+		<result column="failure_num" property="failureNum" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="MActivityLog">
+		insert into m_activity_log 
+		(l_id,activity_id,cycle_num,participants_num,participants_amount,
+		allocation_amount,success_num,failure_num) 
+		values 
+		(#{lId},#{activityId},#{cycleNum},#{participantsNum},#{participantsAmount},
+		#{allocationAmount},#{successNum},#{failureNum})
+	</insert>
+	
+	<update id="update" parameterType="MActivityLog">
+		update m_activity_log 
+		<set>
+			<if test="participantsNum != null and participantsNum != ''">
+				participants_num = #{participantsNum},
+			</if>
+			<if test="participantsAmount != null and participantsAmount != ''">
+				participants_amount = #{participantsAmount},
+			</if>
+			<if test="allocationAmount != null and allocationAmount != ''">
+				allocation_amount = #{allocationAmount},
+			</if>
+			<if test="successNum != null and successNum != ''">
+				success_num = #{successNum},
+			</if>
+			<if test="failureNum != null and failureNum != ''">
+				failure_num = #{failureNum},
+			</if>
+		</set> 
+		where l_id = #{lId}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from m_activity_log where l_id = #{lId}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from m_activity_log where l_id = #{lId}
+	</select>
+	
+	<select id="selectList" parameterType="MActivityLog" resultMap="BaseResultMap">
+		select * from m_activity_log
+		<where>
+			<if test="activityId != null and activityId != ''">
+				and activity_id = #{activityId}
+			</if>
+			<if test="cycleNum != null and cycleNum != ''">
+				and cycle_num = #{cycleNum}
+			</if>
+		</where>
+		order by activity_id desc,cycle_num desc 
+	</select>
+	
+	<select id="selectLatestTwo" parameterType="Integer" resultMap="BaseResultMap">
+		select * from m_activity_log where activity_id = #{activityId} ORDER BY l_id desc limit 2
+	</select>
+	
+</mapper>

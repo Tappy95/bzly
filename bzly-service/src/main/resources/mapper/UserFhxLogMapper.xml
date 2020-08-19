@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.wish.UserFhxLogDao" >
+	<resultMap type="UserFhxLog" id="baseMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="fhx_num" property="fhxNum" jdbcType="INTEGER"/>
+		<result column="changed_type" property="changedType" jdbcType="INTEGER"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="changed_time" property="changedTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="UserFhxLog">
+		insert into sr_user_fhx_log (id,user_id,fhx_num,changed_type,status,changed_time)
+		values (#{id},#{userId},#{fhxNum},#{changedType},#{status},#{changedTime})
+	</insert>
+	
+	<select id="selectListF" parameterType="UserFhxLog" resultMap="baseMap">
+		select fhx_num,changed_type,status,changed_time from sr_user_fhx_log where user_id = #{userId}
+		order by changed_time desc limit #{pageIndex},#{pageSize}
+	</select>
+
+	<select id="selectListFCount" parameterType="UserFhxLog" resultType="long">
+		select count(id) from sr_user_fhx_log where user_id = #{userId}
+	</select>
+</mapper>

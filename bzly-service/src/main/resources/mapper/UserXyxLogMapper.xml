@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.wish.UserXyxLogDao" >
+	<resultMap type="UserXyxLog" id="baseMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="xyx_num" property="xyxNum" jdbcType="INTEGER"/>
+		<result column="changed_type" property="changedType" jdbcType="INTEGER"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="changed_time" property="changedTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="UserXyxLog">
+		insert into sr_user_xyx_log (id,user_id,xyx_num,changed_type,status,changed_time)
+		values (#{id},#{userId},#{xyxNum},#{changedType},#{status},#{changedTime})
+	</insert>
+	
+	<select id="selectListF" parameterType="UserXyxLog" resultMap="baseMap">
+		select xyx_num,changed_type,status,changed_time from sr_user_xyx_log where user_id = #{userId}
+		order by changed_time desc limit #{pageIndex},#{pageSize}
+	</select>
+
+	<select id="selectListFCount" parameterType="UserXyxLog" resultType="long">
+		select count(id) from sr_user_xyx_log where user_id = #{userId}
+	</select>
+
+	<select id="selectListByUserType" resultMap="baseMap">
+		select * from sr_user_xyx_log where user_id = #{userId} and changed_type = #{changedType} order by status,changed_time desc
+	</select>
+	
+	<select id="selectUsing" parameterType="Integer" resultMap="baseMap">
+		select * from sr_user_xyx_log where status = #{status} order by changed_time desc
+	</select>
+</mapper>

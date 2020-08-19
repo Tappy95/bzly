@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.platform.PDictionaryDao" >
+	<resultMap type="PDictionary" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="dic_name" property="dicName" jdbcType="VARCHAR"/>		
+		<result column="dic_remark" property="dicRemark" jdbcType="VARCHAR"/>		
+		<result column="dic_value" property="dicValue" jdbcType="VARCHAR"/>		
+		<result column="modify_user" property="modifuUserId" jdbcType="VARCHAR"/>		
+		<result column="modify_time" property="modifyTime" jdbcType="INTEGER"/>
+		<result column="value_type" property="valueType" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterType="PDictionary">
+		insert into p_dictionary 
+		(id,dic_name,dic_remark,dic_value,modify_user,modify_time,value_type,status) 
+		values 
+		(#{id},#{dicName},#{dicRemark},#{dicValue},#{modifuUserId},#{modifyTime},#{valueType},#{status})
+	</insert>
+	
+	<update id="update" parameterType="PDictionary">
+		update p_dictionary 
+		<set>
+			<if test="dicName != null and dicName != ''">
+				dic_name = #{dicName},
+			</if>
+			<if test="dicRemark != null and dicRemark != ''">
+				dic_remark = #{dicRemark},
+			</if>
+			<if test="dicValue != null and dicValue != ''">
+				dic_value = #{dicValue},
+			</if>
+			<if test="modifuUserId != null and modifuUserId != ''">
+				modify_user = #{modifuUserId},
+			</if>
+			<if test="modifyTime != null and modifyTime != ''">
+				modify_time = #{modifyTime},
+			</if>
+			<if test="valueType != null and valueType != ''">
+				value_type = #{valueType},
+			</if>
+			<if test="status != null and status != ''">
+				status = #{status},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from p_dictionary where id = #{id}
+	</select>
+
+	<select id="selectByName" parameterType="String" resultMap="BaseResultMap">
+		select * from p_dictionary where dic_name = #{dicName}
+	</select>
+	
+	<select id="selectList" parameterType="PDictionary" resultMap="BaseResultMap">
+		select * from p_dictionary 
+		<where>
+			<if test="dicName != null and dicName != ''">
+				dic_name like concat('%',#{dicName},'%')
+			</if>
+			<if test="dicRemark != null and dicRemark != ''">
+				dic_remark like concat('%',#{dicRemark},'%')
+			</if>
+		</where>
+		order by id
+	</select>
+	
+	<select id="selectByNameStatus" resultMap="BaseResultMap">
+		select * from p_dictionary where status=#{status} and dic_name = #{dicName}
+	</select>
+	
+</mapper>

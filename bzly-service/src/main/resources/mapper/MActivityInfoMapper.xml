@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.activity.MActivityInfoDao" >
+	<resultMap type="MActivityInfo" id="BaseResultMap">
+		<result column="act_id" property="actId" jdbcType="INTEGER"/>
+		<result column="activity_name" property="activityName" jdbcType="VARCHAR"/>		
+		<result column="activity_type" property="activityType" jdbcType="INTEGER"/>		
+		<result column="start_time" property="startTime" jdbcType="VARCHAR"/>		
+		<result column="stop_time" property="stopTime" jdbcType="VARCHAR"/>		
+		<result column="is_cycle" property="isCycle" jdbcType="INTEGER"/>		
+		<result column="periodic" property="periodic" jdbcType="INTEGER"/>		
+		<result column="periodic_unit" property="periodicUnit" jdbcType="INTEGER"/>		
+		<result column="is_disable" property="isDisable" jdbcType="INTEGER"/>		
+		<result column="memo" property="memo" jdbcType="VARCHAR"/>		
+		<result column="begain_time" property="begainTime" jdbcType="INTEGER"/>		
+		<result column="end_time" property="endTime" jdbcType="INTEGER"/>		
+		<result column="settlement_time" property="settlementTime" jdbcType="VARCHAR"/>		
+		<result column="base_allocation_amount" property="baseAllocationTmount" jdbcType="DECIMAL"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="MActivityInfo">
+		insert into m_activity_info 
+		(act_id,activity_name,activity_type,start_time,stop_time,is_cycle,periodic,
+		periodic_unit,is_disable,memo,begain_time,end_time,settlement_time,base_allocation_amount) 
+		values 
+		(#{actId},#{activityName},#{activityType},#{startTime},#{stopTime},#{isCycle},#{periodic},
+		#{periodicUnit},#{isDisable},#{memo},#{begainTime},#{endTime},#{settlementTime},#{baseAllocationTmount})
+	</insert>
+	
+	<update id="update" parameterType="MActivityInfo">
+		update m_activity_info 
+		<set>
+			<if test="activityName != null and activityName != ''">
+				activity_name = #{activityName},
+			</if>
+			<if test="activityType != null and activityType != ''">
+				activity_type = #{activityType},
+			</if>
+			<if test="startTime != null and startTime != ''">
+				start_time = #{startTime},
+			</if>
+			<if test="stopTime != null and stopTime != ''">
+				stop_time = #{stopTime},
+			</if>
+			<if test="isCycle != null and isCycle != ''">
+				is_cycle = #{isCycle},
+			</if>
+			<if test="periodic != null and periodic != ''">
+				periodic = #{periodic},
+			</if>
+			<if test="periodicUnit != null and periodicUnit != ''">
+				periodic_unit = #{periodicUnit},
+			</if>
+			<if test="isDisable != null and isDisable != ''">
+				is_disable = #{isDisable},
+			</if>
+			<if test="memo != null and memo != ''">
+				memo = #{memo},
+			</if>
+			<if test="begainTime != null and begainTime != ''">
+				begain_time = #{begainTime},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				end_time = #{endTime},
+			</if>
+			<if test="settlementTime != null and settlementTime != ''">
+				settlement_time = #{settlementTime},
+			</if>
+			<if test="baseAllocationTmount != null and baseAllocationTmount != ''">
+				base_allocation_amount = #{baseAllocationTmount},
+			</if>
+		</set> 
+		where act_id = #{actId}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from m_activity_info where act_id = #{actId}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from m_activity_info where act_id = #{actId}
+	</select>
+
+	<select id="selectByActivityType" parameterType="Integer" resultMap="BaseResultMap">
+		select * from m_activity_info where activity_type = #{activityType} and is_disable = 1
+	</select>
+	
+	<select id="selectList" parameterType="MActivityInfo" resultMap="BaseResultMap">
+		select * from m_activity_info
+		<where>
+			<if test="activityType != null and activityType != ''">
+				and activity_type = #{activityType}
+			</if>
+			<if test="activityName != null and activityName != ''">
+				and activity_name = #{activityName}
+			</if>
+		</where>
+		order by is_disable desc 
+	</select>
+
+</mapper>

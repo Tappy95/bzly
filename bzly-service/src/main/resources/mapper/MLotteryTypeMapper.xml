@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.lottery.MLotteryTypeDao" >
+	<resultMap type="MLotteryType" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>	
+		<result column="type_name" property="typeName" jdbcType="VARCHAR"/>	
+		<result column="day_num" property="dayNum" jdbcType="INTEGER"/>	
+		<result column="times_oneday" property="timesOneday" jdbcType="INTEGER"/>				
+		<result column="expend_pig_coin" property="expendPigCoin" jdbcType="INTEGER"/>				
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+		<result column="apply_crowd" property="applyCrowd" jdbcType="INTEGER"/>		
+		<result column="lottery_sort" property="lotterySort" jdbcType="INTEGER"/>				
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="MLotteryType">
+		INSERT INTO m_lottery_type(type_name,day_num,times_oneday,expend_pig_coin,remark,apply_crowd,lottery_sort,create_time,status)
+        VALUE (#{typeName},#{dayNum},#{timesOneday},#{expendPigCoin},#{remark,jdbcType=VARCHAR},#{applyCrowd},#{lotterySort},#{createTime},#{status})
+	</insert>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select *
+		from m_lottery_type
+		where id=#{id}
+	</select>
+	
+	<select id="selectPageList" parameterType="MLotteryType" resultMap="BaseResultMap">
+		select *
+		from m_lottery_type
+		<where>
+		   <if test="typeName != null and typeName !=''">
+			and type_name = #{typeName}
+		   </if>
+		</where>
+		order by create_time desc
+	</select>
+	
+	<select id="selectList" resultMap="BaseResultMap">
+		select *
+		from m_lottery_type
+		where status=1
+		order by create_time desc
+	</select>
+	
+	<update id="update" parameterType="MLotteryType">
+		update m_lottery_type 
+		<set>
+			<if test="status != null and status != ''">
+				status  = #{status},				
+			</if>
+			day_num  = #{dayNum,jdbcType=INTEGER},
+			<if test="typeName != null and typeName != ''">
+				type_name  = #{typeName},				
+			</if>
+			times_oneday  = #{timesOneday,jdbcType=INTEGER},
+			<if test="expendPigCoin != null and expendPigCoin != ''">
+				expend_pig_coin  = #{expendPigCoin},				
+			</if>
+			<if test="remark != null and remark != ''">
+				remark  = #{remark},				
+			</if>
+			<if test="applyCrowd != null and applyCrowd != ''">
+				apply_crowd  = #{applyCrowd},				
+			</if>
+			<if test="lotterySort != null and lotterySort != ''">
+				lottery_sort  = #{lotterySort},				
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+	   DELETE FROM m_lottery_type WHERE id=#{id}
+	</delete>
+	
+	<select id="selectEnableType" resultMap="BaseResultMap">
+		select * from m_lottery_type where status = 1 and lottery_sort = 2 order by create_time desc limit 1
+	</select>
+	
+	<select id="selectTypeOne" resultMap="BaseResultMap">
+	    select *
+	    from m_lottery_type
+	    where lottery_sort=1 and status=1
+	    limit 0,1
+	</select>
+</mapper>

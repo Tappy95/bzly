@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.egg.EGoleEggOrderDao">
+	<resultMap id="BaseResultMap" type="EGoleEggOrder">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="pig_coin" property="pigCoin" jdbcType="INTEGER"/>
+		<result column="obtain_pig_coin" property="obtainPigCoin" jdbcType="INTEGER"/>
+		<result column="card_number" property="cardNumber" jdbcType="VARCHAR"/>
+		<result column="card_password" property="cardPassword" jdbcType="VARCHAR"/>
+		<result column="state" property="state" jdbcType="INTEGER"/>
+		<result column="exchange_user_id" property="exchangeUserId" jdbcType="INTEGER"/>
+		<result column="creator_time" property="creatorTime" jdbcType="INTEGER"/>
+		<result column="exchange_time" property="exchangeTime" jdbcType="INTEGER"/>
+		<result column="is_prohibit" property="isProhibit" jdbcType="INTEGER"/>
+		<result column="modify_password" property="modifyPassword" jdbcType="INTEGER"/>
+		
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>
+		<result column="exchange_account_id" property="exchangeAccountId" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="EGoleEggOrder">
+	   INSERT INTO e_gole_egg_order(user_id,pig_coin,obtain_pig_coin,card_number,card_password,state,exchange_user_id,creator_time,exchange_time,is_prohibit,modify_password)
+       VALUES (#{userId},#{pigCoin},#{obtainPigCoin},#{cardNumber},#{cardPassword},#{state},#{exchangeUserId},#{creatorTime},#{exchangeTime},#{isProhibit},#{modifyPassword})
+	</insert>
+	
+	<select id="selectUserCount" parameterType="String" resultType="int">
+	   select count(1) from e_gole_egg_order where user_id=#{userId} and FROM_UNIXTIME(creator_time/1000,'%Y-%m-%d')=CURDATE()
+	</select>
+	
+	<select id="selectList" parameterType="EGoleEggOrder" resultMap="BaseResultMap">
+	   SELECT e.*,
+	   (SELECT account_id FROM m_user_info WHERE user_id=e.user_id) AS account_id,
+	   (SELECT account_id FROM m_user_info WHERE user_id=e.exchange_user_id) AS exchange_account_id
+	   FROM e_gole_egg_order e
+	   <where>
+	      <if test="userId != null and userId != ''">
+			and e.user_id = #{userId}
+		  </if>
+		  <if test="exchangeUserId != null and exchangeUserId != ''">
+			and e.exchange_user_id = #{exchangeUserId}
+		  </if>
+		  <if test="cardNumber != null and cardNumber != ''">
+			and e.card_number = #{exchangeUserId}
+		  </if>
+		  <if test="state != null and state != ''">
+			and e.state = #{state}
+		  </if>
+		  <if test="startCreatorTime != null and startCreatorTime != ''">
+			and e.creator_time >= #{startCreatorTime}
+		  </if>
+		  <if test="endCreatorTime != null and endCreatorTime != ''">
+			and #{endCreatorTime}>e.creator_time
+		  </if>
+		  <if test="startExchangeTime != null and startExchangeTime != ''">
+			and e.exchange_time >= #{startExchangeTime}
+		  </if>
+		  <if test="endExchangeTime != null and endCreatorTime != ''">
+			and #{endExchangeTime}>e.exchange_time
+		  </if>
+	   </where>
+	   ORDER BY e.creator_time DESC
+	   limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="EGoleEggOrder" resultType="int">
+	   SELECT count(1)
+	   FROM e_gole_egg_order e
+	   <where>
+	      <if test="userId != null and userId != ''">
+			and e.user_id = #{userId}
+		  </if>
+		  <if test="exchangeUserId != null and exchangeUserId != ''">
+			and e.exchange_user_id = #{exchangeUserId}
+		  </if>
+		  <if test="cardNumber != null and cardNumber != ''">
+			and e.card_number = #{exchangeUserId}
+		  </if>
+		  <if test="state != null and state != ''">
+			and e.state = #{state}
+		  </if>
+		  <if test="startCreatorTime != null and startCreatorTime != ''">
+			and e.creator_time >= #{startCreatorTime}
+		  </if>
+		  <if test="endCreatorTime != null and endCreatorTime != ''">
+			and #{endCreatorTime}>e.creator_time
+		  </if>
+		  <if test="startExchangeTime != null and startExchangeTime != ''">
+			and e.exchange_time >= #{startExchangeTime}
+		  </if>
+		  <if test="endExchangeTime != null and endCreatorTime != ''">
+			and #{endExchangeTime}>e.exchange_time
+		  </if>
+	   </where>
+	</select>
+	
+	<select id="selectOne" parameterType="long" resultMap="BaseResultMap">
+	   SELECT e.*,
+	   (SELECT account_id FROM m_user_info WHERE user_id=e.user_id) AS account_id,
+	   (SELECT account_id FROM m_user_info WHERE user_id=e.exchange_user_id) AS exchange_account_id
+	   FROM e_gole_egg_order e
+	   where e.id=#{id}
+	</select>
+	
+	<update id="updateProhibit">
+	   update e_gole_egg_order
+	   set is_prohibit=#{isProhibit}
+	   where id=#{id}
+	</update>
+	
+	<select id="selectMaxId" resultType="long">
+	   select IFNULL(max(id),0) from e_gole_egg_order
+	</select>
+	
+	<select id="selectAppList" parameterType="EGoleEggOrder" resultType="map">
+	   select id,obtain_pig_coin as obtainPigCoin,card_number as cardNumber,state
+	   from e_gole_egg_order
+	   <where>
+	      <if test="state != null and state != ''">
+	         state=#{state}
+	      </if>
+	      <if test="userId != null and userId != ''">
+	         user_id=#{userId}
+	      </if>
+	   </where>
+	   ORDER BY creator_time DESC
+	   limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectAppCount" parameterType="EGoleEggOrder" resultType="int">
+	   select count(1)
+	   from e_gole_egg_order
+	   <where>
+	      <if test="state != null and state != ''">
+	         state=#{state}
+	      </if>
+	      <if test="userId != null and userId != ''">
+	         user_id=#{userId}
+	      </if>
+	   </where>
+	</select>
+	
+	<select id="selectAppInfo" parameterType="long" resultType="map">
+       select id,obtain_pig_coin as obtainPigCoin,card_number as cardNumber,state,
+        CASE state
+		WHEN 1 THEN 0
+		WHEN 2 THEN card_password
+		END cardPassword
+	   from e_gole_egg_order
+	   where id=#{id}
+	</select>
+	
+	<select id="selectPassword" parameterType="long" resultType="String">
+	   select card_password from e_gole_egg_order where id=#{id}
+	</select>
+	
+	<select id="selectCard" parameterType="String" resultMap="BaseResultMap">
+	   select *
+	   from e_gole_egg_order
+	   where card_number=#{cardNumber} and state=1
+	</select>
+	
+	<select id="selectCardNumOrPass" resultMap="BaseResultMap">
+	   select * from e_gole_egg_order where card_number=#{cardNumber} and card_password=#{cardPassword}
+	</select>
+	
+	<update id="update" parameterType="EGoleEggOrder">
+	   update e_gole_egg_order
+	   set exchange_user_id=#{exchangeUserId},
+	   exchange_time=#{exchangeTime},
+	   state=#{state}
+	   where id=#{id}
+	</update>
+	
+	<select id="selectUseAppList" parameterType="EGoleEggOrder" resultType="map">
+	   select id,obtain_pig_coin as obtainPigCoin,exchange_time as exchangeTime,card_number as cardNumber
+	   from e_gole_egg_order
+	   <where>
+	      <if test="exchangeUserId != null and exchangeUserId != ''">
+	         exchange_user_id=#{exchangeUserId}
+	      </if>
+	   </where>
+	   ORDER BY creator_time DESC
+	   limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectUseAppCount" parameterType="EGoleEggOrder" resultType="int">
+	   select count(1)
+	   from e_gole_egg_order
+	   <where>
+	      <if test="exchangeUserId != null and exchangeUserId != ''">
+	         exchange_user_id=#{exchangeUserId}
+	      </if>
+	   </where>
+	</select>
+	
+	<select id="selectNewsRoll" resultType="map">
+	    SELECT CONCAT(LEFT(u.mobile,3), '****', RIGHT(u.mobile,4)) AS mobile,g.obtain_pig_coin AS obtainPigCoin
+		FROM e_gole_egg_order g INNER JOIN m_user_info u ON g.user_id=u.user_id
+		ORDER BY g.creator_time DESC
+		LIMIT 0,10
+	</select>
+</mapper>

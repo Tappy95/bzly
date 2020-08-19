@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LRankCoinDao" >
+	
+	<resultMap type="LRankCoin" id="BaseMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="rank_type" property="rankType" jdbcType="INTEGER"/>
+		<result column="rank_order" property="rankOrder" jdbcType="INTEGER"/>
+		<result column="image_url" property="imageUrl" jdbcType="INTEGER"/>
+		<result column="alias_name" property="aliasName" jdbcType="INTEGER"/>
+		<result column="mobile" property="mobile" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="INTEGER"/>
+		<result column="coin_balance" property="coinBalance" jdbcType="INTEGER"/>
+		<result column="rank_date" property="rankDate" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="real_data" property="realData" jdbcType="INTEGER"/>
+		<result column="reward_amount" property="rewardAmount" jdbcType="INTEGER"/>
+	</resultMap>
+	 
+	 <select id="selectList" parameterType="LRankCoin" resultMap="BaseMap">
+	 	select c.* from l_rank_coin c
+	 	<where>
+	 		<if test="rankDate != null and rankDate != ''">and c.rank_date = #{rankDate}</if>
+	 		<if test="rankType != null and rankType != ''">and c.rank_type = #{rankType}</if>
+	 		<if test="realData != null and realData != ''">and c.real_data = #{realData}</if>
+	 	</where>
+	 	order by rank_date desc,rank_order asc
+	 </select>
+	 
+	 <select id="selectLatest7Date" resultType="String">
+	 	select GROUP_CONCAT(a.rank_date) from (select DISTINCT rank_date from l_rank_coin ORDER BY rank_date desc limit 1,7)a
+	 </select>
+	 
+	 <select id="selectOne" parameterType="LRankCoin" resultMap="BaseMap">
+	 	select * from l_rank_coin where rank_date = #{rankDate} and user_id = #{userId} and rank_type = #{rankType}
+	 </select>
+</mapper>

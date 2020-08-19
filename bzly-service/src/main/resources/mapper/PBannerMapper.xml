@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.platform.PBannerDao" >
+	<resultMap type="PBanner" id="BaseResultMap">
+		<result column="banner_id" property="bannerId" jdbcType="INTEGER"/>
+		<result column="title" property="title" jdbcType="VARCHAR"/>		
+		<result column="position" property="position" jdbcType="INTEGER"/>		
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>		
+		<result column="link_url" property="linkUrl" jdbcType="VARCHAR"/>		
+		<result column="start_time" property="startTime" jdbcType="INTEGER"/>		
+		<result column="end_time" property="endTime" jdbcType="INTEGER"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="PBanner">
+		insert into p_banner 
+		(banner_id,title,position,image_url,link_url,start_time,end_time,create_time,status) 
+		values 
+		(#{bannerId},#{title},#{position},#{imageUrl},#{linkUrl},#{startTime},#{endTime},#{createTime},#{status})
+	</insert>
+	
+	<update id="update" parameterType="PBanner">
+		update p_banner 
+		<set>
+			<if test="title != null and title != ''">
+				title = #{title},
+			</if>
+			<if test="position != null and position != ''">
+				position = #{position},
+			</if>
+			<if test="imageUrl != null and imageUrl != ''">
+				image_url = #{imageUrl},
+			</if>
+			<if test="linkUrl != null and linkUrl != ''">
+				link_url = #{linkUrl},
+			</if>
+			<if test="startTime != null and startTime != ''">
+				start_time = #{startTime},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				end_time = #{endTime},
+			</if>
+			<if test="status != null and status != ''">
+				status = #{status}
+			</if>
+		</set> 
+		where banner_id = #{bannerId}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from p_banner where banner_id = #{bannerId}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from p_banner where banner_id = #{bannerId}
+	</select>
+	
+	<select id="selectList" parameterType="PBanner" resultMap="BaseResultMap">
+		select * from p_banner
+		<where>
+			<if test="title != null and title != ''">
+				and title = #{title}
+			</if>
+			<if test="position != null and position != ''">
+				and position = #{position}
+			</if>
+			<if test="status != null and status != ''">
+				and status = #{status}
+			</if>
+		</where>
+		order by create_time desc 
+	</select>
+	
+	
+	
+</mapper>

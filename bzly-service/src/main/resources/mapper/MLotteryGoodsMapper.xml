@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.lottery.MLotteryGoodsDao" >
+	<resultMap type="MLotteryGoods" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="type_id" property="typeId" jdbcType="INTEGER"/>	
+		<result column="abbreviation" property="abbreviation" jdbcType="VARCHAR"/>	
+		<result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>		
+		<result column="rate" property="rate" jdbcType="INTEGER"/>		
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>		
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>	
+		<result column="price" property="price" jdbcType="DECIMAL"/>	
+		<result column="pig_coin" property="pigCoin" jdbcType="INTEGER"/>
+		<result column="goods_number" property="goodsNumber" jdbcType="INTEGER"/>
+		<result column="goods_consume_number" property="goodsConsumeNumber" jdbcType="INTEGER"/>
+		<result column="orders" property="orders" jdbcType="INTEGER"/>
+		<result column="goods_type" property="goodsType" jdbcType="INTEGER"/>
+		<result column="carousel_img" property="carouselImg" jdbcType="VARCHAR"/>
+		<result column="info_img" property="infoImg" jdbcType="VARCHAR"/>
+		<result column="lotterySort" property="lotterySort" jdbcType="INTEGER"/>
+		<result column="typeName" property="typeName" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="MLotteryGoods">
+		insert into m_lottery_goods 
+		(type_id,abbreviation,goods_name,rate,image_url,remark,create_time,status,price,pig_coin,goods_number,goods_consume_number,orders,goods_type,carousel_img,info_img) 
+		values 
+		(#{typeId},#{abbreviation},#{goodsName},#{rate},#{imageUrl},#{remark},#{createTime},#{status},#{price},#{pigCoin},#{goodsNumber},#{goodsConsumeNumber},#{orders},#{goodsType},#{carouselImg},#{infoImg})
+	</insert>
+	
+	<update id="update" parameterType="MLotteryGoods">
+		update m_lottery_goods 
+		<set>
+			<if test="typeId != null">
+				type_id = #{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="abbreviation != null">
+				abbreviation = #{abbreviation,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsName != null">
+				goods_name = #{goodsName,jdbcType=VARCHAR},
+			</if>
+			rate = #{rate,jdbcType=INTEGER},
+			<if test="imageUrl != null">
+				image_url = #{imageUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="price != null">
+				price = #{price,jdbcType=DECIMAL},
+			</if>
+			
+			<if test="pigCoin != null">
+				pig_coin = #{pigCoin,jdbcType=INTEGER},
+			</if>
+			<if test="goodsNumber != null">
+				goods_number = #{goodsNumber,jdbcType=DECIMAL},
+			</if>
+			<if test="goodsConsumeNumber != null">
+				goods_consume_number = #{goodsConsumeNumber,jdbcType=DECIMAL},
+			</if>
+			<if test="orders != null">
+				orders = #{orders,jdbcType=DECIMAL},
+			</if>
+			<if test="goodsType != null">
+				goods_type = #{goodsType,jdbcType=DECIMAL},
+			</if>
+			<if test="carouselImg != null">
+				carousel_img = #{carouselImg,jdbcType=DECIMAL},
+			</if>
+			<if test="infoImg != null">
+				info_img = #{infoImg,jdbcType=DECIMAL},
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from m_lottery_goods where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select *,(SELECT lottery_sort FROM m_lottery_type WHERE id=type_id) AS lotterySort
+		from m_lottery_goods 
+		where id = #{id}
+	</select>
+
+	<select id="selectList" parameterType="MLotteryGoods" resultMap="BaseResultMap">
+		select *,
+		(select type_name from m_lottery_type where id=type_id) as typeName
+		from m_lottery_goods
+		<where>
+			<if test="typeId != null">
+				and type_id = #{typeId,jdbcType=INTEGER}
+			</if>
+			<if test="goodsName != null">
+				and goods_name = #{goodsName,jdbcType=VARCHAR}
+			</if>
+			<if test="status != null">
+				and status = #{status,jdbcType=INTEGER}
+			</if>
+		</where>
+		order by status,create_time desc 
+	</select>
+	
+	<select id="selectGoodsList" parameterType="Integer" resultMap="BaseResultMap">
+		select * from m_lottery_goods where type_id = #{typeId,jdbcType=INTEGER} and rate > 0 and status = 1 
+	</select>
+	
+	<select id="selectExchangeList" parameterType="MLotteryGoods" resultMap="BaseResultMap">
+	    SELECT *
+		FROM m_lottery_goods
+		WHERE status=1 AND type_id=(
+		   SELECT id
+		   FROM m_lottery_type
+		   WHERE lottery_sort=1 AND status=1
+		   LIMIT 0,1
+		) 
+		order by orders
+	</select>
+	
+	<update id="updateNumberAdd" parameterType="int">
+		update m_lottery_goods 
+		set	goods_consume_number = goods_consume_number+1
+		where id = #{id}
+	</update>
+	
+	<update id="updateNumberReduce" parameterType="int">
+		update m_lottery_goods 
+		set	goods_consume_number = goods_consume_number-1
+		where id = #{id}
+	</update>
+</mapper>

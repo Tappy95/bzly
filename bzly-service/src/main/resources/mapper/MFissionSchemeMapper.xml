@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.MFissionSchemeDao" >
+	<resultMap type="MFissionScheme" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="name" property="name" jdbcType="VARCHAR"/>		
+		<result column="team_price" property="teamPrice" jdbcType="DECIMAL"/>				
+		<result column="renew_price" property="renewPrice" jdbcType="DECIMAL"/>				
+		<result column="one_commission" property="oneCommission" jdbcType="DOUBLE"/>		
+		<result column="two_commission" property="twoCommission" jdbcType="DOUBLE"/>		
+		<result column="partner_commission" property="partnerCommission" jdbcType="DOUBLE"/>
+		<result column="effective_day" property="effectiveDay" jdbcType="INTEGER"/>
+		<result column="ordinary_exchange" property="ordinaryExchange" jdbcType="DOUBLE"/>			
+		<result column="group_exchange" property="groupExchange" jdbcType="DOUBLE"/>	
+		<result column="give_money" property="giveMoney" jdbcType="DOUBLE"/>
+		<result column="give_coin" property="giveCoin" jdbcType="INTEGER"/>	
+		<result column="give_pig" property="givePig" jdbcType="INTEGER"/>
+		<result column="give_day" property="giveDay" jdbcType="INTEGER"/>	
+		<result column="scheme_img" property="schemeImg" jdbcType="VARCHAR"/>
+		<result column="ordinary_reward_img" property="ordinaryRewardImg" jdbcType="VARCHAR"/>
+		<result column="team_reward_img" property="teamRewardImg" jdbcType="VARCHAR"/>
+		<result column="daren_reward_img" property="darenRewardImg" jdbcType="VARCHAR"/>
+		<result column="invite_img" property="inviteImg" jdbcType="VARCHAR"/>
+		<result column="remarks" property="remarks" jdbcType="VARCHAR"/>	
+		<result column="creater_time" property="createrTime" jdbcType="INTEGER"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterType="MFissionScheme">
+		INSERT INTO m_fission_scheme(name,team_price,renew_price,one_commission,two_commission,partner_commission,effective_day,ordinary_exchange,group_exchange,give_money,give_coin,give_pig,give_day,scheme_img,ordinary_reward_img,team_reward_img,daren_reward_img,invite_img,remarks,creater_time)
+        VALUE(#{name},#{teamPrice},#{renewPrice},#{oneCommission},#{twoCommission},#{partnerCommission},#{effectiveDay},#{ordinaryExchange},#{groupExchange},#{giveMoney},#{giveCoin},#{givePig},#{giveDay},#{schemeImg},#{ordinaryRewardImg},#{teamRewardImg},#{darenRewardImg},#{inviteImg},#{remarks},#{createrTime})
+	</insert>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select *
+		from m_fission_scheme
+		where id=#{id}
+	</select>
+	
+	<select id="selectList" parameterType="MFissionScheme" resultMap="BaseResultMap">
+		select *
+		from m_fission_scheme
+		order by creater_time desc
+	</select>
+	
+	<update id="update" parameterType="MFissionScheme">
+		update m_fission_scheme 
+		<set>
+			<if test="name != null">
+				name  = #{name},				
+			</if>
+			<if test="teamPrice != null">
+				team_price  = #{teamPrice},				
+			</if>
+			<if test="renewPrice != null">
+				renew_price  = #{renewPrice},				
+			</if>
+			<if test="oneCommission != null">
+				one_commission  = #{oneCommission},				
+			</if>
+			<if test="twoCommission != null">
+				two_commission  = #{twoCommission},				
+			</if>
+			<if test="partnerCommission != null">
+				partner_commission  = #{partnerCommission},				
+			</if>
+			<if test="renewPrice != null">
+				renew_price  = #{renewPrice},				
+			</if>
+			<if test="effectiveDay != null">
+				effective_day  = #{effectiveDay},				
+			</if>
+			<if test="ordinaryExchange != null">
+				ordinary_exchange  = #{ordinaryExchange},				
+			</if>
+			<if test="groupExchange != null">
+				group_exchange  = #{groupExchange},				
+			</if>
+			<if test="giveMoney != null">
+				give_money  = #{giveMoney},				
+			</if>
+			<if test="giveCoin != null">
+				give_coin  = #{giveCoin},				
+			</if>
+			<if test="givePig != null">
+				give_pig  = #{givePig},				
+			</if>
+			<if test="teamPrice != null">
+				team_price  = #{teamPrice},				
+			</if>
+			<if test="giveDay != null">
+				give_day  = #{giveDay},				
+			</if>
+			<if test="schemeImg != null">
+				scheme_img  = #{schemeImg},				
+			</if>
+			<if test="ordinaryRewardImg != null">
+				ordinary_reward_img  = #{ordinaryRewardImg},				
+			</if>
+			<if test="teamRewardImg != null">
+				team_reward_img  = #{teamRewardImg},				
+			</if>
+			<if test="darenRewardImg != null">
+				daren_reward_img  = #{darenRewardImg},				
+			</if>
+			<if test="inviteImg != null">
+				invite_img  = #{inviteImg},				
+			</if>
+			<if test="remarks != null">
+				remarks  = #{remarks},				
+			</if>
+			<if test="createrTime != null">
+				creater_time  = #{createrTime}			
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from m_fission_scheme where id = #{id}
+	</delete>
+	
+	<select id="selectDownList" parameterType="MFissionScheme" resultMap="BaseResultMap">
+		select *
+		from m_fission_scheme
+		order by creater_time desc
+	</select>
+	
+	<select id="selectChannelCodeOne" parameterType="String" resultType="map">
+	    SELECT scheme_img as schemeImg,ordinary_reward_img as ordinaryRewardImg,
+	    team_reward_img as teamRewardImg,daren_reward_img as darenRewardImg,invite_img as inviteImg
+		FROM m_fission_scheme
+		WHERE id=(
+			SELECT fission_id
+			FROM m_channel_config
+			WHERE channel_code=#{channelCode}
+		)
+	</select>
+
+	<select id="selectSchemeByChannelCode" parameterType="String" resultMap="BaseResultMap">
+	    SELECT *
+		FROM m_fission_scheme
+		WHERE id=(
+			SELECT fission_id
+			FROM m_channel_config
+			WHERE channel_code=#{channelCode}
+		)
+	</select>
+</mapper>

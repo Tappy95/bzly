@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<springProperty name="level_root" source="logging.level.root" defaultValue="INFO" />
+    <property name="log_dir" value="logs/bzly-api" />
+    <property name="max_history" value="30"/>
+  
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">  
+        <encoder>  
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger -%msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>  
+    </appender>
+      
+    <appender name="ERROR-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">  
+            <level>ERROR</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <fileNamePattern>${log_dir}/error.%d{yyyy-MM-dd}.log</fileNamePattern>  
+            <maxHistory>${max_history}</maxHistory>  
+        </rollingPolicy>
+      
+        <encoder>  
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+            <charset>UTF-8</charset>  
+        </encoder>  
+    </appender>  
+      
+    <appender name="WARN-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">  
+            <level>WARN</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>  
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <fileNamePattern>${log_dir}/warn.%d{yyyy-MM-dd}.log  
+            </fileNamePattern>  
+            <maxHistory>${max_history}</maxHistory>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+            <charset>UTF-8</charset>  
+        </encoder>  
+    </appender>  
+      
+    <appender name="INFO-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">  
+            <level>INFO</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>  
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <fileNamePattern>${log_dir}/info.%d{yyyy-MM-dd}.log  
+            </fileNamePattern>  
+            <maxHistory>${max_history}</maxHistory>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+            <charset>UTF-8</charset>  
+        </encoder>  
+    </appender>  
+      
+    <appender name="DEBUG-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">  
+            <level>DEBUG</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>  
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <fileNamePattern>${log_dir}/debug.%d{yyyy-MM-dd}.log  
+            </fileNamePattern>  
+            <maxHistory>${max_history}</maxHistory>  
+        </rollingPolicy>  
+        <encoder>  
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+            <charset>UTF-8</charset>  
+        </encoder>  
+    </appender>  
+    <root level="${level_root}">
+        <appender-ref ref="CONSOLE" />  
+        <appender-ref ref="ERROR-APPENDER" />  
+        <appender-ref ref="WARN-APPENDER" />
+        <appender-ref ref="INFO-APPENDER" />
+        <appender-ref ref="DEBUG-APPENDER" />
+    </root>
+
+	<springProfile name="*">
+		<logger name="com.mc.bzly.*" level="INFO" additivity="false">  
+	        <appender-ref ref="CONSOLE"/> 
+	        <appender-ref ref="INFO-APPENDER"/>  
+		</logger>
+	</springProfile>
+
+</configuration>

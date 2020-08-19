@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.egg.EUserGoldEggDao">
+	<resultMap id="BaseResultMap" type="EUserGoldEgg">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="frequency" property="frequency" jdbcType="INTEGER"/>
+		<result column="creator_time" property="creatorTime" jdbcType="INTEGER"/>
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="EUserGoldEgg">
+	   INSERT INTO e_user_gold_egg(user_id,frequency,creator_time,update_time)
+       VALUES (#{userId},#{frequency},#{creatorTime},#{updateTime})
+	</insert>
+	
+	<select id="selectOne" parameterType="String" resultMap="BaseResultMap">
+	   select *
+	   from e_user_gold_egg 
+	   where user_id=#{userId}
+	</select>
+	
+	<update id="update" parameterType="EUserGoldEgg">
+	    update e_user_gold_egg 
+		<set>
+			frequency = #{frequency},
+			update_time = #{updateTime}
+		</set> 
+		where id = #{id}
+	</update>
+	
+</mapper>

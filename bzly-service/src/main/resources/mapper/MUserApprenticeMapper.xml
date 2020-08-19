@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.MUserApprenticeDao" >
+	<resultMap type="MUserApprentice" id="BaseResultMap">
+		<result column="apprentice_id" property="apprenticeId" jdbcType="INTEGER"/>
+		<result column="referrer_id" property="referrerId" jdbcType="VARCHAR"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="contribution" property="contribution" jdbcType="INTEGER"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>	
+		<result column="apprentice_type" property="apprenticeType" jdbcType="INTEGER"/>	
+		
+		<result column="apprenticeMobile" property="apprenticeMobile" jdbcType="VARCHAR"/>
+		<result column="reward_status" property="rewardStatus" jdbcType="INTEGER"/>	
+		<result column="referrerName" property="referrerName" jdbcType="VARCHAR"/>	
+		<result column="apprenticeName" property="apprenticeName" jdbcType="VARCHAR"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="MUserApprentice">
+		insert into m_user_apprentice 
+		(apprentice_id,referrer_id,user_id,contribution,reward_status,create_time,update_time,apprentice_type) 
+		values 
+		(#{apprenticeId},#{referrerId},#{userId},#{contribution},#{rewardStatus},#{createTime},#{updateTime},#{apprenticeType})
+	</insert>
+	
+	<update id="update" parameterType="MUserApprentice">
+		update m_user_apprentice 
+		<set>
+			<if test="contribution != null and contribution != ''">
+				contribution = #{contribution},
+			</if>
+			<if test="rewardStatus != null and rewardStatus != ''">
+				reward_status = #{rewardStatus},
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				update_time = #{updateTime}
+			</if>
+		</set> 
+		where apprentice_id = #{apprenticeId}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from m_user_apprentice where apprentice_id = #{apprenticeId}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from m_user_apprentice where apprentice_id = #{apprenticeId}
+	</select>
+	
+	<select id="selectList" parameterType="MUserApprentice" resultMap="BaseResultMap">
+		select apprentice.*,
+		CONCAT(SUBSTR(info.mobile FROM 1 FOR 3),'****',SUBSTR(info.mobile FROM 8 FOR 4)) as apprenticeMobile 
+		 from m_user_apprentice apprentice
+		left join m_user_info info on apprentice.user_id = info.user_id
+		<where>
+			<if test="userId != null and userId !=''">
+				and user_id = #{userId}
+			</if>
+			<if test="referrerId != null and referrerId != ''">
+				and referrer_id = #{referrerId}
+			</if>
+		</where>
+		order by contribution desc 
+	</select>
+	
+	<select id="selectPage" parameterType="MUserApprentice" resultMap="BaseResultMap">
+	    SELECT a.*,(SELECT mobile FROM m_user_info WHERE user_id=a.user_id) AS apprenticeMobile,(SELECT user_name FROM m_user_info WHERE user_id=a.referrer_id) AS referrerName,(SELECT user_name FROM m_user_info WHERE user_id=a.user_id) AS apprenticeName
+        FROM m_user_apprentice a
+		WHERE a.referrer_id=#{referrerId}
+	</select>
+	
+	<select id="selectUserId" resultMap="BaseResultMap">
+	  select * from m_user_apprentice where user_id=#{userId}
+	</select>
+	<select id="selectUserIdNew" resultMap="BaseResultMap">
+	  select * from m_user_apprentice where user_id=#{userId}
+	</select>
+	
+	<select id="selectListByUser" resultMap="BaseResultMap">
+		select * from m_user_apprentice where referrer_id = #{referrerId} and apprentice_type = #{apprenticeType}
+	</select>
+	
+	<select id="selectWishCount" parameterType="String" resultType="map">
+	    SELECT IFNULL(SUM(contribution),0)/11000 AS income,COUNT(1) AS number
+		FROM m_user_apprentice
+		WHERE referrer_id=#{referrerId}
+	</select>
+	
+	<select id="selectWishRewardList" resultType="map">
+	    SELECT a.contribution/11000 AS contribution,
+		CONCAT(SUBSTR((SELECT mobile FROM m_user_info WHERE user_id=a.user_id) FROM 1 FOR 3),'****',SUBSTR((SELECT mobile FROM m_user_info WHERE user_id=a.user_id) FROM 8 FOR 4)) AS mobile,
+		a.update_time AS updateTime
+		FROM m_user_apprentice a
+		where reward_status=2 and referrer_id=#{referrerId}
+		ORDER BY a.create_time desc
+		limit ${pageIndex},${pageSize}
+	</select>
+	
+	<select id="selectWishRewardCount" resultType="int">
+	    SELECT count(1)
+		FROM m_user_apprentice a
+		where reward_status=2 and referrer_id=#{referrerId}
+	</select>
+	
+	<select id="selectWishNumberList" resultType="map">
+	    SELECT CONCAT(SUBSTR((SELECT mobile FROM m_user_info WHERE user_id=a.user_id) FROM 1 FOR 3),'****',SUBSTR((SELECT mobile FROM m_user_info WHERE user_id=a.user_id) FROM 8 FOR 4)) AS mobile,
+		a.create_time AS createTime
+		FROM m_user_apprentice a
+		where referrer_id=#{referrerId}
+		ORDER BY a.create_time desc
+		limit ${pageIndex},${pageSize}
+	</select>
+	
+	<select id="selectWishNumberCount" resultType="int">
+	    SELECT count(1)
+		FROM m_user_apprentice a
+		where referrer_id=#{referrerId}
+	</select>
+</mapper>

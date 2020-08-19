@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.user.MUserOpinionDao">
+	<resultMap id="BaseResultMap" type="MUserOpinion">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>
+		<result column="vip_name" property="vipName" jdbcType="VARCHAR"/>
+		<result column="experience" property="experience" jdbcType="INTEGER"/>
+		<result column="opinion_type" property="opinionType" jdbcType="INTEGER"/>
+		<result column="opinion_content" property="opinionContent" jdbcType="VARCHAR"/>
+		<result column="content_img" property="contentImg" jdbcType="VARCHAR"/>
+		<result column="email" property="email" jdbcType="VARCHAR"/>
+		<result column="state" property="state" jdbcType="INTEGER"/>
+		<result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+		<result column="creater_time" property="createrTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="saveOpinion" parameterType="MUserOpinion">
+	   INSERT INTO m_user_opinion(account_id,vip_name,experience,opinion_type,opinion_content,content_img,email,state,remarks,creater_time)
+       VALUES (#{accountId},#{vipName},#{experience},#{opinionType},#{opinionContent},#{contentImg},#{email},#{state},#{remarks},#{createrTime})
+	</insert>
+	
+	<select id="selectList" parameterType="MUserOpinion" resultMap="BaseResultMap">
+	   select *
+	   from m_user_opinion
+	   <where>
+			<if test="accountId != null and accountId != ''">
+				and account_id = #{accountId}
+			</if>
+			<if test="opinionType != null and opinionType != ''">
+				and opinion_type = #{opinionType}
+			</if>
+			<if test="state != null and state != ''">
+				and state = #{state}
+			</if>
+		</where>
+	   order by creater_time desc 
+	</select>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+	   select *
+	   from m_user_opinion 
+	   where id=#{id}
+	</select>
+	
+	<update id="update" parameterType="MUserOpinion">
+	    update m_user_opinion 
+		<set>
+			<if test="state != null and state != ''">
+				state = #{state},
+			</if>
+			<if test="remarks != null and remarks != ''">
+				remarks = #{remarks},
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+</mapper>

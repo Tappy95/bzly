@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.passbook.MPassbookDao" >
+	<resultMap type="MPassbook" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="passbook_name" property="passbookName" jdbcType="VARCHAR"/>
+		<result column="passbook_type" property="passbookType" jdbcType="INTEGER"/>
+		<result column="use_day" property="useDay" jdbcType="INTEGER"/>
+		<result column="passbook_value" property="passbookValue" jdbcType="INTEGER"/>
+		<result column="reg_send" property="regSend" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="taskTypeName" property="taskTypeName" jdbcType="VARCHAR"/>
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="MPassbook" useGeneratedKeys="true" keyProperty="id">
+		insert into m_passbook 
+		(id,passbook_name,passbook_type,use_day,passbook_value,reg_send,create_time,remark) values
+		(#{id},#{passbookName},#{passbookType},#{useDay},#{passbookValue},#{regSend},#{createTime},#{remark})
+	</insert>
+	
+	<update id="update">
+		update m_passbook 
+		<set>
+			<if test="passbookName != null and passbookName != ''">
+				passbook_name = #{passbookName},			
+			</if>
+			<if test="passbookType != null and passbookType != ''">
+				passbook_type = #{passbookType},			
+			</if>
+			<if test="useDay != null and useDay != ''">
+				use_day = #{useDay},			
+			</if>
+			<if test="regSend != null and regSend != ''">
+				reg_send = #{regSend},			
+			</if>
+			<if test="passbookValue != null and passbookValue != ''">
+				passbook_value = #{passbookValue},			
+			</if>
+			<if test="remark != null and remark != ''">
+				remark = #{remark},			
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from m_passbook where id = #{id}
+	</delete>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+		select * from m_passbook where id = #{id}
+	</select>
+	
+	<select id="selectList" resultMap="BaseResultMap">
+		select passbook.*,
+		(select GROUP_CONCAT(short_name) from m_task_type 
+			where id in (select task_type_id from rs_passbook_task where passbook_id = passbook.id)
+		) as taskTypeName
+		from m_passbook passbook 
+		<where>
+			<if test="passbookName != null and passbookName != ''">
+				passbook.passbook_name = #{passbookName}	
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectRegSend" resultMap="BaseResultMap">
+		select * from m_passbook where reg_send = 2
+	</select>
+</mapper>

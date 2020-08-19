@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LDarenRewardDao" >
+	
+	<resultMap type="LDarenReward" id="BaseMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="reward_date" property="rewardDate" jdbcType="VARCHAR" />
+		<result column="apprentice_count" property="apprenticeCount" jdbcType="INTEGER" />
+		<result column="first_reward" property="firstReward" jdbcType="INTEGER" />
+		<result column="second_reward" property="secondReward" jdbcType="INTEGER" />
+		<result column="task_count" property="taskCount" jdbcType="INTEGER" />
+		<result column="update_time" property="updateTime" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<insert id="insert" parameterType="LDarenReward">
+		insert into l_daren_reward (id,user_id,reward_date,apprentice_count,first_reward,second_reward,task_count,update_time)
+		values (#{id},#{userId},#{rewardDate},#{apprenticeCount},#{firstReward},#{secondReward},#{taskCount},#{updateTime})
+	</insert>
+	
+	<update id="update" parameterType="LDarenReward">
+		update l_daren_reward 
+		<set>
+			<if test="apprenticeCount != null">
+				apprentice_count = #{apprenticeCount},
+			</if>
+			<if test="firstReward != null">
+				first_reward = #{firstReward},
+			</if>
+			<if test="secondReward != null">
+				second_reward = #{secondReward},
+			</if>
+			<if test="taskCount != null">
+				task_count = #{taskCount},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<select id="selectList" parameterType="LDarenReward" resultMap="BaseMap">
+		select reward.* from l_daren_reward reward 
+		<where>
+			<if test="userId != null and userId != ''">
+				and reward.user_id = #{userId}
+			</if>
+			<if test="rewardDate != null and rewardDate != ''">
+				and reward.reward_date = #{rewardDate}
+			</if>
+		</where>
+		order by reward.reward_date desc
+	</select>
+	
+	<select id="selectByUser" resultMap="BaseMap">
+		select * from l_daren_reward where user_id = #{userId} and reward_date = #{rewardDate}
+	</select>
+
+	<select id="selectByUserTotal" resultType="java.util.Map">
+		select sum(first_reward) as first_reward,SUM(second_reward) as second_reward,SUM(task_count) as task_count,sum(apprentice_count) as apprentice_count
+		 from l_daren_reward where user_id = #{userId}
+	</select>
+</mapper>

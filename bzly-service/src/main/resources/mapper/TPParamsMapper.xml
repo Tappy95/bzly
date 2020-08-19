@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.TPParamsDao" >
+	<resultMap type="TPParams" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="interface_id" property="interfaceId" jdbcType="INTEGER"/>		
+		<result column="interface_name" property="interfaceName" jdbcType="VARCHAR"/>		
+		<result column="name" property="name" jdbcType="VARCHAR"/>		
+		<result column="code" property="code" jdbcType="VARCHAR"/>		
+		<result column="type" property="type" jdbcType="INTEGER"/>		
+		<result column="value" property="value" jdbcType="VARCHAR"/>		
+		<result column="is_encrypt" property="isEncrypt" jdbcType="INTEGER"/>		
+		<result column="encrypt_type" property="encryptType" jdbcType="INTEGER"/>	
+		<result column="encrypt_separator" property="encryptSeparator" jdbcType="VARCHAR"/>	
+		<result column="is_need" property="isNeed" jdbcType="INTEGER"/>	
+		<result column="encrypt_need" property="encryptNeed" jdbcType="INTEGER"/>	
+		<result column="info_encrypt_need" property="infoEncryptNeed" jdbcType="INTEGER"/>	
+		<result column="order_id" property="orderId" jdbcType="INTEGER"/>	
+		<result column="is_replace" property="isReplace" jdbcType="INTEGER"/>	
+		<result column="replace_code" property="replaceCode" jdbcType="VARCHAR"/>	
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>			
+	</resultMap>
+	
+	<insert id="insert" parameterType="TPParams">
+		insert into tp_params 
+		(id,interface_id,name,code,type,value,is_encrypt,encrypt_type,encrypt_separator,
+		is_need,encrypt_need,order_id,create_time,is_replace,replace_code,info_encrypt_need)
+		values 
+		(#{id},#{interfaceId},#{name},#{code},#{type},#{value},#{isEncrypt},#{encryptType},#{encryptSeparator},
+		#{isNeed},#{encryptNeed},#{orderId},#{createTime},#{isReplace},#{replaceCode},#{infoEncryptNeed})
+	</insert>
+	
+	<update id="update" parameterType="TPParams">
+		update tp_params 
+		<set>
+			<if test="interfaceId != null and interfaceId != ''">
+				interface_id = #{interfaceId},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="code != null and code != ''">
+				code = #{code},
+			</if>
+			<if test="type != null and type != ''">
+				type = #{type},
+			</if>
+			<if test="value != null and value != ''">
+				value = #{value},
+			</if>
+			<if test="isEncrypt != null and isEncrypt != ''">
+				is_encrypt = #{isEncrypt},
+			</if>
+			<if test="encryptType != null and encryptType != ''">
+				encrypt_type = #{encryptType},
+			</if>
+			<if test="encryptSeparator != null and encryptSeparator != ''">
+				encrypt_separator = #{encryptSeparator},
+			</if>
+			<if test="isNeed != null and isNeed != ''">
+				is_need = #{isNeed},
+			</if>
+			<if test="encryptNeed != null and encryptNeed != ''">
+				encrypt_need = #{encryptNeed},
+			</if>
+			<if test="orderId != null and orderId != ''">
+				order_id = #{orderId},
+			</if>
+			<if test="isReplace != null and isReplace != ''">
+				is_replace = #{isReplace},
+			</if>
+			<if test="replaceCode != null and replaceCode != ''">
+				replace_code = #{replaceCode},
+			</if>
+			<if test="infoEncryptNeed != null and infoEncryptNeed != ''">
+				info_encrypt_need = #{infoEncryptNeed},
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from tp_params where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from tp_params where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="TPParams" resultMap="BaseResultMap">
+		select tpp.* ,tpi.interface_name from tp_params tpp 
+		left join tp_interface tpi on tpp.interface_id = tpi.id
+		<where>
+			<if test="interfaceId != null">
+				and tpp.interface_id = #{interfaceId}
+			</if>
+		</where>
+		order by tpp.order_id asc 
+	</select>
+	
+	<select id="selectListByInterface" parameterType="Integer" resultMap="BaseResultMap">
+		select * from tp_params where interface_id = #{interfaceId} order by order_id asc 
+	</select>
+	
+</mapper>

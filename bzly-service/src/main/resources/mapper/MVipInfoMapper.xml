@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.passbook.MVipInfoDao" >
+	<resultMap type="MVipInfo" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="name" property="name" jdbcType="VARCHAR"/>
+		<result column="logo" property="logo" jdbcType="VARCHAR"/>
+		<result column="first_reward" property="firstReward" jdbcType="INTEGER"/>
+		<result column="first_reward_unit" property="firstRewardUnit" jdbcType="INTEGER"/>
+		<result column="continue_reward" property="continueReward" jdbcType="INTEGER"/>
+		<result column="continue_reward_unit" property="continueRewardUnit" jdbcType="INTEGER"/>
+		<result column="game_addition" property="gameAddition" jdbcType="INTEGER"/>
+		<result column="use_day" property="useDay" jdbcType="INTEGER"/>
+		<result column="coin_to_pig_addition" property="coinToPigAddition" jdbcType="DECIMAL"/>
+		<result column="everyday_active_pig" property="everydayActivePig" jdbcType="INTEGER"/>
+		<result column="everyday_active_coin" property="everydayActiveCoin" jdbcType="INTEGER"/>
+		<result column="onetime_limit" property="onetimeLimit" jdbcType="INTEGER"/>
+		<result column="audit_first" property="auditFirst" jdbcType="INTEGER"/>
+		<result column="send_sms" property="sendSms" jdbcType="INTEGER"/>
+		<result column="everyday_relief_pig" property="everydayReliefPig" jdbcType="INTEGER"/>
+		<result column="everyday_relief_pig_times" property="everydayReliefPigTimes" jdbcType="INTEGER"/>
+		<result column="one_withdrawals" property="oneWithdrawals" jdbcType="INTEGER"/>
+		<result column="price" property="price" jdbcType="DECIMAL"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="order_id" property="orderId" jdbcType="INTEGER"/>
+		<result column="is_task" property="isTask" jdbcType="INTEGER"/>
+		<result column="task_num" property="taskNum" jdbcType="INTEGER"/>
+		<result column="is_renew" property="isRenew" jdbcType="INTEGER"/>
+		<result column="background_img" property="backgroundImg" jdbcType="VARCHAR"/>
+		<result column="overdue_img" property="overdueImg" jdbcType="VARCHAR"/>
+		<result column="vip_type" property="vipType" jdbcType="INTEGER"/>
+		<result column="cash_money" property="cashMoney" jdbcType="INTEGER"/>
+		<result column="reward_day" property="rewardDay" jdbcType="INTEGER"/>
+		<result column="return_vip" property="returnVip" jdbcType="INTEGER"/>
+		
+	    <result column="isBuy" property="isBuy" jdbcType="INTEGER"/>
+	    <result column="isPay" property="isPay" jdbcType="INTEGER"/>
+		<result column="high_vip" property="highVip" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="MVipInfo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO m_vip_info(name,logo,first_reward,first_reward_unit,continue_reward,continue_reward_unit,game_addition,use_day,coin_to_pig_addition,everyday_active_pig,everyday_active_coin,onetime_limit,audit_first,send_sms,everyday_relief_pig,everyday_relief_pig_times,one_withdrawals,price,create_time,status,order_id,is_task,task_num,is_renew,background_img,overdue_img,vip_type,cash_money,reward_day,return_vip,high_vip) 
+		values
+		(#{name},#{logo},#{firstReward},#{firstRewardUnit},#{continueReward},#{continueRewardUnit},#{gameAddition},#{useDay},#{coinToPigAddition},#{everydayActivePig},#{everydayActiveCoin},#{onetimeLimit},#{auditFirst},#{sendSms},#{everydayReliefPig},#{everydayReliefPigTimes},#{oneWithdrawals},#{price},#{createTime},#{status},#{orderId},#{isTask},1,#{isRenew},#{backgroundImg},#{overdueImg},#{vipType},#{cashMoney},#{rewardDay},#{returnVip},#{highVip})
+	</insert>
+	
+	<update id="update" parameterType="MVipInfo">
+		update m_vip_info 
+		<set>
+			<if test="name != null  and name != ''">
+				name = #{name},			
+			</if>
+			<if test="logo != null  and logo != ''">
+				logo = #{logo},			
+			</if>
+			<if test="firstReward != null  and firstReward != ''">
+				first_reward = #{firstReward},			
+			</if>
+			<if test="firstRewardUnit != null  and firstRewardUnit != ''">
+				first_reward_unit = #{firstRewardUnit},			
+			</if>
+			<if test="continueReward != null  and continueReward != ''">
+				continue_reward = #{continueReward},			
+			</if>
+			<if test="continueRewardUnit != null  and continueRewardUnit != ''">
+				continue_reward_unit = #{continueRewardUnit},			
+			</if>
+			<if test="gameAddition != null">
+				game_addition = #{gameAddition},			
+			</if>
+			<if test="useDay != null  and useDay != ''">
+				use_day = #{useDay},			
+			</if>
+			<if test="coinToPigAddition != null">
+				coin_to_pig_addition = #{coinToPigAddition},			
+			</if>
+			<if test="everydayActivePig != null">
+				everyday_active_pig = #{everydayActivePig},			
+			</if>
+			<if test="everydayActiveCoin != null">
+				everyday_active_coin = #{everydayActiveCoin},			
+			</if>
+			<if test="onetimeLimit != null  and onetimeLimit != ''">
+				onetime_limit = #{onetimeLimit},			
+			</if>
+			<if test="auditFirst != null  and auditFirst != ''">
+				audit_first = #{auditFirst},			
+			</if>
+			<if test="sendSms != null  and sendSms != ''">
+				send_sms = #{sendSms},			
+			</if>
+			<if test="everydayReliefPig != null  and everydayReliefPig != ''">
+				everyday_relief_pig = #{everydayReliefPig},			
+			</if>
+			<if test="everydayReliefPigTimes != null  and everydayReliefPigTimes != ''">
+				everyday_relief_pig_times = #{everydayReliefPigTimes},			
+			</if>
+			<if test="oneWithdrawals != null  and oneWithdrawals != ''">
+				one_withdrawals = #{oneWithdrawals},			
+			</if>
+			<if test="price != null  and price != ''">
+				price = #{price},			
+			</if>
+			<if test="status != null  and status != ''">
+				status = #{status},			
+			</if>
+			<if test="orderId != null  and orderId != ''">
+				order_id = #{orderId},			
+			</if>
+			<if test="isTask != null  and isTask != ''">
+				is_task = #{isTask},			
+			</if>
+			<if test="taskNum != null  and taskNum != ''">
+				task_num = #{taskNum},			
+			</if>
+			<if test="isRenew != null  and isRenew != ''">
+				is_renew = #{isRenew},		
+			</if>
+			<if test="backgroundImg != null  and backgroundImg != ''">
+				background_img = #{backgroundImg},		
+			</if>
+			<if test="overdueImg != null  and overdueImg != ''">
+				overdue_img = #{overdueImg},		
+			</if>
+			<if test="vipType != null  and vipType != ''">
+				vip_type = #{vipType},		
+			</if>
+			<if test="cashMoney != null  and cashMoney != ''">
+				cash_money = #{cashMoney},		
+			</if>
+			<if test="rewardDay != null  and rewardDay != ''">
+				reward_day = #{rewardDay},		
+			</if>
+			<if test="returnVip != null  and returnVip != ''">
+				return_vip = #{returnVip},	
+			</if>
+			<if test="highVip != null  and highVip != ''">
+				high_vip = #{highVip},	
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from m_vip_info where id = #{id}
+	</delete>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+		select * from m_vip_info where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="MVipInfo" resultMap="BaseResultMap">
+		select *
+		from m_vip_info
+		
+		<where>
+		    <if test="status != null and status != ''">
+		    	and status = #{status}
+		    </if>
+			<if test="name != null  and name != ''">
+			   AND name = #{name}		
+			</if>
+		</where>
+		order by order_id asc
+	</select>
+	
+	<select id="selectOneUser" resultMap="BaseResultMap">
+		SELECT v.*,(SELECT COUNT(*) FROM l_user_vip WHERE STATUS=1 AND vip_id=v.id  AND user_id=#{userId}) AS isBuy,(SELECT COUNT(*) FROM l_user_vip WHERE vip_id=v.id  AND user_id=#{userId}) AS isPay
+		FROM m_vip_info AS v
+		WHERE v.id =#{id}
+	</select>
+	
+	<select id="selectByUser" parameterType="String" resultMap="BaseResultMap">
+		select * from m_vip_info where id in (select vip_id FROM l_user_vip where user_id = #{userId} and status = 1) ORDER BY onetime_limit desc
+	</select>
+	
+	<select id="selectUserVip" resultMap="BaseResultMap">
+	    SELECT *
+		FROM m_vip_info
+		WHERE id=(
+			SELECT vip_id
+			FROM l_user_vip
+			WHERE status=1 AND user_id=#{userId} AND vip_id=#{vipId}
+		)
+	</select>
+	
+	<select id="selectUserList" resultType="map">
+		SELECT v.id,v.name,v.price,v.is_renew AS isRenew,v.logo,v.background_img as backgroundImg,v.high_vip as highVip,
+		(SELECT COUNT(*) FROM l_user_vip WHERE STATUS=1 AND vip_id=v.id  AND user_id=#{userId}) AS isBuy,
+		(SELECT COUNT(*) FROM l_user_vip WHERE vip_id=v.id  AND user_id=#{userId}) AS isPay
+		FROM m_vip_info v
+		WHERE 
+		v.vip_type=#{vipType} AND 
+		(v.status=1 OR (SELECT COUNT(*) FROM l_user_vip WHERE user_id=#{userId} AND vip_id=v.id AND STATUS=1)>=1)
+		ORDER BY v.order_id
+	</select>
+	
+	<select id="selectZqVipUser" parameterType="String" resultMap="BaseResultMap">
+		SELECT * FROM m_vip_info WHERE vip_type=2 AND id IN (SELECT vip_id FROM l_user_vip WHERE user_id = #{userId} and status = 1) ORDER BY onetime_limit desc
+	</select>
+	
+	<select id="selectZqVip" resultType="map">
+	    SELECT id,name
+		FROM m_vip_info
+		WHERE status=1 AND vip_type=2
+	</select>
+	
+	<select id="selectZqUserInfo" resultMap="BaseResultMap">
+	    SELECT *
+		FROM m_vip_info
+		WHERE id =(
+		  SELECT u.vip_id
+		  FROM l_user_vip u
+		  WHERE u.user_id=#{userId} and u.vip_id=#{vipId}
+		)
+	</select>
+</mapper>

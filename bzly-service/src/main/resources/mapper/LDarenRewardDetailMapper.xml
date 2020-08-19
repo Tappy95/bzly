@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LDarenRewardDetailDao" >
+	
+	<resultMap type="LDarenRewardDetail" id="BaseMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="reward" property="reward" jdbcType="INTEGER"/>
+		<result column="apprentice_id" property="apprenticeId" jdbcType="VARCHAR"/>
+		<result column="apprentice_reward" property="apprenticeReward" jdbcType="INTEGER"/>
+		<result column="task_type" property="taskType" jdbcType="INTEGER"/>
+		<result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		
+		<result column="taccount_id" property="taccountId" jdbcType="INTEGER"/>
+		<result column="daccount_id" property="daccountId" jdbcType="INTEGER"/>
+		<result column="qr_code" property="qrCode" jdbcType="VARCHAR"/>
+		<result column="user_name" property="userName" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="LDarenRewardDetail">
+		insert into l_daren_reward_detail (id,user_id,reward,apprentice_id,apprentice_reward,task_type,task_name,create_time)
+		values (#{id},#{userId},#{reward},#{apprenticeId},#{apprenticeReward},#{taskType},#{taskName},#{createTime})
+	</insert>
+	
+	<select id="selectList" parameterType="LDarenRewardDetail" resultMap="BaseMap">
+		select detail.*,
+			d.account_id as daccount_id,d.qr_code,
+			t.account_id as taccount_id,t.user_name 
+		from l_daren_reward_detail detail 
+		left join m_user_info d on detail.user_id = d.user_id
+		left join m_user_info t on detail.apprentice_id = t.user_id
+		<where>
+			<if test="userId != null and userId != ''">
+			    and detail.user_id = #{userId}
+			</if>
+			<if test="taccountId != null and taccountId != ''">
+			    and t.account_id = #{taccountId}
+			</if>
+			<if test="daccountId != null and daccountId != ''">
+			    and d.account_id = #{daccountId}
+			</if>
+			<if test="taskType != null and taskType != ''">
+			    and detail.task_type = #{taskType}
+			</if>
+			<if test="taskName != null and taskName != ''">
+			    and detail.task_name = #{taskName}
+			</if>
+			<if test="startTime != null and startTime != ''">
+			    and detail.create_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+			    and #{endTime} >= detail.create_time
+			</if>
+		</where>
+		order by detail.create_time desc
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCount" parameterType="LDarenRewardDetail" resultType="int">
+		select count(*) 
+		from l_daren_reward_detail detail 
+		left join m_user_info d on detail.user_id = d.user_id
+		left join m_user_info t on detail.apprentice_id = t.user_id
+		<where>
+			<if test="userId != null and userId != ''">
+			    and detail.user_id = #{userId}
+			</if>
+			<if test="taccountId != null and taccountId != ''">
+			    and t.account_id = #{taccountId}
+			</if>
+			<if test="daccountId != null and daccountId != ''">
+			    and d.account_id = #{daccountId}
+			</if>
+			<if test="taskType != null and taskType != ''">
+			    and detail.task_type = #{taskType}
+			</if>
+			<if test="taskName != null and taskName != ''">
+			    and detail.task_name = #{taskName}
+			</if>
+			<if test="startTime != null and startTime != ''">
+			    and detail.create_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+			    and #{endTime} >= detail.create_time
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectSum" parameterType="LDarenRewardDetail" resultType="long">
+		SELECT IFNULL(SUM(a.reward),0)
+        FROM (
+		select detail.reward AS reward
+		from l_daren_reward_detail detail 
+		left join m_user_info d on detail.user_id = d.user_id
+		left join m_user_info t on detail.apprentice_id = t.user_id
+		<where>
+			<if test="userId != null and userId != ''">
+			    and detail.user_id = #{userId}
+			</if>
+			<if test="taccountId != null and taccountId != ''">
+			    and t.account_id = #{taccountId}
+			</if>
+			<if test="daccountId != null and daccountId != ''">
+			    and d.account_id = #{daccountId}
+			</if>
+			<if test="taskType != null and taskType != ''">
+			    and detail.task_type = #{taskType}
+			</if>
+			<if test="taskName != null and taskName != ''">
+			    and detail.task_name = #{taskName}
+			</if>
+			<if test="startTime != null and startTime != ''">
+			    and detail.create_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+			    and #{endTime} >= detail.create_time
+			</if>
+		</where>
+		) a
+	</select>
+	
+	<select id="selectSumApprenticeReward" parameterType="String" resultType="long">
+		select IFNULL(SUM(apprentice_reward),0) from l_daren_reward_detail where user_id = #{userId}
+	</select>
+	
+	<select id="selectByUserToday" resultMap="BaseMap">
+		select * from l_daren_reward_detail where apprentice_id = #{apprenticeId} and create_time > #{createTime}
+	</select>
+	
+	
+	<select id="selectListF" resultType="Map">
+		select 
+			m.account_id AS accountId,m.create_time AS regTime,
+			d.task_name AS taskName,d.create_time AS taskTime,d.reward
+		from l_daren_reward_detail d 
+		left join m_user_info m on d.apprentice_id = m.user_id
+		where d.user_id = #{userId}
+			<if test="accountId != null and accountId != ''"> and m.account_id = #{accountId}</if>
+		order by d.create_time desc
+		limit #{pageIndex},#{pageSize}
+	</select>
+
+	<select id="selectListCountF" resultType="long">
+		select 
+			count(1)
+		from l_daren_reward_detail d 
+		left join m_user_info m on d.apprentice_id = m.user_id
+		where d.user_id = #{userId}
+		<if test="accountId != null and accountId != ''"> and m.account_id = #{accountId}</if>
+	</select>
+	
+	<select id="selectCountTask" parameterType="String" resultType="long">
+		select count(id) from l_daren_reward_detail where apprentice_id = #{userId}
+	</select>
+	
+</mapper>

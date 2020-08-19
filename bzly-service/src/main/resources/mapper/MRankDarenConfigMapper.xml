@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.MRankDarenConfigDao" >
+	
+	<resultMap type="MRankDarenConfig" id="baseMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="daren_level" property="darenLevel" jdbcType="INTEGER"/>
+		<result column="need_num" property="needNum" jdbcType="INTEGER"/>
+		<result column="reward" property="reward" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<select id="selectByNum" parameterType="Integer" resultMap="baseMap">
+		<![CDATA[select * from m_rank_daren_config where need_num < #{needNum} order by need_num desc limit 1]]>
+	</select>
+	
+	<insert id="insert" parameterType="MRankDarenConfig">
+		INSERT INTO m_rank_daren_config(daren_level,need_num,reward,create_time)
+        VALUES (#{darenLevel},#{needNum},#{reward},#{createTime})
+	</insert>
+
+    <select id="selectList" parameterType="MRankDarenConfig" resultMap="baseMap">
+        select *
+        from m_rank_daren_config
+        order by create_time desc
+    </select>
+    
+    <select id="selectOne" parameterType="int" resultMap="baseMap">
+        select *
+        from m_rank_daren_config
+        where id=#{id}
+    </select>
+    
+    <update id="update" parameterType="MRankDarenConfig">
+        update m_rank_daren_config 
+		<set>
+			<if test="darenLevel != null">
+				daren_level = #{darenLevel},
+			</if>
+			<if test="needNum != null">
+			    need_num = #{needNum},
+			</if>
+			<if test="reward != null">
+			    reward = #{reward},
+			</if>
+		</set>
+		where id=#{id}
+    </update>
+    
+    <delete id="delete" parameterType="int">
+       delete from m_rank_daren_config where id=#{id}
+    </delete>
+</mapper>

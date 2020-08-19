@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.fighting.MFightingQuestionDao" >
+	<resultMap type="MFightingQuestion" id="BaseResultMap">
+		<id column="q_id" property="qId" jdbcType="INTEGER"/>		
+		<result column="question_type" property="questionType" jdbcType="INTEGER"/>		
+		<result column="question" property="question" jdbcType="INTEGER"/>				
+		<result column="creator" property="creator" jdbcType="VARCHAR"/>
+		<result column="create_time" property="createTime" jdbcType="VARCHAR"/>	
+		<result column="score" property="score" jdbcType="INTEGER"/>	
+		<result column="question_state" property="questionState" jdbcType="INTEGER"/>	
+		<result column="reject_reason" property="rejectReason" jdbcType="VARCHAR"/>	
+		<result column="count_time" property="countTime" jdbcType="INTEGER"/>
+		<result column="coin" property="coin" jdbcType="INTEGER"/>
+		<result column="questionTypeName" property="questionTypeName" jdbcType="VARCHAR"/>	
+		<result column="creatorName" property="creatorName" jdbcType="VARCHAR"/>				
+	</resultMap>
+	
+	<insert id="save" useGeneratedKeys="true" keyProperty="qId" parameterType="MFightingQuestion">
+	   INSERT INTO m_fighting_question(question_type,question,creator,create_time,score,question_state,reject_reason,count_time,coin)
+       VALUES (#{questionType},#{question},#{creator},#{createTime},#{score},#{questionState},#{rejectReason},#{countTime},#{coin})
+	</insert>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+	     SELECT q.*,p.dic_remark AS questionTypeName,(SELECT user_name FROM m_user_info WHERE user_id=q.creator) AS creatorName
+		FROM m_fighting_question q,p_dictionary p
+		WHERE q.question_type=p.id  AND q.q_id=#{qId}
+	</select>
+	
+	<select id="selectList" parameterType="MFightingQuestion" resultMap="BaseResultMap">
+	   SELECT q.*,p.dic_remark AS questionTypeName
+       FROM m_fighting_question q,p_dictionary p
+	   <where>
+	      q.question_type=p.id
+	      <if test="question != null and question != ''">
+			and	q.question LIKE CONCAT('%',#{question},'%')
+		  </if>
+		  <if test="questionState !=null and questionState != -1">
+			and	q.question_state = #{questionState}
+		  </if>
+		  <if test="questionState == -1">
+			and	q.question_state = 0
+		  </if>
+	   </where>
+	   order by create_time desc
+	</select>
+	
+	<update id="update" parameterType="MFightingQuestion">
+	    update m_fighting_question
+	    <set>
+			<if test="questionType != null and questionType != ''">
+				question_type = #{questionType},
+			</if>
+			<if test="question != null and question != ''">
+				question = #{question},
+			</if>
+			<if test="creator != null and creator != ''">
+				creator = #{creator},
+			</if>
+			<if test="createTime != null and createTime != ''">
+				create_time = #{createTime},
+			</if>
+			<if test="score != null and score != ''">
+				score = #{score},
+			</if>
+			<if test="questionState != null and questionState != ''">
+				question_state = #{questionState},
+			</if>
+			<if test="questionState != null and questionState != ''">
+				question_state = #{questionState},
+			</if>
+			<if test="rejectReason != null and rejectReason != ''">
+				reject_reason = #{rejectReason},
+			</if>
+			<if test="countTime != null and countTime != ''">
+				count_time = #{countTime},
+			</if>
+			<if test="coin != null and coin != ''">
+			    coin=#{coin},
+			</if>
+		</set>
+		where q_id=#{qId}
+	</update>
+	
+	<delete id="delete">
+	    delete from m_fighting_question
+	    where q_id=#{qId}
+	</delete>
+	
+	<select id="selectCreatorList" parameterType="MFightingQuestion" resultMap="BaseResultMap">
+	    SELECT q.q_id,q.question,q.create_time,q.question_state,q.coin,p.dic_remark AS questionTypeName
+		FROM m_fighting_question q,p_dictionary p
+		WHERE q.question_type=p.id and creator=#{creator}
+		limit 0,1
+	</select>
+	
+	<select id="selectCreator" parameterType="MFightingQuestion" resultType="Map">
+	    SELECT q.q_id AS qId,q.question AS question,q.question_state AS questionState,q.reject_reason AS rejectReason,q.coin AS coin,p.dic_remark AS questionTypeName,a.answer AS answer
+		FROM m_fighting_question q,p_dictionary p,m_fighting_answer a
+		WHERE q.question_type=p.id AND q.q_id=a.question_id AND a.is_correct=1 and q_id=#{qId}
+	</select>
+	
+	<select id="getUserTopic" resultMap="BaseResultMap">
+	    select q.*,
+		(select dic_value from p_dictionary where q.question_type=id) AS questionTypeName
+		 from m_fighting_question q where creator = #{creator} 
+		ORDER BY create_time 
+		DESC LIMIT 0,1;
+	</select>
+	
+	<select id="selectQueOne" resultMap="BaseResultMap">
+	   select *
+	   from m_fighting_question
+	   where q_id=#{qId}
+	</select>
+</mapper>

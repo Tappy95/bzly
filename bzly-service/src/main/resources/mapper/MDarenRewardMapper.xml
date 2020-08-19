@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.thirdparty.MDarenRewardDao">
+	<resultMap id="BaseResultMap" type="MDarenReward">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="reward_type" property="rewardType" jdbcType="INTEGER"/>
+		<result column="reward_name" property="rewardName" jdbcType="VARCHAR"/>
+		<result column="coin" property="coin" jdbcType="INTEGER"/>
+		<result column="orders" property="orders" jdbcType="INTEGER"/>
+		<result column="day_limit" property="dayLimit" jdbcType="INTEGER"/>
+		<result column="people_limit" property="peopleLimit" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="state" property="state" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="PCashPriceConfig">
+	   INSERT INTO m_daren_reward(reward_type,reward_name,coin,orders,day_limit,people_limit,create_time,state)
+       VALUES (#{rewardType},#{rewardName},#{coin},#{orders},#{dayLimit},#{peopleLimit},#{createTime},#{state})
+	</insert>
+	
+	<select id="selectList" parameterType="MDarenReward" resultMap="BaseResultMap">
+	   select *
+	   from m_daren_reward
+	   <where>
+	      <if test="rewardType != null and rewardType != ''">
+				reward_type  = #{rewardType}				
+		  </if>
+	   </where>
+	   order by state,orders
+	</select>
+	
+	<select id="selectOne" parameterType="int" resultMap="BaseResultMap">
+	   select *
+	   from m_daren_reward 
+	   where id=#{id}
+	</select>
+	
+	<update id="update" parameterType="PCashPriceConfig">
+	    update m_daren_reward 
+		<set>
+		    <if test="rewardType != null">
+				reward_type = #{rewardType},
+			</if>
+			<if test="rewardName != null">
+				reward_name = #{rewardName},
+			</if>
+			<if test="coin != null">
+				coin = #{coin},
+			</if>
+			<if test="orders != null">
+				orders = #{orders},
+			</if>
+			<if test="state != null">
+				state = #{state},
+			</if>
+			day_limit=#{dayLimit,jdbcType=INTEGER},
+			people_limit=#{peopleLimit,jdbcType=INTEGER}
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+	   update m_daren_reward 
+	   set state=3
+	   where id = #{id}
+	</delete>
+	
+	<select id="selectByOrders" parameterType="long" resultMap="BaseResultMap">
+		select * from m_daren_reward where orders = #{orders} and state = 1
+	</select>
+</mapper>

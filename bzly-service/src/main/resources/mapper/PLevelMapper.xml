@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.platform.PLevelDao" >
+	<resultMap type="PLevel" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="level" property="level" jdbcType="VARCHAR"/>		
+		<result column="experience" property="experience" jdbcType="INTEGER"/>		
+		<result column="img_url" property="imgUrl" jdbcType="VARCHAR"/>		
+		<result column="order_id" property="orderId" jdbcType="INTEGER"/>		
+		<result column="addition" property="addition" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="PLevel">
+		insert into p_level 
+		(id,level,experience,img_url,addition,order_id) 
+		values 
+		(#{id},#{level},#{experience},#{imgUrl},#{addition},#{orderId})
+	</insert>
+	
+	<update id="update" parameterType="PLevel">
+		update p_level 
+		<set>
+			<if test="level != null and level != ''">
+				level = #{level},
+			</if>
+			<if test="experience != null and experience != ''">
+				experience = #{experience},
+			</if>
+			<if test="imgUrl != null and imgUrl != ''">
+				img_url = #{imgUrl},
+			</if>
+			<if test="orderId != null and orderId != ''">
+				order_id = #{orderId},
+			</if>
+			<if test="addition != null and addition != ''">
+				addition = #{addition},
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from p_level where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from p_level where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="PLevel" resultMap="BaseResultMap">
+		select * from p_level 
+		<where>
+			<if test="level != null and level != ''">
+				level = #{level}
+			</if>
+		</where>
+		order by order_id asc 
+	</select>
+	
+	<select id="selectNextLevel" parameterType="String" resultMap="BaseResultMap">
+		SELECT * FROM p_level where order_id > (select order_id from p_level where level = #{level}) limit 1
+	</select>
+
+	<select id="selectByLevel" parameterType="String" resultMap="BaseResultMap">
+		SELECT * FROM p_level where level = #{level}
+	</select>
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.news.AppNewsInformDao">
+	<resultMap id="BaseResultMap" type="AppNewsInform">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+		<result column="inform_title" property="informTitle" jdbcType="VARCHAR"/>
+		<result column="inform_content" property="informContent" jdbcType="VARCHAR"/>
+		<result column="push_object" property="pushObject" jdbcType="INTEGER"/>
+		<result column="push_time" property="pushTime" jdbcType="INTEGER"/>
+		<result column="creater_time" property="createrTime" jdbcType="INTEGER"/>
+		<result column="inform_type" property="informType" jdbcType="INTEGER"/>
+		<result column="inform_url" property="informUrl" jdbcType="VARCHAR"/>
+		<result column="is_release" property="isRelease" jdbcType="INTEGER"/>
+		<result column="is_push" property="isPush" jdbcType="INTEGER"/>
+		<result column="push_mode" property="pushMode" jdbcType="INTEGER"/>
+		<result column="add_mode" property="addMode" jdbcType="INTEGER"/>
+		<result column="is_read" property="isRead" jdbcType="INTEGER"/>
+		<result column="app_type" property="appType" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="saveInform" parameterType="AppNewsInform">
+	   INSERT INTO app_news_inform(user_id,mobile,inform_title,inform_content,push_object,push_time,creater_time,inform_type,inform_url,is_release,is_push,push_mode,add_mode,is_read,app_type)
+       VALUES (#{userId},#{mobile},#{informTitle},#{informContent},#{pushObject},#{pushTime},#{createrTime},#{informType},#{informUrl},#{isRelease},#{isPush},#{pushMode},#{addMode},1,#{appType})
+	</insert>
+	
+	<select id="selectList" parameterType="AppNewsInform" resultMap="BaseResultMap">
+	   select *
+	   from app_news_inform
+	   <where>
+	        <if test="mobile != null and mobile !=''">
+				and mobile = #{mobile}
+			</if>
+			<if test="userId != null and userId !=''">
+				and user_id = #{userId}
+			</if>
+			<if test="informTitle != null and informTitle !=''">
+				and inform_title = #{informTitle}
+			</if>
+			<if test="isRelease != null and isRelease !=''">
+				and is_release = #{isRelease}
+			</if>
+			<if test="addMode != null and addMode !=''">
+				and add_mode = #{addMode}
+			</if>
+			<if test="appType != null and appType !=''">
+				and (app_type = #{appType} or IFNULL(app_type,0)=0)
+			</if>
+		</where>
+		order by creater_time desc
+	</select>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+	   select *
+	   from app_news_inform
+	   where id = #{id}
+	</select>
+	
+	<update id="update" parameterType="AppNewsInform">
+	   update app_news_inform 
+		<set>
+		    <if test="userId != null and userId != ''">
+				user_id = #{userId},
+			</if>
+		    <if test="mobile != null and mobile != ''">
+				mobile = #{mobile},
+			</if>
+			<if test="pushObject != null and pushObject != ''">
+				push_object = #{pushObject},
+			</if>
+			<if test="pushTime != null and pushTime != ''">
+				push_time = #{pushTime},
+			</if>
+			<if test="informTitle != null and informTitle != ''">
+				inform_title = #{informTitle},
+			</if>
+			<if test="informContent != null and informContent != ''">
+				inform_content = #{informContent},
+			</if>
+			<if test="informType != null and informType != ''">
+				inform_type = #{informType},
+			</if>
+			<if test="isRelease != null and isRelease != ''">
+				is_release = #{isRelease},
+			</if>
+			<if test="isRelease != null and isRelease != ''">
+				is_release = #{isRelease},
+			</if>
+			<if test="informUrl != null and informUrl != ''">
+				inform_url = #{informUrl},
+			</if>
+			<if test="pushMode != null and pushMode != ''">
+				push_mode = #{pushMode},
+			</if>
+			<if test="appType != null and appType != ''">
+				app_type = #{appType}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+	  delete from app_news_inform where id = #{id}
+	</delete>
+	
+	<insert id="saveInformList" parameterType="java.util.List">
+	   INSERT INTO app_news_inform(user_id,mobile,inform_title,inform_content,push_object,push_time,creater_time,inform_type,inform_url,is_release,is_push,push_mode,add_mode,is_read,app_type)
+       VALUES 
+       <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.userId},#{item.mobile},#{item.informTitle},#{item.informContent},#{item.pushObject},#{item.pushTime},#{item.createrTime},#{item.informType},#{item.informUrl},#{item.isRelease},#{item.isPush},#{item.pushMode},#{item.addMode},1,#{item.appType})
+       </foreach>
+	</insert>
+	
+	<select id="selectIsRead" parameterType="String" resultType="int">
+	   select count(*)
+	   from app_news_inform
+	   where is_read=1 and user_id=#{userId}
+	</select>
+	
+	<update id="updateRead">
+	   update app_news_inform
+	   set is_read=2
+	   where id=#{id} and user_id=#{userId}
+	</update>
+	
+	<update id="updateWholeRead">
+	   update app_news_inform
+	   set is_read=2
+	   where is_read=1 and user_id=#{userId}
+	</update>
+</mapper>

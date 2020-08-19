@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mc.bzly.dao.user.MUserGyroDao">
+	<resultMap id="BaseResultMap" type="MUserGyro">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="gyro_x" property="gyroX" jdbcType="DOUBLE"/>
+		<result column="gyro_y" property="gyroY" jdbcType="DOUBLE"/>
+		<result column="gyro_z" property="gyroZ" jdbcType="DOUBLE"/>
+		<result column="page_type" property="pageType" jdbcType="INTEGER"/>
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>
+		<result column="number" property="number" jdbcType="INTEGER"/>
+		<result column="accountId" property="accountId" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="add" parameterType="MUserGyro">
+	   INSERT INTO m_user_gyro(user_id,gyro_x,gyro_y,gyro_z,page_type,update_time,number)
+       VALUES (#{userId},#{gyroX},#{gyroY},#{gyroZ},#{pageType},#{updateTime},#{number})
+	</insert>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+	   select *
+	   from m_user_gyro
+	   where user_id=#{userId} and page_type=#{pageType} and number=#{number}
+	</select>
+	
+	<update id="update" parameterType="MUserGyro">
+	    update m_user_gyro 
+		<set>
+		    <if test="gyroX != null">
+				gyro_x = #{gyroX},
+			</if>
+			<if test="gyroY != null">
+				gyro_y = #{gyroY},
+			</if>
+			<if test="gyroZ != null">
+				gyro_z = #{gyroZ},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<select id="selectList" parameterType="String" resultMap="BaseResultMap">
+	    select g.*,(select account_id from m_user_info where user_id=g.user_id) as accountId
+	    from m_user_gyro g
+	    where g.user_id=#{userId}
+	</select>
+	
+	<delete id="delete" parameterType="String">
+	    delete from m_user_gyro where user_id=#{userId}
+	</delete>
+</mapper>

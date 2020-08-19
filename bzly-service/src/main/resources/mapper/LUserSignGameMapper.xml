@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserSignGameDao" >
+	<resultMap type="LUserSignGame" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="signin_id" property="signinId" jdbcType="INTEGER"/>
+		<result column="game_id" property="gameId" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="finish_time" property="finishTime" jdbcType="INTEGER"/>
+		<result column="reward" property="reward" jdbcType="INTEGER"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="is_hide" property="isHide" jdbcType="INTEGER"/>
+		
+		<result column="gameName" property="gameName" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="LUserSignGame">
+		insert into l_user_sign_game 
+		(id,user_id,signin_id,game_id,create_time,finish_time,status,is_hide) values
+		(#{id},#{userId},#{signinId},#{gameId},#{createTime},#{finishTime},#{status},#{isHide})
+	</insert>
+	
+	<update id="update" parameterType="LUserSignGame">
+		update l_user_sign_game 
+		<set>
+			<if test="finishTime != null">
+				finish_time = #{finishTime},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="gameId != null">
+				game_id = #{gameId},
+			</if>
+			<if test="reward != null">
+				reward = #{reward},
+			</if>
+			<if test="isHide != null">
+				is_hide = #{isHide}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<select id="selectByUserSignin" resultMap="BaseResultMap">
+		select * from l_user_sign_game where user_id = #{userId} <if test="status != null and status != ''"> and status = #{status} </if> and signin_id = #{signinId} order by status desc
+	</select>
+
+	<select id="selectByUserGame" resultMap="BaseResultMap">
+		select * from l_user_sign_game where user_id = #{userId} and game_id = #{gameId} order by status asc 
+	</select>
+	
+	<delete id="deleteByUserGame">
+		delete from l_user_sign_game where user_id = #{userId} and signin_id = #{signinId} and status = 1
+	</delete>
+	
+	<select id="selectCountByUserSigin" resultType="Long">
+		select count(1) from l_user_sign_game where user_id = #{userId} and signin_id = #{signinId}
+	</select>
+
+	<select id="selectByUserSigin" resultMap="BaseResultMap">
+		select * from l_user_sign_game where user_id = #{userId} and signin_id = #{signinId}
+	</select>
+	
+	<select id="selectCountByUser" resultType="long">
+		select count(1) from l_user_sign_game where user_id = #{userId} and finish_time > #{time}
+	</select>
+
+	<select id="selectSumByUser" resultType="long">
+		select IFNULL(SUM(reward),0) from l_user_sign_game where user_id = #{userId} and finish_time > #{time}
+	</select>
+	
+	<update id="hideUpdate" parameterType="LUserSignGame">
+		update l_user_sign_game 
+		<set>
+			<if test="isHide != null">
+				is_hide = #{isHide}
+			</if>
+		</set>
+		where id = #{id}  and user_id = #{userId}
+	</update>
+	
+	<update id="updateGame" parameterType="LUserSignGame">
+		update l_user_sign_game 
+		<set>
+			<if test="gameId != null">
+				game_id = #{gameId},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<update id="updateNew" parameterType="LUserSignGame">
+		update l_user_sign_game 
+		<set>
+			<if test="finishTime != null">
+				finish_time = #{finishTime},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="gameId != null">
+				game_id = #{gameId},
+			</if>
+			<if test="reward != null">
+				reward = #{reward},
+			</if>
+			<if test="isHide != null">
+				is_hide = #{isHide}
+			</if>
+		</set>
+		where id = #{id} and signin_id = #{signinId}
+	</update>
+	
+	<select id="selectSignList" parameterType="LUserSignGame" resultMap="BaseResultMap">
+	    select sg.id as id,tg.game_title as gameName,IFNULL(sg.reward,0) as reward,sg.create_time,sg.finish_time,sg.`status`
+	    from l_user_sign_game sg LEFT JOIN tp_game  tg on sg.game_id = tg.id 
+		WHERE signin_id=#{signinId}
+	</select>
+	
+	<delete id="delete" parameterType="int">
+	    delete from l_user_sign_game where id=#{id}
+	</delete>
+</mapper>

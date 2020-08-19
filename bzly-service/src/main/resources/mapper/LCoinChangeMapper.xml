@@ -1,0 +1,996 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LCoinChangeDao" >
+	<resultMap type="LCoinChange" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="amount" property="amount" jdbcType="INTEGER"/>				
+		<result column="amountM" property="amountM" jdbcType="DECIMAL"/>				
+		<result column="flow_type" property="flowType" jdbcType="INTEGER"/>		
+		<result column="changed_type" property="changedType" jdbcType="INTEGER"/>		
+		<result column="changed_time" property="changedTime" jdbcType="INTEGER"/>
+		<result column="account_type" property="accountType" jdbcType="INTEGER"/>
+		<result column="userName" property="userName" jdbcType="VARCHAR"/>			
+		<result column="status" property="status" jdbcType="INTEGER"/>	
+		<result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+		<result column="coin_balance" property="coinBalance" jdbcType="INTEGER"/>	
+		<result column="role_type" property="roleType" jdbcType="INTEGER"/>	
+		<result column="channelRelation" property="channelRelation" jdbcType="VARCHAR"/>
+		<result column="account" property="account" jdbcType="VARCHAR"/>
+		<result column="audit_time" property="auditTime" jdbcType="INTEGER"/>
+		<result column="ali_num" property="aliNum" jdbcType="VARCHAR"/>
+		<result column="channelCode" property="channelCode" jdbcType="VARCHAR"/>	
+		<result column="account_id" property="accountId" jdbcType="INTEGER"/>
+		<result column="registerTime" property="registerTime" jdbcType="INTEGER"/>
+		
+		<result column="level" property="level" jdbcType="VARCHAR"/>
+		<result column="revenue" property="revenue" jdbcType="VARCHAR"/>
+		<result column="expend" property="expend" jdbcType="VARCHAR"/>	
+		<result column="equipment_type" property="equipmentType" jdbcType="INTEGER"/>	
+	</resultMap>
+
+	<resultMap type="MessageList" id="MessageListMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="content" property="content" jdbcType="VARCHAR"/>				
+		<result column="changed_time" property="changedTime" jdbcType="INTEGER"/>
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<resultMap type="UserWithdrawals" id="UserWithdrawalsMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="amount" property="amount" jdbcType="INTEGER"/>
+		<result column="changed_time" property="changedTime" jdbcType="INTEGER"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="account_type" property="accountType" jdbcType="INTEGER"/>
+		<result column="account" property="account" jdbcType="VARCHAR"/>
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+		<result column="user_name" property="userName" jdbcType="VARCHAR"/>
+		<result column="amountM" property="amountM" jdbcType="DECIMAL"/>
+		<result column="audit_time" property="auditTime" jdbcType="INTEGER"/>
+		<result column="reason" property="reason" jdbcType="VARCHAR"/>
+		<result column="changed_type" property="changedType" jdbcType="INTEGER"/>
+		<result column="flow_type" property="flowType" jdbcType="INTEGER"/>
+		<result column="coin" property="coin" jdbcType="INTEGER"/>			
+	</resultMap>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="LCoinChange">
+		INSERT INTO l_coin_change(user_id,amount,flow_type,changed_type,changed_time,status,account_type,remarks,coin_balance)
+        VALUE (#{userId},#{amount},#{flowType},#{changedType},#{changedTime},1,0,#{remarks},#{coinBalance})
+	</insert>
+	
+	<insert id="insertCoin" useGeneratedKeys="true" keyProperty="id" parameterType="LCoinChange">
+		INSERT INTO l_coin_change(user_id,amount,flow_type,changed_type,changed_time,status,account_type,remarks,coin_balance)
+        VALUE (#{userId},#{amount},#{flowType},#{changedType},#{changedTime},#{status},#{accountType},#{remarks},#{coinBalance})
+	</insert>
+
+	<insert id="batchInsert" parameterType="java.util.List">
+		INSERT INTO l_coin_change(user_id,amount,flow_type,changed_type,changed_time,status,remarks,coin_balance)
+        VALUE 
+        <foreach collection="list" item="item" index="index" separator=",">
+        	(#{item.userId},#{item.amount},#{item.flowType},#{item.changedType},#{item.changedTime},#{item.status},#{item.remarks},#{item.coinBalance})
+   		</foreach>		
+	</insert>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select c.*,u.user_name AS userName,u.ali_num
+		from l_coin_change AS c,m_user_info AS u
+		where c.user_id=u.user_id AND c.id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="LCoinChange" resultMap="BaseResultMap">
+		select user_id,amount / (select dic_value from p_dictionary where dic_name = 'coin_to_money') as amountM,amount,
+		flow_type,changed_type,changed_time,status,account_type,coin_balance,reason,remarks from l_coin_change where user_id=#{userId}
+		and changed_type != 35
+		order by changed_time desc
+	</select>
+	
+	<select id="selectPageList" parameterType="LCoinChange" resultMap="BaseResultMap">
+		SELECT c.*,u.user_name AS userName,u.account_id,u.role_type,u.channel_code as channelCode,u.level,
+		CASE c.flow_type
+		WHEN 1 THEN c.amount
+		END revenue,
+		CASE c.flow_type
+		WHEN 2 THEN c.amount
+		END expend,
+		u.create_time as registerTime,
+		u.equipment_type
+		FROM l_coin_change c inner join m_user_info u on c.user_id=u.user_id
+		WHERE u.user_id!="1"
+		<if test="channelCode !='baozhu'">
+			    <if test="channelCode != null and channelCode != '' and userRelation==1">
+				    and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==2">
+				    and u.channel_code=#{channelCode}
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+				</if>
+				<!-- and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+		</if>
+		<if test="userName != null and userName != ''">
+			and u.user_name = #{userName}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and u.mobile = #{mobile}
+		</if>
+		<if test="changedType != null and changedType != ''">
+			and c.changed_type = #{changedType}
+		</if>
+		<if test="accountId != null and accountId != ''">
+			and u.account_id = #{accountId}
+		</if>
+		<if test="flowType != null and flowType != ''">
+			and c.flow_type = #{flowType}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and c.changed_time >= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and #{endTime} >= c.changed_time
+		</if>
+		<if test="coinMin !=null and coinMin!=''">
+		    and amount>=#{coinMin} 
+		</if>
+		<if test="coinMax !=null and coinMax!=''">
+		    and #{coinMax}>=amount
+		</if>
+		ORDER BY c.changed_time DESC
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectSum" parameterType="LCoinChange" resultType="map">
+	    SELECT SUM(a.amount) AS amount,a.flow_type AS flowType,COUNT(*) cou
+		FROM (
+		SELECT flow_type,amount
+		FROM l_coin_change c 
+		where
+	    user_id!="1"
+        <if test="channelCode !='baozhu'">
+		    <if test="channelCode != null and channelCode != '' and userRelation==1">
+			    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==2">
+			    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+			</if>
+			<if test="channelCode != null and channelCode != '' and userRelation==3">
+			    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+			</if>
+			<!-- and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+		</if>
+		<if test="userName != null and userName != ''">
+			and c.user_id in (select u.user_id from m_user_info u where user_name = #{userName})
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and c.user_id = (select u.user_id from m_user_info u where mobile = #{mobile})
+		</if>
+		<if test="accountId != null and accountId != ''">
+			and c.user_id = (select u.user_id from m_user_info u where account_id = #{accountId})
+		</if>
+		<if test="changedType != null and changedType != ''">
+			and c.changed_type = #{changedType}
+		</if>
+		<if test="flowType != null and flowType != ''">
+			and c.flow_type = #{flowType}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and c.changed_time >= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and #{endTime} >= c.changed_time
+		</if>
+		<if test="coinMin !=null and coinMin!=''">
+		    and c.amount>=#{coinMin} 
+		</if>
+		<if test="coinMax !=null and coinMax!=''">
+		    and #{coinMax}>=c.amount
+		</if>
+		ORDER BY c.changed_time DESC
+		LIMIT #{pageIndex},#{pageSize}
+		) a
+		GROUP BY a.flow_type
+	</select>
+	
+	<select id="selectCount" parameterType="LCoinChange" resultType="map">
+	    SELECT SUM(a.amount) AS amount,a.flow_type AS flowType,COUNT(*) cou
+		FROM (
+		SELECT flow_type,amount
+		FROM l_coin_change c
+		WHERE user_id!="1"
+		<if test="channelCode !='baozhu'">
+			    <if test="channelCode != null and channelCode != '' and userRelation==1">
+				    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==2">
+				    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==3">
+				    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+				</if>
+				<!-- and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+		</if>
+		<if test="userName != null and userName != ''">
+			and c.user_id in (select u.user_id from m_user_info u where user_name = #{userName})
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and c.user_id = (select u.user_id from m_user_info u where mobile = #{mobile})
+		</if>
+		<if test="accountId != null and accountId != ''">
+			and c.user_id = (select u.user_id from m_user_info u where account_id = #{accountId})
+	    </if>
+		<if test="changedType != null and changedType != ''">
+			and c.changed_type = #{changedType}
+		</if>
+		<if test="flowType != null and flowType != ''">
+			and c.flow_type = #{flowType}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and c.changed_time >= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and #{endTime} >= c.changed_time
+		</if>
+		<if test="coinMin !=null and coinMin!=''">
+		    and amount>=#{coinMin} 
+		</if>
+		<if test="coinMax !=null and coinMax!=''">
+		    and #{coinMax}>=amount
+		</if>
+		) a
+		GROUP BY a.flow_type
+	</select>
+	
+	<select id="selectMessageList" resultMap="MessageListMap" >
+		SELECT * FROM (
+			(
+				SELECT changes.id,changes.user_id,
+				CASE changes.changed_type 
+				WHEN 1 THEN CONCAT('答题获得',amount,'金币') 
+				WHEN 2 THEN CONCAT('APP每日签到奖励',amount,'金币')
+				WHEN 4 THEN CONCAT('推荐用户成功获得',amount,'金币')
+				WHEN 5 THEN CONCAT('通过徒弟贡献获得',amount,'金币')
+				WHEN 6 THEN CONCAT('通过vip获得',amount,'金币')
+				WHEN 7 THEN CONCAT('试玩游戏获得',amount,'金币')
+				WHEN 8 THEN CONCAT('通过徒弟获得',amount,'金币')
+				WHEN 9 THEN CONCAT('注册获得',amount,'金币')
+				WHEN 10 THEN CONCAT('完成任务获得',amount,'金币')
+				WHEN 11 THEN CONCAT('出题获得',amount,'金币')
+				WHEN 13 THEN CONCAT('阅读资讯获得',amount,'金币')
+				WHEN 15 THEN CONCAT('获得好友升级奖励',amount,'金币')
+				WHEN 16 THEN CONCAT('升级运营总监赠送',amount,'金币')
+				WHEN 17 THEN CONCAT('获得间接分成奖励',amount,'金币')
+				WHEN 18 THEN CONCAT('获得好友额外分成',amount,'金币')
+				WHEN 19 THEN CONCAT('阅读广告',amount,'金币')
+				WHEN 20 THEN CONCAT('分享资讯',amount,'金币')
+				WHEN 21 THEN CONCAT('签到领了',FORMAT(amount / 10000,2),'元')
+				WHEN 22 THEN CONCAT('获得好友额外分成',amount,'金币')
+				WHEN 23 THEN CONCAT('快速赚任务获得',FORMAT(amount / 10000,2),'元')
+				WHEN 24 THEN CONCAT('获得达人奖励',FORMAT(amount / 10000,2),'元')
+				WHEN 25 THEN CONCAT('获得达人奖励',FORMAT(amount / 10000,2),'元')
+				WHEN 26 THEN CONCAT('阅读小说获得',amount,'金币')
+				WHEN 27 THEN CONCAT('达人排行榜奖励',amount,'金币')
+				WHEN 28 THEN CONCAT('达人高额赚提成',amount,'金币')
+				WHEN 29 THEN CONCAT('每日红包任务',amount,'金币')
+				WHEN 30 THEN CONCAT('观看视频',amount,'金币')
+				WHEN 31 THEN CONCAT('试玩小游戏奖励',amount,'金币')
+				WHEN 33 THEN CONCAT('参加早起打卡奖励',amount,'金币')
+				WHEN 34 THEN CONCAT('金币每日冲榜奖励',amount,'金币')
+				WHEN 34 THEN CONCAT('金币每日冲榜奖励',amount,'金币')
+				WHEN 35 THEN CONCAT('心愿宝箱奖励',amount,'金币')
+				WHEN 41 THEN CONCAT('好友开通VIP奖励',FORMAT(amount / 10000,2),'元')
+				WHEN 42 THEN CONCAT('好友开通VIP奖励',FORMAT(amount / 10000,2),'元')
+				else CONCAT('活动奖励',amount,'金币')
+				END content ,changed_time,CONCAT(SUBSTR(info.mobile FROM 1 FOR 3),'****',SUBSTR(info.mobile FROM 8 FOR 4)) AS mobile
+				FROM l_coin_change changes
+				LEFT JOIN m_user_info info ON changes.user_id = info.user_id
+				WHERE flow_type = 1 and changes.changed_type != 14  ORDER BY changed_time DESC  LIMIT 5
+			)
+			UNION ALL
+			(	SELECT changes.log_id AS id ,changes.user_id,
+				CASE changes.changed_type 
+				WHEN 3 THEN CONCAT('推荐好友获得',amount,'元') 
+				WHEN 5 THEN CONCAT('参与打卡瓜分了',amount,'元')
+				WHEN 7 THEN CONCAT('升级运营总监赠送',amount,'元')
+				 END content,changed_time,CONCAT(SUBSTR(info.mobile FROM 1 FOR 3),'****',SUBSTR(info.mobile FROM 8 FOR 4)) AS mobile
+				FROM l_balance_change changes
+				LEFT JOIN m_user_info info ON changes.user_id = info.user_id
+				WHERE flow_type = 1 ORDER BY changed_time DESC  LIMIT 5
+			)
+		) a ORDER BY a.changed_time DESC LIMIT 5
+	</select>
+	
+	<select id="selectByChangeType" resultMap="BaseResultMap">
+		select * from l_coin_change where user_id = #{userId} and changed_type = #{changedType}
+	</select>
+	
+	<update id="update" parameterType="LCoinChange">
+		update l_coin_change 
+		<set>
+			<if test="status != null and status != ''">
+				status  = #{status},				
+			</if>
+			<if test="changedTime != null and changedTime != ''">
+				changed_time  = #{changedTime},				
+			</if>
+			<if test="auditTime != null and auditTime != ''">
+				audit_time  = #{auditTime},				
+			</if>
+			<if test="reason != null and reason != ''">
+				reason  = #{reason},				
+			</if>
+			<if test="remarks != null and remarks != ''">
+				remarks  = #{remarks}			
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<select id="selectWithdrawals" parameterType="UserWithdrawals" resultMap="UserWithdrawalsMap">
+		select cc.id,cc.user_id,cc.amount,cc.changed_time,cc.status,cc.account_type,cc.coin_balance,
+			case cc.account_type when 1 then u.open_id else u.ali_num end account,
+			u.mobile,u.user_name,cc.reason,cc.audit_time,
+			cc.amount / (select dic_value from p_dictionary where dic_name = 'coin_to_money') as amountM,cc.flow_type
+		from l_coin_change cc 
+		left join m_user_info u on cc.user_id = u.user_id
+		where cc.changed_type = 3 
+		<if test = "mobile != null and mobile != ''">
+			and u.mobile = #{mobile}
+		</if>
+		<if test = "status != null and status != ''">
+			and cc.status = #{status}
+		</if>
+	</select>
+
+	<select id="selectWithdrawalsInfo" parameterType="Integer" resultMap="UserWithdrawalsMap">
+		select cc.id,cc.user_id,cc.amount,cc.changed_time,cc.status,cc.account_type,cc.coin_balance,
+			case cc.account_type when 1 then u.open_id else u.ali_num end account,
+			u.mobile,u.user_name,cc.reason,cc.audit_time,cc.changed_type,
+			cc.amount / (select dic_value from p_dictionary where dic_name = 'coin_to_money') as amountM,cc.flow_type,u.coin
+		from l_coin_change cc 
+		left join m_user_info u on cc.user_id = u.user_id
+		where cc.id = #{id}
+	</select>
+	
+	<select id="selectUserReadZXRewardSum" resultType="Double">
+		select IFNULL(sum(amount),0) from l_coin_change where user_id = #{userId,jdbcType=VARCHAR} and changed_type = 13 and changed_time > #{changedTime}
+	</select>
+	
+	<select id="getApprenticeReward" resultType="Double">
+		select IFNULL(sum(amount),0) from l_coin_change where user_id = #{userId,jdbcType=VARCHAR} and changed_type in (4,5,8)
+	</select>
+	
+	<select id="getApprenticeRewardDetail" resultMap="BaseResultMap">
+		select * from l_coin_change where user_id = #{userId,jdbcType=VARCHAR} and changed_type in (4,5,8) order by changed_time desc
+	</select>
+	
+	<select id="selectByChangeTypeTime" resultMap="BaseResultMap">
+		select * from l_coin_change where user_id = #{userId} and changed_type = #{changedType} and changed_time=#{changedTime}
+	</select>
+	<select id="selectChannelList" parameterType="LCoinChange" resultMap="BaseResultMap">
+	    SELECT c.*,u.user_name AS userName,u.account_id,
+	    CASE IFNULL(u.channel_code,0)
+		    WHEN #{channelCode} THEN '直属用户' 
+		    WHEN 0 THEN '非直属用户'
+		    END channelRelation,
+		     u.role_type,
+		     u.channel_code as channelCode,u.level,
+		CASE c.flow_type
+		WHEN 1 THEN c.amount
+		END revenue,
+		CASE c.flow_type
+		WHEN 2 THEN c.amount
+		END expend
+		FROM l_coin_change c INNER JOIN m_user_info u ON c.user_id=u.user_id
+		<where>
+			<!-- (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+			<if test="userRelation==1">
+			    and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+			</if>
+			<if test="userRelation==2">
+			    and u.channel_code=#{channelCode}
+			</if>
+			<if test="userRelation==3">
+			    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+			</if>
+			<if test="userName != null and userName != ''">
+				and u.user_name = #{userName}
+			</if>
+			<if test="mobile != null and mobile != ''">
+				and u.mobile = #{mobile}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+			</if>
+			<if test="coinMin !=null and coinMin!=''">
+		    and amount>=#{coinMin} 
+		</if>
+		<if test="coinMax !=null and coinMax!=''">
+		    and #{coinMax}>=amount
+		</if>
+		</where> 
+		ORDER BY changed_time DESC
+	</select>
+	<select id="exclCoinChange" parameterType="LCoinChange" resultType="Map">
+	    SELECT c.amount,c.coin_balance,c.remarks,
+		CASE c.changed_type 
+			WHEN 1 THEN '答题'
+			WHEN 2 THEN 'APP每日签到'
+			WHEN 3 THEN '提现'
+			WHEN 4 THEN '推荐用户获得'
+			WHEN 5 THEN '徒弟贡献'
+			WHEN 6 THEN 'vip'
+			WHEN 7 THEN '游戏试玩奖励'
+			WHEN 8 THEN '徒弟到达4L奖励'
+			WHEN 9 THEN '新人注册奖励'
+			WHEN 10 THEN '任务'
+			WHEN 11 THEN '出题'
+			WHEN 12 THEN '兑换金猪'
+			WHEN 13 THEN '阅读资讯'
+			WHEN 14 THEN '提现退回'
+			WHEN 15 THEN '获得好友升级奖励'
+			WHEN 16 THEN '升级运营总监赠送'
+			WHEN 17 THEN '获得间接分成奖励'
+			WHEN 18 THEN '获得好友额外分成'
+			WHEN 19 THEN '阅读广告'
+			WHEN 20 THEN '分享资讯'
+			WHEN 21 THEN '签到赚'
+			WHEN 22 THEN '获得好友额外分成'
+			WHEN 23 THEN '快速赚任务获得'
+			WHEN 24 THEN '获得达人奖励'
+			WHEN 25 THEN '获得达人奖励'
+			WHEN 26 THEN '阅读小说获得'
+			WHEN 27 THEN '达人排行榜奖励'
+			WHEN 28 THEN '达人高额赚提成'
+			WHEN 29 THEN '每日红包任务'
+			WHEN 30 THEN '观看视频'
+			WHEN 31 THEN '试玩小游戏奖励'
+			WHEN 32 THEN '参加早起打卡消耗'
+			WHEN 33 THEN '参加早起打卡奖励'
+			WHEN 34 THEN '金币每日冲榜奖励'
+			WHEN 35 THEN '心愿宝箱奖励'
+			WHEN 41 THEN '好友开通VIP奖励'
+			WHEN 42 THEN '好友开通VIP奖励'
+			else '活动奖励'
+			END changedType,
+		CASE c.flow_type 
+			WHEN 1 THEN '收入'
+			WHEN 2 THEN '支出'
+			END flowType,
+		u.user_name AS userName,
+		u.account_id AS accountId,
+		CASE IFNULL(u.channel_code,0)
+		    WHEN #{channelCode} THEN '直属用户' 
+		    WHEN 0 THEN '非直属用户'
+		    END channelRelation,
+		CASE u.role_type 
+		    WHEN 1 THEN '小猪猪'
+		    WHEN 2 THEN '团队长'
+		    WHEN 3 THEN '超级合伙人'
+		    END roleType,
+		u.channel_code as channelCode,
+		FROM_UNIXTIME(c.changed_time/1000,'%Y-%m-%d %H:%i:%s') AS changedTime,
+		u.ali_num AS aliNum,
+		u.level,
+		CASE c.flow_type
+		WHEN 1 THEN c.amount
+		END revenue,
+		CASE c.flow_type
+		WHEN 2 THEN c.amount
+		END expend,
+		u.coin AS coin,
+		FROM_UNIXTIME(u.create_time/1000,'%Y-%m-%d %H:%i:%s') AS exclRegisterTime,
+		c.coin_balance as coinBalance,
+		CASE u.equipment_type 
+		    WHEN 1 THEN '安卓'
+		    WHEN 2 THEN 'ios'
+		    END equipmentType
+		FROM l_coin_change c INNER JOIN m_user_info u ON c.user_id=u.user_id
+		<where>
+		     u.user_id!="1"
+			<if test="channelCode !='baozhu'">
+			    <if test="channelCode != null and channelCode != '' and userRelation==1">
+				    and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode})
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==2">
+				    and u.channel_code=#{channelCode}
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==3">
+				    and u.channel_code='' and u.parent_channel_code=#{channelCode}
+				</if>
+				<!-- and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+			</if>
+			<if test="userName != null and userName != ''">
+				and u.user_name = #{userName}
+			</if>
+			<if test="mobile != null and mobile != ''">
+				and u.mobile = #{mobile}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+			</if>
+			<if test="coinMin !=null and coinMin!=''">
+			    and amount>=#{coinMin} 
+			</if>
+			<if test="coinMax !=null and coinMax!=''">
+			    and #{coinMax}>=amount
+			</if>
+		</where> 
+		ORDER BY c.changed_time DESC
+		limit 0,5000
+	</select>
+	
+	<select id="selectGroupContribution" parameterType="String" resultType="String">
+		SELECT IFNULL(SUM(amount),0)
+		FROM l_coin_change
+		WHERE flow_type=1 AND changed_type IN (4,5,8,15,17,18,22,24,25,28,41,42) AND user_id=#{userId}
+	</select>
+	
+	<select id="selectTeamSum" resultType="long">
+	    SELECT IFNULL(SUM(amount),0)
+		FROM l_coin_change
+		<where>
+		   flow_type=1 AND user_id=#{userId}
+		   <if test="changedType!=5">
+		     AND changed_type=#{changedType}
+		   </if>
+		   <if test="changedType==5">
+		     AND changed_type in (4,5,8)
+		   </if>
+		</where>
+	</select>
+
+	<select id="selectUserReadRewardSum" resultType="Double">
+		select IFNULL(sum(amount),0) from l_coin_change where user_id = #{userId,jdbcType=VARCHAR} and changed_type = #{changedType} and changed_time > #{changedTime}
+	</select>
+	
+	<select id="selectMyReward" resultType="long">
+		SELECT IFNULL(SUM(amount),0)
+		FROM l_coin_change 
+		<where>
+			user_id=#{userId}
+			 AND changed_type in (4,5,8)
+		</where>
+	</select>
+	
+	<select id="selectqdzList" resultMap="MessageListMap" >
+		SELECT changes.id,changes.user_id,changed_time,
+		CONCAT('签到领了',FORMAT(amount / 10000,2),'元') content,
+		CONCAT(SUBSTR(info.mobile FROM 1 FOR 3),'****',SUBSTR(info.mobile FROM 8 FOR 4)) AS mobile
+		FROM l_coin_change changes
+		LEFT JOIN m_user_info info ON changes.user_id = info.user_id
+		WHERE flow_type = 1 and changed_type = 21  ORDER BY changed_time DESC  LIMIT 5
+	</select>
+	
+	<select id="selectSumByUser" resultType="Long">
+		select IFNULL(sum(amount),0) from l_coin_change where user_id = #{userId} and changed_type = #{changedType} and changed_time > #{time}
+	</select>
+	
+	
+	<select id="selectTeamSumNew" resultType="long">
+	    SELECT IFNULL(SUM(amount),0)
+		FROM l_coin_change
+		where
+		   flow_type=1 AND user_id=#{userId}
+		     AND changed_type in (18,22)
+	</select>
+	
+	<select id="selectkszList" resultMap="MessageListMap" >
+		SELECT changes.id,changes.user_id,changed_time,
+		CONCAT('完成快速赚任务领了',FORMAT(amount / 10000,2),'元') content,
+		CONCAT(SUBSTR(info.mobile FROM 1 FOR 3),'****',SUBSTR(info.mobile FROM 8 FOR 4)) AS mobile
+		FROM l_coin_change changes
+		LEFT JOIN m_user_info info ON changes.user_id = info.user_id
+		WHERE flow_type = 1 and changed_type = 23  ORDER BY changed_time DESC  LIMIT 5
+	</select>
+	
+	<select id="selectWXcount" parameterType="String" resultType="int">
+	    SELECT COUNT(*)
+		FROM l_coin_change
+		WHERE changed_type=3 AND account_type=1 AND status=1 and user_id=#{userId}
+	</select>
+	
+	<select id="selectDRReward" parameterType="String" resultType="long">
+		select ifnull(sum(amount),0) from l_coin_change where user_id = #{userId} and changed_type in (24,25,28)
+	</select>
+	
+	<select id="selectSignSum" parameterType="String" resultType="long">
+	    SELECT IFNULL(SUM(amount),0)
+		FROM l_coin_change
+		WHERE changed_type IN (2,29) AND user_id=#{userId}
+	</select>
+	
+	<select id="selectUserXYXRewardSum" resultType="long">
+		select count(1) from l_coin_change where user_id = #{userId,jdbcType=VARCHAR} and changed_type = 31 and changed_time > #{changedTime}
+	</select>
+	
+	<select id="selectByChangeTypeRank" resultType="double">
+		select sum(amount) from l_coin_change where user_id = #{userId,jdbcType=VARCHAR} and changed_type in (7,23) and changed_time > #{changedTime}
+	</select>
+	
+	<select id="selectPageListNew" parameterType="LCoinChange" resultMap="BaseResultMap">
+	    SELECT c.*,
+		CASE c.flow_type
+		WHEN 1 THEN c.amount
+		END revenue,
+		CASE c.flow_type
+		WHEN 2 THEN c.amount
+		END expend,
+		(select user_name from m_user_info where user_id=c.user_id) as userName,
+		(select account_id from m_user_info where user_id=c.user_id) as account_id,
+		(select level from m_user_info where user_id=c.user_id) as level,
+		(select create_time from m_user_info where user_id=c.user_id) as registerTime,
+		(select equipment_type from m_user_info where user_id=c.user_id) as equipment_type
+		FROM l_coin_change c
+		<where>
+			<if test="channelCode !='baozhu'">
+				    <!-- <if test="channelCode != null and channelCode != '' and userRelation==1">
+					    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==2">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==3">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+					</if> -->
+					and c.user_id in 
+					(<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="userId != null and userId != ''">
+				and c.user_id = #{userId}
+			</if>
+			
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+			</if>
+			<if test="coinMin !=null and coinMin!=''">
+			    and amount>=#{coinMin} 
+			</if>
+			<if test="coinMax !=null and coinMax!=''">
+			    and #{coinMax}>=amount
+			</if>
+		</where>
+		ORDER BY c.changed_time DESC
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="selectCountNew" parameterType="LCoinChange" resultType="map">
+	    SELECT SUM(a.amount) AS amount,a.flow_type AS flowType,COUNT(*) cou
+		FROM (
+		SELECT flow_type,amount
+		FROM l_coin_change c
+		<where>
+			<if test="channelCode !='baozhu'">
+				    <if test="channelCode != null and channelCode != '' and userRelation==1">
+					    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==2">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==3">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+					</if>
+					<!-- and (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}) -->
+			</if>
+			<if test="userId != null and userId != ''">
+				and c.user_id=#{userId}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+			</if>
+			<if test="coinMin !=null and coinMin!=''">
+			    and amount>=#{coinMin} 
+			</if>
+			<if test="coinMax !=null and coinMax!=''">
+			    and #{coinMax}>=amount
+			</if>
+		</where>
+		) a
+		GROUP BY a.flow_type
+	</select>
+	
+	<select id="selectCountNewRevenue" parameterType="LCoinChange" resultType="map">
+		SELECT ifnull(sum(c.amount),0) as amount,count(1) as cou
+		FROM l_coin_change c
+		<where>
+		    c.flow_type = 1
+			<if test="channelCode !='baozhu'">
+				   <!--  <if test="channelCode != null and channelCode != '' and userRelation==1">
+					    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==2">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==3">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+					</if> -->
+					and c.user_id in 
+					(<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="userId != null and userId != ''">
+				and c.user_id=#{userId}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+			</if>
+			<if test="coinMin !=null and coinMin!=''">
+			    and amount>=#{coinMin} 
+			</if>
+			<if test="coinMax !=null and coinMax!=''">
+			    and #{coinMax}>=amount
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectCountNewExpend" parameterType="LCoinChange" resultType="map">
+		SELECT ifnull(sum(c.amount),0) as amount,COUNT(*) cou
+		FROM l_coin_change c
+		<where>
+		    c.flow_type=2
+			<if test="channelCode !='baozhu'">
+				   <!--  <if test="channelCode != null and channelCode != '' and userRelation==1">
+					    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==2">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==3">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+					</if> -->
+					and c.user_id in 
+					(<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="userId != null and userId != ''">
+				and c.user_id=#{userId}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+			</if>
+			<if test="coinMin !=null and coinMin!=''">
+			    and amount>=#{coinMin} 
+			</if>
+			<if test="coinMax !=null and coinMax!=''">
+			    and #{coinMax}>=amount
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectSumNew" parameterType="LCoinChange" resultType="map">
+	    SELECT SUM(a.amount) AS amount,a.flow_type AS flowType,COUNT(*) cou
+		FROM (
+		SELECT flow_type,amount
+		FROM l_coin_change c 
+		<where>
+	        <if test="channelCode !='baozhu'">
+			   <!--  <if test="channelCode != null and channelCode != '' and userRelation==1">
+				    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==2">
+				    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+				</if>
+				<if test="channelCode != null and channelCode != '' and userRelation==3">
+				    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+				</if> -->
+				and c.user_id in 
+					(<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="userId != null and userId != ''">
+				and c.user_id=#{userId}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+			</if>
+			<if test="coinMin !=null and coinMin!=''">
+			    and c.amount>=#{coinMin} 
+			</if>
+			<if test="coinMax !=null and coinMax!=''">
+			    and #{coinMax}>=c.amount
+			</if>
+		</where>
+		ORDER BY c.changed_time DESC
+		LIMIT #{pageIndex},#{pageSize}
+		) a
+		GROUP BY a.flow_type
+	</select>
+	
+	<select id="exclCoinChangeNew" parameterType="LCoinChange" resultType="Map">
+	    SELECT c.amount,c.coin_balance,c.remarks,
+		CASE c.changed_type 
+			WHEN 1 THEN '答题'
+			WHEN 2 THEN 'APP每日签到'
+			WHEN 3 THEN '提现'
+			WHEN 4 THEN '推荐用户获得'
+			WHEN 5 THEN '徒弟贡献'
+			WHEN 6 THEN 'vip'
+			WHEN 7 THEN '游戏试玩奖励'
+			WHEN 8 THEN '徒弟到达4L奖励'
+			WHEN 9 THEN '新人注册奖励'
+			WHEN 10 THEN '任务'
+			WHEN 11 THEN '出题'
+			WHEN 12 THEN '兑换金猪'
+			WHEN 13 THEN '阅读资讯'
+			WHEN 14 THEN '提现退回'
+			WHEN 15 THEN '获得好友升级奖励'
+			WHEN 16 THEN '升级运营总监赠送'
+			WHEN 17 THEN '获得间接分成奖励'
+			WHEN 18 THEN '获得好友额外分成'
+			WHEN 19 THEN '阅读广告'
+			WHEN 20 THEN '分享资讯'
+			WHEN 21 THEN '签到赚'
+			WHEN 22 THEN '获得好友额外分成'
+			WHEN 23 THEN '快速赚任务获得'
+			WHEN 24 THEN '获得达人奖励'
+			WHEN 25 THEN '获得达人奖励'
+			WHEN 26 THEN '阅读小说获得'
+			WHEN 27 THEN '达人排行榜奖励'
+			WHEN 28 THEN '达人高额赚提成'
+			WHEN 29 THEN '每日红包任务'
+			WHEN 30 THEN '观看视频'
+			WHEN 31 THEN '试玩小游戏奖励'
+			WHEN 32 THEN '参加早起打卡消耗'
+			WHEN 33 THEN '参加早起打卡奖励'
+			WHEN 34 THEN '金币每日冲榜奖励'
+			WHEN 41 THEN 好友开通VIP奖励'
+			WHEN 42 THEN 好友开通VIP奖励'
+			else '活动奖励'
+			END changedType,
+		CASE c.flow_type 
+			WHEN 1 THEN '收入'
+			WHEN 2 THEN '支出'
+			END flowType,
+	   (select user_name from m_user_info where user_id=c.user_id) as userName,
+       (select account_id from m_user_info where user_id=c.user_id) as accountId,
+		FROM_UNIXTIME(c.changed_time/1000,'%Y-%m-%d %H:%i:%s') AS changedTime,
+		(select level from m_user_info where user_id=c.user_id) as level,
+		CASE c.flow_type
+		WHEN 1 THEN c.amount
+		END revenue,
+		CASE c.flow_type
+		WHEN 2 THEN c.amount
+		END expend,
+		FROM_UNIXTIME((select create_time from m_user_info where user_id=c.user_id)/1000,'%Y-%m-%d %H:%i:%s') AS exclRegisterTime,
+		c.coin_balance as coinBalance,
+		CASE (select equipment_type from m_user_info where user_id=c.user_id)
+		    WHEN 1 THEN '安卓'
+		    WHEN 2 THEN 'ios'
+		    END equipmentType
+		FROM l_coin_change c 
+		<where>
+			<if test="channelCode !='baozhu'">
+				    <!-- <if test="channelCode != null and channelCode != '' and userRelation==1">
+					    and c.user_id in (select u.user_id from m_user_info u where (u.channel_code=#{channelCode} OR u.parent_channel_code=#{channelCode}))
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==2">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code=#{channelCode})
+					</if>
+					<if test="channelCode != null and channelCode != '' and userRelation==3">
+					    and c.user_id in (select u.user_id from m_user_info u where u.channel_code='' and u.parent_channel_code=#{channelCode})
+					</if> -->
+				and c.user_id in 
+					(<foreach collection="userIds" index="index" item="item" separator=",">
+									#{item}
+								</foreach>)
+			</if>
+			<if test="userId != null and userId != ''">
+				and c.user_id = #{userId}
+			</if>
+			<if test="changedType != null and changedType != ''">
+				and c.changed_type = #{changedType}
+			</if>
+			<if test="accountId != null and accountId != ''">
+				and u.account_id = #{accountId}
+			</if>
+			<if test="flowType != null and flowType != ''">
+				and c.flow_type = #{flowType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.changed_time >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} >= c.changed_time
+			</if>
+			<if test="coinMin !=null and coinMin!=''">
+			    and amount>=#{coinMin} 
+			</if>
+			<if test="coinMax !=null and coinMax!=''">
+			    and #{coinMax}>=amount
+			</if>
+		</where> 
+		ORDER BY c.changed_time DESC
+		limit 0,5000
+	</select>
+	
+	<select id="selectListXYZ" parameterType="LCoinChange" resultMap="BaseResultMap">
+		select user_id,amount / (select dic_value from p_dictionary where dic_name = 'coin_to_money') as amountM,amount,
+		flow_type,changed_type,changed_time,status,account_type,coin_balance,reason,remarks from l_coin_change where user_id=#{userId}
+		and changed_type in (3,5,14,35,36)
+		order by changed_time desc
+	</select>
+	
+	<select id="selecthHighVipAmount" parameterType="String" resultType="long">
+		select ifnull(sum(amount),0) from l_coin_change where user_id = #{userId} and changed_type in (41,42)
+	</select>
+
+	<select id="selecthHighVipCount" parameterType="String" resultType="long">
+		select count(1) from l_coin_change where user_id = #{userId} and changed_type in (41,42)
+	</select>
+
+	<select id="listHighVip" resultType="Map">
+		select id,amount,changed_type AS changedType,changed_time AS changedTime 
+		from l_coin_change where user_id = #{userId} and changed_type in (41,42) 
+		order by changed_time desc limit #{pageIndex},#{pageSize}
+	</select>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.TPCompanyDao" >
+	<resultMap type="TPCompany" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="name" property="name" jdbcType="VARCHAR"/>		
+		<result column="short_name" property="shortName" jdbcType="VARCHAR"/>		
+		<result column="h5_type" property="h5Type" jdbcType="INTEGER"/>		
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>		
+		<result column="remark" property="remark" jdbcType="VARCHAR"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="TPCompany">
+		insert into tp_company 
+		(id,name,short_name,image_url,h5_type,remark,create_time,status) 
+		values 
+		(#{id},#{name},#{shortName},#{imageUrl},#{h5Type},#{remark},#{createTime},#{status})
+	</insert>
+	
+	<update id="update" parameterType="TPCompany">
+		update tp_company 
+		<set>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="shortName != null and shortName != ''">
+				short_name = #{shortName},
+			</if>
+			<if test="imageUrl != null and imageUrl != ''">
+				image_url = #{imageUrl},
+			</if>
+			<if test="h5Type != null and h5Type != ''">
+				h5_type = #{h5Type},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark = #{remark},
+			</if>
+			<if test="status != null and status != ''">
+				status = #{status}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from tp_company where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from tp_company where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="TPCompany" resultMap="BaseResultMap">
+		select * from tp_company 
+		<where>
+			<if test="h5Type != null">
+				and h5_type = #{h5Type}
+			</if>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+		</where>
+	</select>
+</mapper>

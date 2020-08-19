@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.platform.PAdminDao" >
+	<resultMap type="PAdmin" id="BaseResultMap">
+		<result column="admin_id" property="adminId" jdbcType="INTEGER"/>
+		<result column="realname" property="realname" jdbcType="VARCHAR"/>		
+		<result column="mobile" property="mobile" jdbcType="VARCHAR"/>		
+		<result column="password" property="password" jdbcType="VARCHAR"/>		
+		<result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>		
+		<result column="role_id" property="roleId" jdbcType="INTEGER"/>		
+		<result column="roleName" property="roleName" jdbcType="VARCHAR"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>
+		<result column="user_relation" property="userRelation" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="PAdmin">
+		insert into p_admin 
+		(admin_id,realname,mobile,password,image_url,role_id,create_time,status,channel_code,user_relation) 
+		values 
+		(#{adminId},#{realname},#{mobile},#{password},#{imageUrl},#{roleId},#{createTime},#{status},#{channelCode},#{userRelation})
+	</insert>
+	
+	<update id="update" parameterType="PAdmin">
+		update p_admin 
+		<set>
+		    <if test="mobile != null and mobile != ''">
+				mobile = #{mobile},
+			</if>
+			<if test="realname != null and realname != ''">
+				realname = #{realname},
+			</if>
+			<if test="password != null and password != ''">
+				password = #{password},
+			</if>
+			<if test="imageUrl != null and imageUrl != ''">
+				image_url = #{imageUrl},
+			</if>
+			<if test="roleId != null and roleId != ''">
+				role_id = #{roleId},
+			</if>
+			<if test="status != null and status != ''">
+				status = #{status},
+			</if>
+			<if test="channelCode != null and channelCode != ''">
+				channel_code = #{channelCode},
+			</if>
+			<if test="userRelation != null">
+				user_relation = #{userRelation}
+			</if>
+		</set> 
+		where admin_id = #{adminId}
+	</update>
+	
+	<delete id="delete" parameterType="String">
+		delete from p_admin where admin_id = #{adminId}
+	</delete>
+	
+	<select id="selectOne" parameterType="String" resultMap="BaseResultMap">
+		select * from p_admin where admin_id = #{adminId}
+	</select>
+	
+	<select id="selectForLogin" parameterType="PAdmin" resultMap="BaseResultMap">
+		select * from p_admin where mobile = #{mobile} and password = #{password} and status = 1
+	</select>
+	
+	<select id="selectList" parameterType="PAdmin" resultMap="BaseResultMap">
+		select *,(select role_name from p_role where id = p.role_id) as roleName from p_admin p
+		<where>
+			<if test="mobile != null and mobile != ''">
+				and p.mobile = #{mobile}
+			</if>
+			<if test="status != null and status != ''">
+				and p.status = #{status}
+			</if>
+		</where>
+		order by p.create_time desc 
+	</select>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserTaskDao" >
+	<resultMap type="LUserTask" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER"/>		
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>		
+		<result column="task_id" property="taskId" jdbcType="INTEGER"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="is_receive" property="isReceive" jdbcType="INTEGER"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterType="LUserTask">
+		insert into l_user_task (user_id,task_id,create_time,is_receive)
+		values (#{userId},#{taskId},#{createTime},#{isReceive})
+	</insert>
+	
+	<select id="selectOne" resultMap="BaseResultMap">
+		select * from l_user_task where user_id = #{userId} and task_id = #{taskId}
+	</select>
+
+	<select id="selectListUser" resultMap="BaseResultMap">
+		select * from l_user_task where user_id = #{userId} and task_id = #{taskId}
+	</select>
+	
+	<select id="selectCompleteCount" resultType="int">
+	    SELECT COUNT(*)
+		FROM l_user_task
+		WHERE user_id=#{userId} AND is_receive=2 AND task_id IN (
+			SELECT id
+			FROM m_task_info
+			WHERE status=1 AND task_type=#{taskType}
+		)
+	</select>
+	
+	<update id="update">
+	  update l_user_task
+	  set is_receive=#{isReceive}
+	  where id=#{id}
+	</update>
+	
+	<select id="selectUserTaskCount" resultType="long">
+		select count(*) from l_user_task where user_id = #{userId} and task_id = #{taskId}
+	</select>
+	
+	<select id="selectList" parameterType="LUserTask" resultType="map">
+	    SELECT l.id,l.task_id AS taskId,t.task_name AS taskName,u.account_id AS accountId,l.create_time AS createTime
+		FROM l_user_task l INNER JOIN m_task_info t ON l.task_id=t.id INNER JOIN m_user_info u ON l.user_id=u.user_id
+		<where>
+		   <if test="accountId != null and accountId != ''">
+				u.account_id  = #{accountId}				
+		   </if>
+		</where>
+		ORDER BY l.task_id,l.create_time desc
+		<!-- limit #{pageIndex},#{pageSize} -->
+	</select>
+	
+	<select id="selectCount" parameterType="LUserTask" resultType="int">
+	    SELECT count(1)
+		FROM l_user_task l INNER JOIN m_task_info t ON l.task_id=t.id INNER JOIN m_user_info u ON l.user_id=u.user_id
+		<where>
+		   <if test="accountId != null and accountId != ''">
+				u.account_id  = #{accountId}				
+		   </if>
+		</where>
+	</select>
+</mapper>

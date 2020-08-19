@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.platform.MRankConfigDao" >
+	<resultMap type="MRankConfig" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="rank_name" property="rankName" jdbcType="VARCHAR"/>		
+		<result column="rank_type" property="rankType" jdbcType="INTEGER"/>		
+		<result column="data_logic" property="dataLogic" jdbcType="INTEGER"/>		
+		<result column="range_min" property="rangeMin" jdbcType="DECIMAL"/>		
+		<result column="rang_max" property="rangeMax" jdbcType="DECIMAL"/>		
+		<result column="up_num" property="upNum" jdbcType="INTEGER"/>			
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="update_time" property="updateTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="MRankConfig">
+		insert into m_rank_config 
+		(id,rank_name,rank_type,data_logic,range_min,rang_max,up_num,create_time,update_time,status) 
+		values 
+		(#{id},#{rankName},#{rankType},#{dataLogic},#{rangeMin},#{rangeMax},#{upNum},#{createTime},#{updateTime},#{status})
+	</insert>
+	
+	<update id="update" parameterType="MRankConfig">
+		update m_rank_config 
+		<set>
+			<if test="rankType != null and rankType != ''">
+				rank_type = #{rankType},
+			</if>
+			<if test="dataLogic != null and dataLogic != ''">
+				data_logic = #{dataLogic},
+			</if>
+			<if test="rangeMin != null and rangeMin != ''">
+				range_min = #{rangeMin},
+			</if>
+			<if test="rangeMax != null and rangeMax != ''">
+				rang_max = #{rangeMax},
+			</if>
+			<if test="upNum != null">
+				up_num = #{upNum},
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				update_time = #{updateTime},
+			</if>
+			<if test="rankName != null and rankName != ''">
+				rank_name = #{rankName},
+			</if>
+			<if test="status != null and status != ''">
+				status = #{status}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from m_rank_config where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from m_rank_config where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="MRankConfig" resultMap="BaseResultMap">
+		select * from m_rank_config
+		<where>
+			<if test="rankType != null and rankType != ''">
+				and rank_type = #{rankType}
+			</if>
+			<if test="status != null and status != ''">
+				and status = #{status}
+			</if>
+		</where>
+		order by update_time desc 
+	</select> 
+</mapper>

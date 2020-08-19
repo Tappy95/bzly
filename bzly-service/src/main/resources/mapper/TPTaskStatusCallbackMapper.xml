@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.TPTaskStatusCallbackDao" >
+	<resultMap type="TPTaskStatusCallback" id="baseMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="VARCHAR"/>
+		<result column="task_id" property="taskId" jdbcType="INTEGER"/>
+		<result column="flew_num" property="flewNum" jdbcType="VARCHAR"/>
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="sign" property="sign" jdbcType="VARCHAR"/>
+		<result column="deal_status" property="dealStatus" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>
+		<result column="expire_time" property="expireTime" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="TPTaskStatusCallback">
+		insert into tp_task_status_callback (id,user_id,task_id,flew_num,status,sign,deal_status,create_time,expire_time)
+		values (#{id},#{userId},#{taskId},#{flewNum},#{status},#{sign},#{dealStatus},#{createTime},#{expireTime})
+	</insert>
+	
+	<select id="selectByNum" resultMap="baseMap">
+		select * from tp_task_status_callback where flew_num = #{flewNum} and status = #{status}
+	</select>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="bzly-service" />
+        <module name="bzly-api" />
+        <module name="bzly-common" />
+        <module name="bzly-interface" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="bzly" target="1.8" />
+      <module name="bzly-api" target="1.8" />
+      <module name="bzly-common" target="1.8" />
+      <module name="bzly-interface" target="1.8" />
+      <module name="bzly-service" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.MSignRuleDao" >
+	<resultMap type="MSignRule" id="BaseResultMap">
+		<id column="rule_id" property="ruleId" jdbcType="INTEGER"/>
+		<result column="rule_name" property="ruleName" jdbcType="VARCHAR"/>		
+		<result column="stick_time" property="stickTime" jdbcType="INTEGER"/>		
+		<result column="score" property="score" jdbcType="INTEGER"/>		
+		<result column="has_other_reward" property="hasOtherReward" jdbcType="INTEGER"/>		
+		<result column="reward_type" property="rewardType" jdbcType="INTEGER"/>		
+		<result column="sign_ip" property="rewardType" jdbcType="INTEGER"/>		
+		<result column="other_reward" property="otherReward" jdbcType="VARCHAR"/>		
+	</resultMap>
+	
+	<insert id="insert" parameterType="MSignRule">
+		INSERT INTO m_sign_rule(rule_name,stick_time,score,has_other_reward,reward_type)
+        VALUES (#{ruleName},#{stickTime},#{score},#{hasOtherReward},#{rewardType})
+	</insert>
+	
+	<select id="selectStickTime" resultMap="BaseResultMap">
+		SELECT *
+		FROM m_sign_rule
+		WHERE stick_time=#{stickTime}
+	</select>
+	
+	<select id="selectList" parameterType="MSignRule" resultMap="BaseResultMap">
+		select * 
+		from m_sign_rule
+		<where>
+		    <if test="ruleName != null and ruleName != ''">
+				rule_name = #{ruleName}
+			</if>
+		</where>
+		order by stick_time
+	</select>
+	
+	<select id="selectId" resultMap="BaseResultMap">
+	    select * from m_sign_rule where rule_id=#{ruleId}
+	</select>
+	
+	<update id="updateRule" parameterType="MSignRule">
+	    update m_sign_rule 
+		<set>
+			<if test="ruleName != null and ruleName != ''">
+				rule_name = #{ruleName},
+			</if>
+			<if test="score != null and score != ''">
+				score = #{score},
+			</if>
+			<if test="hasOtherReward != null and hasOtherReward != ''">
+				has_other_reward = #{hasOtherReward},
+			</if>
+			<if test="rewardType != null and rewardType != ''">
+				reward_type = #{rewardType}
+			</if>
+		</set> 
+		where rule_id = #{ruleId}
+	</update>
+	
+	<delete id="deleteRule">
+	   delete from m_sign_rule where rule_id = #{ruleId}
+	</delete>
+	
+	<select id="selectAppList" resultMap="BaseResultMap">
+		select * 
+		from m_sign_rule
+		order by stick_time
+	</select>
+</mapper>

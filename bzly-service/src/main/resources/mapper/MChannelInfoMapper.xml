@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.thirdparty.MChannelInfoDao" >
+	<resultMap type="MChannelInfo" id="BaseResultMap">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR"/>		
+		<result column="channel_id" property="channelId" jdbcType="INTEGER"/>		
+		<result column="channel_name" property="channelName" jdbcType="VARCHAR"/>		
+		<result column="channel_position" property="channelPosition" jdbcType="VARCHAR"/>		
+		<result column="channel_push_type" property="channelPushType" jdbcType="INTEGER"/>		
+		<result column="content" property="content" jdbcType="VARCHAR"/>		
+		<result column="download_url" property="downloadUrl" jdbcType="VARCHAR"/>		
+		<result column="create_time" property="createTime" jdbcType="INTEGER"/>		
+		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="open_ali" property="openAli" jdbcType="INTEGER"/>	
+		<result column="open_wx" property="openWx" jdbcType="INTEGER"/>		
+		<result column="wx_app_id" property="wxAppId" jdbcType="VARCHAR"/>	
+		<result column="mch_id" property="mchId" jdbcType="VARCHAR"/>	
+		<result column="api_key" property="apiKey" jdbcType="VARCHAR"/>	
+		
+		<result column="ali_app_id" property="aliAppId" jdbcType="VARCHAR"/>	
+		<result column="ali_private_key" property="aliPrivateKey" jdbcType="VARCHAR"/>	
+		<result column="ali_public_key" property="aliPublicKey" jdbcType="VARCHAR"/>
+		<result column="web_type" property="webType" jdbcType="INTEGER"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterType="MChannelInfo">
+		insert into m_channel_info 
+		(id,channel_code,channel_id,channel_position,channel_push_type,content,download_url,create_time,status,open_ali,open_wx,wx_app_id,mch_id,api_key,ali_app_id,ali_private_key,ali_public_key,web_type) 
+		values 
+		(#{id},#{channelCode},#{channelId},#{channelPosition},#{channelPushType},#{content},#{downloadUrl},#{createTime},#{status},#{openAli},#{openWx},#{wxAppId},#{mchId},#{apiKey},#{aliAppId},#{aliPrivateKey},#{aliPublicKey},#{webType})
+	</insert>
+	
+	<update id="update" parameterType="MChannelInfo">
+		update m_channel_info 
+		<set>
+			<if test="channelCode != null">
+				channel_code = #{channelCode},
+			</if>
+			<if test="channelId != null">
+				channel_id = #{channelId},
+			</if>
+			<if test="channelPosition != null">
+				channel_position = #{channelPosition},
+			</if>
+			<if test="channelPushType != null">
+				channel_push_type = #{channelPushType},
+			</if>
+			<if test="content != null">
+				content = #{content},
+			</if>
+			<if test="downloadUrl != null">
+				download_url = #{downloadUrl},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="openAli != null">
+				open_ali = #{openAli},
+			</if>
+			<if test="openWx != null">
+				open_wx = #{openWx},
+			</if>
+			<if test="wxAppId != null">
+				wx_app_id = #{wxAppId},
+			</if>
+			<if test="mchId != null">
+				mch_id = #{mchId},
+			</if>
+			<if test="apiKey != null">
+				api_key = #{apiKey},
+			</if>
+			
+			<if test="aliAppId != null">
+				ali_app_id = #{aliAppId},
+			</if>
+			<if test="aliPrivateKey != null">
+				ali_private_key = #{aliPrivateKey},
+			</if>
+			<if test="aliPublicKey != null">
+				ali_public_key = #{aliPublicKey},
+			</if>
+			<if test="webType != null">
+				web_type = #{webType}
+			</if>
+		</set> 
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from m_channel_info where id = #{id}
+	</delete>
+	
+	<select id="selectOne" parameterType="Integer" resultMap="BaseResultMap">
+		select * from m_channel_info where id = #{id}
+	</select>
+	
+	<select id="selectList" parameterType="MChannelInfo" resultMap="BaseResultMap">
+		select i.*,(select channel_name from m_channel where id = i.channel_id) as channel_name from m_channel_info i
+		<where>
+			<if test="channelCode != null and channelCode != ''">
+				and i.channel_code = #{channelCode}
+			</if>
+			<if test="channelId != null and channelId != '' ">
+				and i.channel_id = #{channelId}
+			</if>
+			<if test="status != null and status != '' ">
+				and i.status = #{status}
+			</if>
+			<if test="webType != null and webType != '' ">
+				and i.web_type = #{webType}
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+	
+	<select id="selectDownloadUrl" parameterType="String" resultMap="BaseResultMap">
+		select * from m_channel_info where channel_code = #{channelCode}
+	</select>
+
+	<select id="selectByChannelCode" parameterType="String" resultMap="BaseResultMap">
+		select i.*,(select channel_name from m_channel where id = i.channel_id) as channel_name from m_channel_info i where i.channel_code = #{channelCode}
+	</select>
+	
+	<select id="selectDownList" resultType="map">
+	    SELECT i.channel_code AS channelCode,c.channel_name AS channelName
+		FROM m_channel_info i INNER JOIN m_channel c ON i.channel_id=c.id
+		WHERE i.status=1
+	</select>
+	
+	<select id="selectChannelDownList" resultType="map">
+	    SELECT i.channel_code AS channelCode,c.channel_name AS channelName
+		FROM m_channel_info i INNER JOIN m_channel c ON i.channel_id=c.id
+		WHERE i.status=1 AND i.channel_code NOT IN (SELECT channel_code FROM m_channel_config)
+	</select>
+	
+	<select id="selectCode" parameterType="String" resultMap="BaseResultMap">
+	    SELECT *
+		FROM m_channel_info
+		WHERE channel_code=(
+		  SELECT channel_code
+		  FROM p_pay_log
+		  WHERE out_trade_no=#{outTradeNo}
+		)
+	</select>
+	
+	<select id="selectVersionDownList" resultType="map">
+	    SELECT i.channel_code AS channelCode,c.channel_name AS channelName
+		FROM m_channel_info i INNER JOIN m_channel c ON i.channel_id=c.id
+		WHERE i.status=1 AND i.channel_code NOT IN (SELECT channel_code FROM p_version)
+	</select>
+</mapper>

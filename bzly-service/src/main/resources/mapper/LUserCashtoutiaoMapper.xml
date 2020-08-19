@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mc.bzly.dao.user.LUserCashtoutiaoDao" >
+
+	<insert id="insert" parameterType="LUserCashtoutiao">
+		insert into l_user_cashtoutiao 
+		(id,user_id,channel,create_time,status)
+		values
+		(#{id},#{userId},#{channel},#{createTime},#{status})
+	</insert>
+</mapper>
