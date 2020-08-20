@@ -1,6 +1,38 @@
 server:
   port: 8082
 
+spring:
+  datasource:
+    name: test
+    url: jdbc:mysql://47.102.220.1:3306/bzly?characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&requireSSL=false
+    username: wind
+    password: '!Syy950507'
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+  activemq:
+    broker-url: tcp://106.53.85.158:61616
+    user: admin
+    password: admin
+    in-memory: true
+    pooled: false
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.mc.bzly.model
+
 dubbo:
   registry:
     address: 106.53.85.158:2181
@@ -61,4 +93,22 @@ csj:
     tkAppSecurityKey: 57b3062dfa560f50e4cf1369db57bf82a
     hbAppSecurityKeyIos: 4ca513b2e92aa476dd4bfc69e38a9c6ae
     tkAppSecurityKeyIos: 4ca513b2e92aa476dd4bfc69e38a9c6ae
+
+jedis:
+  host: 106.53.85.158
+  max:
+    idle: 10
+    total: 500
+    wait:
+      millis: 10000
+  min:
+    idle: 5
+  port: 6379
+  test:
+    'on':
+      borrow: true
+  zk:
+    session:
+      timeout:
+        ms: 20000
     

@@ -5,10 +5,10 @@
        http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
 	<!-- 提供方应用信息，用于计算依赖关系 -->
-	<dubbo:application name="bzly-api-consumer" />
+<!--	<dubbo:application name="bzly-api-consumer" />-->
 
 	<!-- 注册中心服务地址 -->
-	<dubbo:registry id="zookeeper" protocol="zookeeper"
+	<dubbo:registry id="zookeeper1" protocol="zookeeper"
 		address="${dubbo.registry.address}" />
 
 	<dubbo:annotation package="com.mc.bzly"></dubbo:annotation>  

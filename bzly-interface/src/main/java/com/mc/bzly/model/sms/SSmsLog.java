@@ -1,5 +1,6 @@
 package com.mc.bzly.model.sms;
 
+import com.mc.bzly.model.BaseModel;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
