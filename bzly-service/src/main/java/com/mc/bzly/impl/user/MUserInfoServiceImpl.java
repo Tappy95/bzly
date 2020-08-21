@@ -351,6 +351,7 @@ public class MUserInfoServiceImpl implements MUserInfoService {
 	public Result loginBySms(Map<String, Object> paramMap) {
 		Result result = new Result();
 		MUserInfo mUserInfo = mUserInfoDao.selectUserForLogin(paramMap);
+//		MUserInfo mUserInfo = null;
 		if(mUserInfo == null){
 			result.setData(null);
 			result.setMessage(RespCodeState.ADMIN_LOGIN_FAILURE.getMessage());
@@ -360,13 +361,14 @@ public class MUserInfoServiceImpl implements MUserInfoService {
 				result.setStatusCode(RespCodeState.USER_LOGIN_FORBIDDEN.getStatusCode());
 				return result;
 		}else{
-			String channelCode = StringUtil.isNullOrEmpty(mUserInfo.getChannelCode())?mUserInfo.getParentChannelCode():mUserInfo.getChannelCode();
-			MChannelInfo channelInfo=mChannelInfoDao.selectDownloadUrl(channelCode);
-			if(channelInfo.getWebType().intValue()==3) {
-				result.setMessage(RespCodeState.NO_LOGIN_BZLY.getMessage());
-				result.setStatusCode(RespCodeState.NO_LOGIN_BZLY.getStatusCode());
-				return result;
-			}
+//			String channelCode = StringUtil.isNullOrEmpty(mUserInfo.getChannelCode())?mUserInfo.getParentChannelCode():mUserInfo.getChannelCode();
+//			MChannelInfo channelInfo=mChannelInfoDao.selectDownloadUrl(channelCode);
+//			if(channelInfo.getWebType().intValue()==3) {
+//				result.setMessage(RespCodeState.NO_LOGIN_BZLY.getMessage());
+//				result.setStatusCode(RespCodeState.NO_LOGIN_BZLY.getStatusCode());
+//				return result;
+			System.out.println("第三选项");
+
 			String userId = mUserInfo.getUserId();
 			// 生成token
 			String redisUser=redisService.getString(mUserInfo.getToken());

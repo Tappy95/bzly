@@ -264,4 +264,8 @@ public class BaseController {
 		}
 		return true;
 	}
+
+	public void test(HashMap maps) {
+		logger.info("test values {}", maps);
+	}
 }

@@ -12,7 +12,7 @@
 		address="${dubbo.registry.address}" />
 
 	<!-- 用dubbo协议在30001 -->
-	<dubbo:protocol name="dubbo" port="30002" dispatcher="message"/>
+	<dubbo:protocol name="dubbo" port="30007" dispatcher="message"/>
 	<dubbo:provider timeout="50000" threadpool="fixed" threads="500" accepts="1000" />
 	<!-- 通过扫包无需声明需要暴露的服务接口 -->
 	<dubbo:annotation package="com.mc.bzly.impl" />
