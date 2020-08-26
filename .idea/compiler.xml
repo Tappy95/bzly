@@ -12,7 +12,7 @@
         <module name="bzly-interface" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="8">
       <module name="bzly" target="1.8" />
       <module name="bzly-api" target="1.8" />
       <module name="bzly-common" target="1.8" />

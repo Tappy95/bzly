@@ -8,8 +8,8 @@
 <!--	<dubbo:application name="bzly-api-consumer" />-->
 
 	<!-- 注册中心服务地址 -->
-	<dubbo:registry id="zookeeper1" protocol="zookeeper"
+	<dubbo:registry id="zookeeper" protocol="zookeeper"
 		address="${dubbo.registry.address}" />
 
-	<dubbo:annotation package="com.mc.bzly"></dubbo:annotation>  
+	<dubbo:annotation package="com.mc.bzly"/>
 </beans>

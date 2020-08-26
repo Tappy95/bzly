@@ -10,6 +10,14 @@
           <file>jar://$MAVEN_REPOSITORY$/io/netty/netty/3.10.6.Final/netty-3.10.6.Final.jar!/org/jboss/netty/container/spring/beans.xml</file>
           <file>file://$MAVEN_REPOSITORY$/io/netty/netty/3.10.6.Final/netty-3.10.6.Final.jar</file>
         </fileset>
+        <fileset id="spring-boot-dispatcherServletAutoConfiguration-mvc" name="BzlyApi MVC" removed="true">
+          <file>file://$MODULE_DIR$/src/main/java/com/mc/bzly/BzlyApi.java</file>
+        </fileset>
+        <fileset id="spring_boot_com.mc.bzly.BzlyApi" name="BzlyApi" removed="true">
+          <file>file://$MODULE_DIR$/src/main/java/com/mc/bzly/BzlyApi.java</file>
+          <file>file://$MODULE_DIR$/src/main/resources/application.yml</file>
+          <file>file://$MODULE_DIR$/src/main/resources/application-prod.yml</file>
+        </fileset>
       </configuration>
     </facet>
     <facet type="web" name="Web">

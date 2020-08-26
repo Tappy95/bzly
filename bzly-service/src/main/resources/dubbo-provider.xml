@@ -8,11 +8,12 @@
 	<dubbo:application name="bzly-service-provider" />
 
 	<!-- 注册中心服务地址 -->
-	<dubbo:registry id="zookeeper" protocol="zookeeper"
+	<dubbo:registry id="zookeeper1" protocol="zookeeper"
 		address="${dubbo.registry.address}" />
 
 	<!-- 用dubbo协议在30001 -->
-	<dubbo:protocol name="dubbo" port="30007" dispatcher="message"/>
+<!--	<dubbo:protocol name="dubbo" host="172.26.50.16" port="32099" dispatcher="message"/>-->
+	<dubbo:protocol name="dubbo" host="192.168.40.1" port="-1" dispatcher="message"/>
 	<dubbo:provider timeout="50000" threadpool="fixed" threads="500" accepts="1000" />
 	<!-- 通过扫包无需声明需要暴露的服务接口 -->
 	<dubbo:annotation package="com.mc.bzly.impl" />

@@ -17,13 +17,15 @@ public class UploadUtil {
 	
 	private static Logger logger = LoggerFactory.getLogger(UploadUtil.class);
 	
-	public static final String ACCESSKEY = "";
-	public static final String SECRETKEY = "";
+	public static final String ACCESSKEY = "J_HgoG0aLf-cjHt1BQxfs85Nbs1ZDZk04P1_Lgn5";
+	public static final String SECRETKEY = "WwyxdMT2IyACDTOgnZXprzQ97J1fh7bBW6-tXlCW";
 	
-	public static final String BUCKET = "";
-	public static final String PRE_URL_1 = "https://image.bzlyplay.com/";
-	public static final String PRE_URL_2 = "https://image.baozhu8.com/";
-	
+	public static final String BUCKET = "bzly-oss";
+//	public static final String PRE_URL_1 = "https://image.bzlyplay.com/";
+	public static final String PRE_URL_1 = "http://qfkqxz1oa.hb-bkt.clouddn.com/";
+//	public static final String PRE_URL_2 = "https://image.baozhu8.com/";
+	public static final String PRE_URL_2 = "http://qfkqxz1oa.hb-bkt.clouddn.com/";
+
 	
 	public static boolean uploadToQN(String fileName,InputStream is) throws QiniuException{
         Configuration cfg = new Configuration(Zone.zone0());
