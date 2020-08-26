@@ -37,7 +37,7 @@ public class UserInfoController extends BaseController {
 	
 	@Reference(version=WebConfig.dubboServiceVersion,interfaceClass=MUserInfoService.class,check=false,timeout = 10000)
 	private MUserInfoService mUserInfoService;
-	
+
 	@RequestMapping(value = "mobileExist",method = RequestMethod.GET)
 	public void mobileExist(HttpServletRequest request,HttpServletResponse response,String mobile){
 		Map<String, String> respMap = new HashMap<>();initResponseMap(request, respMap);
