@@ -1631,7 +1631,6 @@ public class TPGameServiceImpl implements TPGameService {
         List<TPGame> tpTasks = new ArrayList<>();
         List<TPGame> tpGames = new ArrayList<>();
         Random r = new Random();
-        System.out.println("-------"+mChannelConfig.getApplyTask().toString());
         if (mChannelConfig.getApplyTask().intValue() == 1) {
             PDictionary rechargeDictionary = pDictionaryDao.selectByName(DictionaryUtil.USER_APPLY_TASK);
             int taskCount = lUserTptaskDao.selectUserCount(userId);

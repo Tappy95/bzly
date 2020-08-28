@@ -602,8 +602,9 @@ public class TPGameController extends BaseController {
 			result.setMessage(RespCodeState.API_OPERATOR_SUCCESS.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			result.setStatusCode(RespCodeState.API_ERROE_CODE_3000.getStatusCode());
-			result.setMessage(RespCodeState.API_ERROE_CODE_3000.getMessage());
+			// 操作失败返回操作成功,屏蔽掩盖推荐游戏逻辑
+			result.setStatusCode(RespCodeState.API_OPERATOR_SUCCESS.getStatusCode());
+			result.setMessage(RespCodeState.API_OPERATOR_SUCCESS.getMessage());
 		}
 		outStrJSONWithResult(response, result, respMap);
 	}
