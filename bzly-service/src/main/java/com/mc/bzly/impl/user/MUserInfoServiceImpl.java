@@ -165,6 +165,7 @@ public class MUserInfoServiceImpl implements MUserInfoService {
 		mUserInfo.setRegImei(mUserInfo.getImei());
 		mUserInfo.setQrCode(UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10));
 		if(StringUtils.isEmpty(mUserInfo.getProfile())){
+			// 七牛云默认头像
 			mUserInfo.setProfile("https://image.bzlyplay.com/default_img.png");
 		}
 		// 生成token
