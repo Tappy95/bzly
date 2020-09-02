@@ -42,7 +42,7 @@ import com.mc.bzly.model.user.LDarenRewardDetail;
 import com.mc.bzly.model.user.LUserTptask;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.thirdparty.TPTaskInfoService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = TPTaskInfoService.class,version = WebConfig.dubboServiceVersion)
 public class TPTaskInfoServiceImpl implements TPTaskInfoService {

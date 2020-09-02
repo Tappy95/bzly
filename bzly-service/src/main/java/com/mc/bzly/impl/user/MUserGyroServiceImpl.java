@@ -14,7 +14,7 @@ import com.mc.bzly.impl.redis.AWorker;
 import com.mc.bzly.model.user.MUserGyro;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.user.MUserGyroService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = MUserGyroService.class,version = WebConfig.dubboServiceVersion)
 public class MUserGyroServiceImpl implements MUserGyroService{

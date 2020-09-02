@@ -29,7 +29,7 @@ import com.mc.bzly.model.user.LUserFirstLog;
 import com.mc.bzly.model.user.LUserTask;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.platform.PDictionaryService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = PDictionaryService.class,version = WebConfig.dubboServiceVersion)
 public class PDictionaryServiceImpl implements PDictionaryService {

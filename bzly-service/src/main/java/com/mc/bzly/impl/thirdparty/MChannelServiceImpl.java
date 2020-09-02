@@ -12,7 +12,7 @@ import com.mc.bzly.base.WebConfig;
 import com.mc.bzly.dao.thirdparty.MChannelDao;
 import com.mc.bzly.model.thirdparty.MChannel;
 import com.mc.bzly.service.thirdparty.MChannelService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = MChannelService.class,version = WebConfig.dubboServiceVersion)
 public class MChannelServiceImpl implements MChannelService {

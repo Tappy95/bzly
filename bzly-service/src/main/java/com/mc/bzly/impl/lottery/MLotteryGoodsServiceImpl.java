@@ -15,7 +15,7 @@ import com.mc.bzly.base.WebConfig;
 import com.mc.bzly.dao.lottery.MLotteryGoodsDao;
 import com.mc.bzly.model.lottery.MLotteryGoods;
 import com.mc.bzly.service.lottery.MLotteryGoodsService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = MLotteryGoodsService.class,version = WebConfig.dubboServiceVersion)
 public class MLotteryGoodsServiceImpl implements MLotteryGoodsService {

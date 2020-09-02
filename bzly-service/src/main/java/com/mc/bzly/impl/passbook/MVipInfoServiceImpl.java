@@ -21,7 +21,7 @@ import com.mc.bzly.model.thirdparty.TPGame;
 import com.mc.bzly.model.user.LUserGameTask;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.passbook.MVipInfoService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass=MVipInfoService.class,version=WebConfig.dubboServiceVersion)
 public class MVipInfoServiceImpl implements MVipInfoService {

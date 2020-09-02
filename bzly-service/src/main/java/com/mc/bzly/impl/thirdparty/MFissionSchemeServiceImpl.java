@@ -19,7 +19,7 @@ import com.mc.bzly.dao.thirdparty.MChannelConfigDao;
 import com.mc.bzly.model.thirdparty.MFissionScheme;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.thirdparty.MFissionSchemeService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = MFissionSchemeService.class,version = WebConfig.dubboServiceVersion)
 public class MFissionSchemeServiceImpl implements MFissionSchemeService{

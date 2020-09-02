@@ -16,7 +16,7 @@ import com.mc.bzly.model.user.LUserCashLog;
 import com.mc.bzly.model.user.LUserTask;
 import com.mc.bzly.service.jms.JMSProducer;
 import com.mc.bzly.service.user.LUserTaskService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LUserTaskService.class,version = WebConfig.dubboServiceVersion)
 public class LUserTaskServiceImpl implements LUserTaskService{

@@ -7,7 +7,7 @@ import com.mc.bzly.base.WebConfig;
 import com.mc.bzly.dao.user.LUserFirstLogDao;
 import com.mc.bzly.model.user.LUserFirstLog;
 import com.mc.bzly.service.user.LUserFirstLogService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LUserFirstLogService.class,version = WebConfig.dubboServiceVersion)
 public class LUserFirstLogServiceImpl implements LUserFirstLogService{

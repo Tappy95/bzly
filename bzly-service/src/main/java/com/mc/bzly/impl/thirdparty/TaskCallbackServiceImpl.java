@@ -12,7 +12,7 @@ import com.mc.bzly.dao.thirdparty.TaskCallbackDao;
 import com.mc.bzly.dao.user.MUserInfoDao;
 import com.mc.bzly.model.thirdparty.TaskCallback;
 import com.mc.bzly.service.thirdparty.TaskCallbackService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = TaskCallbackService.class,version = WebConfig.dubboServiceVersion)
 public class TaskCallbackServiceImpl implements TaskCallbackService{

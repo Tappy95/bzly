@@ -15,7 +15,7 @@ import com.mc.bzly.dao.user.LUserSigninDao;
 import com.mc.bzly.model.user.LUserBQ;
 import com.mc.bzly.model.user.LUserSignin;
 import com.mc.bzly.service.user.LUserBQService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LUserBQService.class,version = WebConfig.dubboServiceVersion)
 public class LUserBQServiceImpl implements LUserBQService {

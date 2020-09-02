@@ -22,7 +22,7 @@ import com.mc.bzly.model.user.LRankPig;
 import com.mc.bzly.model.user.LRankPigSimple;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.user.LRankPigService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LRankPigService.class,version = WebConfig.dubboServiceVersion)
 public class LRankPigServiceImpl implements LRankPigService {

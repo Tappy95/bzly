@@ -34,7 +34,7 @@ import com.mc.bzly.service.jms.JMSProducer;
 import com.mc.bzly.service.lottery.MLotteryOrderService;
 import com.mc.bzly.service.news.AppNewsInformService;
 import com.mc.bzly.util.PartitionAmountUtil;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = MLotteryOrderService.class,version = WebConfig.dubboServiceVersion)
 public class MLotteryOrderServiceImpl implements MLotteryOrderService {

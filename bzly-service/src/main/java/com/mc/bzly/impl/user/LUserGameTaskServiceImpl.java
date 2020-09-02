@@ -13,7 +13,7 @@ import com.mc.bzly.dao.user.LUserCashDao;
 import com.mc.bzly.dao.user.LUserGameTaskDao;
 import com.mc.bzly.model.user.LUserGameTask;
 import com.mc.bzly.service.user.LUserGameTaskService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LUserGameTaskService.class,version = WebConfig.dubboServiceVersion)
 public class LUserGameTaskServiceImpl implements LUserGameTaskService{

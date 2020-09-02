@@ -619,4 +619,45 @@ public class StringUtil {
         return result;
     }
 
+
+    /**
+     * 随机生成digit位随机字符串
+     *
+     * @return
+     */
+    public static String getRandomString(int digit) {
+        String str = "abcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder sb = new StringBuilder(digit);
+        for (int i = 0; i < digit; i++) {
+            char ch = str.charAt(new Random().nextInt(str.length()));
+            sb.append(ch);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 判断是网址
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isUrl(String str) {
+        String pattern = "^((https|http|ftp|rtsp|mms)?:\\/\\/)[^\\s]+";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(str);
+        return m.matches();
+    }
+
+    /**
+     * 判断是否是用户名
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isChinese(String str) {
+        String pattern = "[A-Za-z0-9_\\-\\u4e00-\\u9fa5]+";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(str);
+        return m.matches();
+    }
 }

@@ -24,7 +24,7 @@ import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.jms.JMSProducer;
 import com.mc.bzly.service.news.AppNewsInformService;
 import com.mc.bzly.service.user.LUserExchangeCashService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LUserExchangeCashService.class,version = WebConfig.dubboServiceVersion)
 public class LUserExchangeCashServiceImpl implements LUserExchangeCashService{

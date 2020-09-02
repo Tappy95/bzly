@@ -10,7 +10,7 @@ import com.mc.bzly.base.WebConfig;
 import com.mc.bzly.dao.thirdparty.TpGameRelationTypeDao;
 import com.mc.bzly.model.thirdparty.TpGameRelationType;
 import com.mc.bzly.service.thirdparty.TpGameRelationTypeService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = TpGameRelationTypeService.class,version = WebConfig.dubboServiceVersion)
 public class TpGameRelationTypeServiceImpl implements TpGameRelationTypeService{

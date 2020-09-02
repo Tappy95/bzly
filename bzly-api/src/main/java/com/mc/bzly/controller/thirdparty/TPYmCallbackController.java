@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 import com.bzly.common.utils.MD5Util;
 import com.mc.bzly.annotation.NeedAuth;
 import com.mc.bzly.base.BaseController;

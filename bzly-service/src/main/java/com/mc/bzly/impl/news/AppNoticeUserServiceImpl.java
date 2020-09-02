@@ -13,7 +13,7 @@ import com.mc.bzly.dao.news.AppNoticeUserDao;
 import com.mc.bzly.model.news.AppNewsNotice;
 import com.mc.bzly.model.news.AppNoticeUser;
 import com.mc.bzly.service.news.AppNoticeUserService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass=AppNoticeUserService.class,version=WebConfig.dubboServiceVersion)
 public class AppNoticeUserServiceImpl implements AppNoticeUserService{

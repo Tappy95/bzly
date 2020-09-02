@@ -12,7 +12,7 @@ import com.mc.bzly.dao.user.LUserStatisticDao;
 import com.mc.bzly.dao.user.MUserInfoDao;
 import com.mc.bzly.model.user.LUserReconciliation;
 import com.mc.bzly.service.user.LUserStatisticServcie;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LUserStatisticServcie.class,version = WebConfig.dubboServiceVersion)
 public class LUserStatisticServcieImpl implements LUserStatisticServcie{

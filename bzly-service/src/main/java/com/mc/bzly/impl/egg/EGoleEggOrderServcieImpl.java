@@ -22,7 +22,7 @@ import com.mc.bzly.model.jms.JmsWrapper.Type;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.egg.EGoleEggOrderServcie;
 import com.mc.bzly.service.jms.JMSProducer;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass=EGoleEggOrderServcie.class,version=WebConfig.dubboServiceVersion)
 public class EGoleEggOrderServcieImpl implements EGoleEggOrderServcie{

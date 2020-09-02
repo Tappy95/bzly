@@ -104,7 +104,7 @@ import com.mc.bzly.service.jms.JMSProducer;
 import com.mc.bzly.service.news.AppNewsInformService;
 import com.mc.bzly.service.thirdparty.TPGameService;
 import com.mc.bzly.util.SignUtil;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = TPGameService.class, version = WebConfig.dubboServiceVersion)
 public class TPGameServiceImpl implements TPGameService {

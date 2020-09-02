@@ -24,7 +24,7 @@ import com.mc.bzly.model.user.LPigChange;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.model.user.MessageList;
 import com.mc.bzly.service.user.LPigChangeService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LPigChangeService.class,version = WebConfig.dubboServiceVersion)
 public class LPigChangeServiceImpl implements LPigChangeService{

@@ -27,7 +27,7 @@ import com.mc.bzly.model.platform.PDictionary;
 import com.mc.bzly.model.user.LCoinChange;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.fighting.MFightingQuestionService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass=MFightingQuestionService.class,version=WebConfig.dubboServiceVersion)
 public class MFightingQuestionServiceImpl implements MFightingQuestionService{

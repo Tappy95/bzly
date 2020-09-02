@@ -17,7 +17,7 @@ import com.mc.bzly.model.egg.EGoldEggType;
 import com.mc.bzly.model.egg.EUserGoldEgg;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.egg.EGoldEggTypeService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass=EGoldEggTypeService.class,version=WebConfig.dubboServiceVersion)
 public class EGoldEggTypeServiceImpl implements EGoldEggTypeService{

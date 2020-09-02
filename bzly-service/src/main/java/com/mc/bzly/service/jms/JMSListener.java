@@ -110,7 +110,7 @@ import com.mc.bzly.service.passbook.MPassbookService;
 import com.mc.bzly.service.thirdparty.TPGameService;
 import com.mc.bzly.service.user.LActiveGoldLogService;
 import com.mc.bzly.service.user.LUserSignService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service
 public class JMSListener {

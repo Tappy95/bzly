@@ -13,7 +13,7 @@ import com.mc.bzly.dao.user.MUserInfoDao;
 import com.mc.bzly.model.user.LCoinChange;
 import com.mc.bzly.model.user.LUserCashLog;
 import com.mc.bzly.service.user.LUserCashLogService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LUserCashLogService.class,version = WebConfig.dubboServiceVersion)
 public class LUserCashLogServiceImpl implements LUserCashLogService{

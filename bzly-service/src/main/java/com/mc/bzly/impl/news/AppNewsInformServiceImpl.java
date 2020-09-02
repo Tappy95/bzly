@@ -17,7 +17,7 @@ import com.mc.bzly.dao.user.MUserInfoDao;
 import com.mc.bzly.model.news.AppNewsInform;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.news.AppNewsInformService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass=AppNewsInformService.class,version=WebConfig.dubboServiceVersion)
 public class AppNewsInformServiceImpl implements AppNewsInformService {

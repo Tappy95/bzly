@@ -25,7 +25,7 @@ import com.mc.bzly.model.user.LUserTptask;
 import com.mc.bzly.model.user.LUserTptaskSubmit;
 import com.mc.bzly.model.user.LUserTptaskSubmitVo;
 import com.mc.bzly.service.user.LUserTptaskSubmitService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LUserTptaskSubmitService.class,version = WebConfig.dubboServiceVersion)
 public class LUserTptaskSubmitServiceImpl implements LUserTptaskSubmitService {

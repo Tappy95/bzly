@@ -16,7 +16,7 @@ import com.mc.bzly.model.fighting.AnswerUser;
 import com.mc.bzly.model.fighting.MFightingInfo;
 import com.mc.bzly.model.fighting.MFightingType;
 import com.mc.bzly.service.redis.RedisService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 @Scope("singleton")
 @Service
 public class RandomMatchingUtil {

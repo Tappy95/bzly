@@ -29,7 +29,7 @@ import com.mc.bzly.model.user.LUserCash;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.jms.JMSProducer;
 import com.mc.bzly.service.user.LUserCashService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = LUserCashService.class,version = WebConfig.dubboServiceVersion)
 public class LUserCashServiceImpl implements LUserCashService{

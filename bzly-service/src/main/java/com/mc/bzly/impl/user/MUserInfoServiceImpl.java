@@ -68,7 +68,7 @@ import com.mc.bzly.service.platform.PDictionaryService;
 import com.mc.bzly.service.platform.PLevelService;
 import com.mc.bzly.service.redis.RedisService;
 import com.mc.bzly.service.user.MUserInfoService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass=MUserInfoService.class,version=WebConfig.dubboServiceVersion)
 public class MUserInfoServiceImpl implements MUserInfoService {

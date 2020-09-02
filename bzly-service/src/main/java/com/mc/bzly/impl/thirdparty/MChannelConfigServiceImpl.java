@@ -29,7 +29,7 @@ import com.mc.bzly.model.thirdparty.MChannelConfigUser;
 import com.mc.bzly.model.thirdparty.MChannelInfo;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.service.thirdparty.MChannelConfigService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = MChannelConfigService.class,version = WebConfig.dubboServiceVersion)
 public class MChannelConfigServiceImpl implements MChannelConfigService{

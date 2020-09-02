@@ -15,7 +15,7 @@ import com.mc.bzly.dao.user.MUserOpinionDao;
 import com.mc.bzly.model.user.MUserInfo;
 import com.mc.bzly.model.user.MUserOpinion;
 import com.mc.bzly.service.user.MUserOpinionService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass=MUserOpinionService.class,version=WebConfig.dubboServiceVersion)
 public class MUserOpinionServiceImpl implements MUserOpinionService{

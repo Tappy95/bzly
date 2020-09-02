@@ -16,7 +16,7 @@ import com.mc.bzly.dao.user.MUserAddressDao;
 import com.mc.bzly.model.platform.PArea;
 import com.mc.bzly.model.user.MUserAddress;
 import com.mc.bzly.service.user.MUserAddressService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = MUserAddressService.class,version = WebConfig.dubboServiceVersion)
 public class MUserAddressServiceImpl implements MUserAddressService {

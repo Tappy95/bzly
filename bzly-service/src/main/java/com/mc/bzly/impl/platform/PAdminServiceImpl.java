@@ -26,7 +26,7 @@ import com.mc.bzly.model.platform.PRole;
 import com.mc.bzly.redis.CodisConfig;
 import com.mc.bzly.service.platform.PAdminService;
 import com.mc.bzly.service.redis.RedisService;
-import com.mc.bzly.util.StringUtil;
+import com.bzly.common.utils.StringUtil;
 
 @Service(interfaceClass = PAdminService.class,version = WebConfig.dubboServiceVersion)
 public class PAdminServiceImpl implements PAdminService {
