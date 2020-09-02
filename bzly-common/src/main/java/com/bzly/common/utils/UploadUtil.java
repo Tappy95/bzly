@@ -28,7 +28,7 @@ public class UploadUtil {
 
 	
 	public static boolean uploadToQN(String fileName,InputStream is) throws QiniuException{
-        Configuration cfg = new Configuration(Zone.zone0());
+        Configuration cfg = new Configuration(Zone.zone1());
         UploadManager uploadManager = new UploadManager(cfg);
     	Auth auth = Auth.create(ACCESSKEY, SECRETKEY);
     	String upToken = auth.uploadToken(BUCKET); 

@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.bzly.common.pay.PayUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +47,9 @@ public class TPInterfaceServiceImpl implements TPInterfaceService {
 	
 	@Autowired
 	private TPGameDao tpGameDao;
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(TPInterfaceServiceImpl.class);
+
 	@Transactional
 	@Override
 	public int add(TPInterface tpInterface) throws Exception {

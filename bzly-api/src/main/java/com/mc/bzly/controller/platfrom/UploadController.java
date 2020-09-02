@@ -52,6 +52,11 @@ public class UploadController extends BaseController {
 					return;
 				}
 			}
+			System.out.println("----------------");
+			System.out.println(file.getOriginalFilename());
+			System.out.println("----------------");
+			System.out.println("----------------");
+			System.out.println("----------------");
 			String picFmt = file.getOriginalFilename().substring(file.getOriginalFilename().indexOf(".") + 1,
 					file.getOriginalFilename().length());
 			String filename = qiniuUrlPreffix + DateUtil.getLongCurrentDate() + "." + picFmt;
